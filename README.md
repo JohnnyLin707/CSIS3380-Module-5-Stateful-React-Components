@@ -2,7 +2,7 @@
 
 > Full Stack Development With JavaScript · Douglas College · 2026
 >
-> Student: **Jinran Lin** (300395016)
+> 🔗 https://johnnylin707.github.io/CSIS3380-Module-5-Stateful-React-Components/
 
 ---
 
@@ -152,6 +152,6 @@ git add -A && git commit -m "update site" && git push
 
 ## 👤 Author
 
-**Jinran Lin** · Student ID 300395016 · CSIS 3380 — Full Stack Development With JavaScript
+**Jinran Lin** · CSIS 3380 — Full Stack Development With JavaScript
 
 🔗 https://github.com/JohnnyLin707/CSIS3380-Module-5-Stateful-React-Components
