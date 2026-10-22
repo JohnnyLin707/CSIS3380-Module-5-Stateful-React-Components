@@ -6,9 +6,16 @@
    你不需要修改此文件。教程中用到的每个类名
    （watchlist、movie、rating、badge 等）都已在此定义样式。 */
 
+/* 作用：文件头说明——本文件提供教程所需的全部样式，学生不需要改它 */
+/* 解释：把样式和 JS 组件分开，学生可以专注学 state 而不用管 CSS；
+        如果某个类名在页面上"没效果"，先来这个文件确认它有没有被定义 */
+
 /* ELEMENT STYLES -------------------- */
 /* 元素基础样式 -------------------- */
 
+/* 作用：body 基础样式——无外边距、浅灰背景、Arial 字体、深灰文字 */
+/* 解释：margin:0 去掉浏览器默认边距，让应用卡片从顶端开始；
+        统一的字体和文字颜色保证整个应用观感一致 */
 body {
   margin: 0;
   background: #eef1f6;
@@ -16,7 +23,9 @@ body {
   color: #1d2433;
 }
 
-/* 页头：深蓝背景、金黄色下边框，标题与统计徽章横向排列 */
+/* 作用：页头——深蓝背景、金黄色下边框，标题与统计徽章横向排列 */
+/* 解释：flex 布局让 h1 和 .stats 徽章在同一行；金黄色下边框是应用的标志性配色；
+        参考：app.js 中 <header> 元素（Header 组件） */
 header {
   display: flex;
   align-items: center;
@@ -26,6 +35,9 @@ header {
   border-bottom: 4px solid #f2b134;
 }
 
+/* 作用：页头主标题——占据剩余空间，拉开与徽章的距离 */
+/* 解释：flex-grow:1 让 h1 吃掉多余宽度，把右侧的统计徽章推到最右边；
+        参考：app.js 中 <h1>{ props.title }</h1> */
 header h1 {
   flex-grow: 1;
   margin: 0;
@@ -33,6 +45,8 @@ header h1 {
   letter-spacing: 1px;
 }
 
+/* 作用：页头内的段落文字（当前模板未使用，预留样式） */
+/* 解释：与 h1 同级的副标题样式，保持页头文字层级完整 */
 header p {
   margin: 6px 0 0;
   color: #c9d6ea;
@@ -41,7 +55,10 @@ header p {
 /* COMPONENT STYLES -------------------- */
 /* 组件样式 -------------------- */
 
-/* 应用主体：固定宽度的白色卡片，圆角加投影 */
+/* 作用：应用主体——固定宽度的白色卡片，圆角加投影 */
+/* 解释：720px 固定宽度让应用在宽屏中也保持紧凑；margin:50px auto 水平居中；
+        overflow:hidden 让页头的圆角裁切整齐；
+        参考：app.js 中 <div className="watchlist"> */
 .watchlist {
   width: 720px;
   margin: 50px auto;
@@ -51,7 +68,9 @@ header p {
   box-shadow: 0 4px 14px rgba(31, 58, 95, 0.18);
 }
 
-/* 页头统计徽章：金黄色胶囊 */
+/* 作用：页头统计徽章——金黄色胶囊，显示电影数量 / 平均评分 */
+/* 解释：胶囊造型（border-radius:999px 等效值）与深蓝页头形成对比，数字一眼可见；
+        参考：app.js Header 组件中的 <span className="stats"> */
 .stats {
   padding: 6px 12px;
   background: #f2b134;
@@ -61,25 +80,33 @@ header p {
   font-size: 0.9em;
 }
 
-/* 单部电影条目：左信息右评分，底部浅色分隔线 */
+/* 作用：单部电影条目——左信息右评分，底部浅色分隔线 */
+/* 解释：flex 横向排列 .movie-info 和 .rating；align-items:center 让两边垂直居中；
+        参考：app.js 中 <div className="movie"> */
 .movie {
   display: flex;
   align-items: center;
   border-bottom: 1px solid #e3e7ee;
 }
 
-/* 最后一部电影去掉底部分隔线 */
+/* 作用：最后一部电影去掉底部分隔线 */
+/* 解释：:last-of-type 选同类最后一个元素，避免列表最下方多出一条线；
+        参考：与 .movie 配合使用 */
 .movie:last-of-type {
   border-bottom: none;
 }
 
-/* 电影信息区域：占据剩余宽度 */
+/* 作用：电影信息区域——占据剩余宽度 */
+/* 解释：flex-grow:1 让信息区吃掉除评分区以外的所有宽度；
+        参考：app.js 中 <div className="movie-info"> */
 .movie-info {
   flex-grow: 1;
   padding: 14px 20px;
 }
 
-/* 电影标题文字 */
+/* 作用：电影标题文字 */
+/* 解释：display:block 让标题独占一行；深蓝色与应用主色呼应；
+        参考：app.js MovieDetails 组件中的 <span className="movie-title"> */
 .movie-title {
   display: block;
   font-size: 1.15em;
@@ -87,7 +114,9 @@ header p {
   color: #1f3a5f;
 }
 
-/* 年份与类型等元信息文字 */
+/* 作用：年份与类型等元信息文字 */
+/* 解释：比标题小一号、颜色更浅，形成主次层级；同样独占一行；
+        参考：app.js 中的 <span className="movie-meta"> */
 .movie-meta {
   display: block;
   margin-top: 4px;
@@ -95,7 +124,10 @@ header p {
   color: #6b7486;
 }
 
-/* 徽章通用样式：小圆角胶囊 */
+/* 作用：徽章通用样式——小圆角胶囊，与文字基线对齐 */
+/* 解释：三种徽章（推荐/已看/未看）共用外形，只换配色；
+        vertical-align:middle 防止徽章把文字行高顶歪；
+        参考：app.js 中的三种 badge */
 .badge {
   display: inline-block;
   margin-left: 8px;
@@ -107,19 +139,25 @@ header p {
   letter-spacing: 0.5px;
 }
 
-/* 三种徽章配色：编辑推荐 / 已看 / 未看 */
+/* 作用：三种徽章配色——编辑推荐 / 已看 / 未看 */
+/* 解释：金黄=推荐（醒目），绿=已看（积极），灰=未看（中性），用颜色传达状态；
+        参考：app.js 中 badge-pick / badge-watched / badge-unwatched 三个类名 */
 .badge-pick { background: #fff1d1; color: #8a5a00; }
 .badge-watched { background: #dcf0e7; color: #0d6a50; }
 .badge-unwatched { background: #eceff4; color: #6b7486; }
 
-/* 评分区域：固定宽度，与电影条目等高 */
+/* 作用：评分区域——固定宽度，与电影条目等高 */
+/* 解释：align-self:stretch 让评分区撑满整行高度，按钮更好点；
+        参考：app.js 中 <Rating score={props.rating} /> */
 .rating {
   display: flex;
   width: 170px;
   align-self: stretch;
 }
 
-/* 评分加减按钮 */
+/* 作用：评分加减按钮 */
+/* 解释：左右两个 50px 宽的方块按钮，中间留给分数；cursor:pointer 提示可点击；
+        参考：app.js Rating 组件中的两个 .rating-action 按钮 */
 .rating-action {
   border: none;
   width: 50px;
@@ -130,13 +168,18 @@ header p {
   cursor: pointer;
 }
 
-/* 悬停时按钮文字变白 */
+/* 作用：悬停时按钮文字变白 */
+/* 解释：配合下面两条 hover 背景色，形成完整的"变彩色"反馈；
+        参考：.decrement:hover 与 .increment:hover */
 .rating-action:hover { color: #ffffff; }
-/* 减分悬停变红，加分悬停变绿 */
+/* 作用：减分悬停变红，加分悬停变绿 */
+/* 解释：红/绿分别暗示"减少/增加"，与按钮功能一致 */
 .decrement:hover { background: #d9534f; }
 .increment:hover { background: #3c9d6b; }
 
-/* 评分分数：等宽字体居中显示 */
+/* 作用：评分分数——等宽字体居中显示 */
+/* 解释：flex-grow:1 占满中间区域；等宽字体（monospace）让 0~5 的数字稳定不跳动；
+        参考：app.js 中的 <span className="rating-score"> */
 .rating-score {
   flex-grow: 1;
   align-self: center;
@@ -146,7 +189,9 @@ header p {
   color: #1f3a5f;
 }
 
-/* 页脚：浅色背景居中文字 */
+/* 作用：页脚——浅色背景居中文字 */
+/* 解释：页脚承载"已看 X / 共 Y"统计，颜色弱化不抢戏；
+        参考：app.js Footer 组件 */
 footer {
   padding: 12px 20px;
   background: #f6f8fb;
@@ -157,6 +202,9 @@ footer {
 
 /* Used in Steps 02-05, before there are components */
 /* Step 02-05 使用：那时还没有组件，直接渲染的标题/页头需要限宽居中 */
+/* 作用：Step 02-05 的兜底样式——直接渲染的 h1/header 也要限宽居中 */
+/* 解释：Step 02-05 还没有 App 组件结构，页面直接渲染标题，
+        用这条规则让它们与最终版的 watchlist 卡片对齐美观 */
 #root > h1,
 #root > header {
   max-width: 720px;
@@ -165,13 +213,21 @@ footer {
 
 /* PART 2 ADDITIONS (state) -------------------- */
 /* PART 2 新增样式（与状态相关） -------------------- */
+/* 作用：分节注释——以下样式是 Part 2 新增的，都与状态交互有关 */
+/* 解释：Part 2 新增了平均评分徽章、删除按钮、可点击徽章、禁用态和空列表提示，
+        集中放在一起便于和 Part 1 样式区分 */
 
-/* 页头中相邻统计徽章之间加间距 */
+/* 作用：页头中相邻统计徽章之间加间距 */
+/* 解释：Part 2 页头有两个 .stats（电影数 + 平均评分），用相邻选择器 + 加边距，
+        只给"后面那个"加间距，不用改 HTML；
+        参考：Step 11 起 Header 组件里新增的 averageRating 徽章 */
 header .stats + .stats {
   margin-left: 8px;
 }
 
-/* 删除电影按钮：默认浅灰，悬停变红 */
+/* 作用：删除电影按钮——默认浅灰，悬停变红 */
+/* 解释：默认低调、悬停警示，避免误点；margin 微调让按钮与卡片内容对齐；
+        参考：Step 10 起 Movie 组件里的 <button className="remove-movie"> */
 .remove-movie {
   border: none;
   background: none;
@@ -186,7 +242,10 @@ header .stats + .stats {
   color: #d9534f;
 }
 
-/* 可点击徽章（button.badge）：去掉默认边框，悬停时加深蓝描边 */
+/* 作用：可点击徽章（button.badge）——去掉默认边框，悬停时加深蓝描边 */
+/* 解释：Step 12 起徽章从 span 变成 button，需要去掉浏览器按钮默认样式，
+        悬停描边提示"这里可以点"；
+        参考：Step 12 MovieDetails 组件中的 button.badge */
 button.badge {
   border: none;
   font-family: inherit;
@@ -197,19 +256,25 @@ button.badge:hover {
   outline: 2px solid #1f3a5f;
 }
 
-/* 评分按钮禁用状态：半透明且禁止指针 */
+/* 作用：评分按钮禁用状态——半透明且禁止指针 */
+/* 解释：Step 07 起评分为 0 或 5 时按钮禁用，防止超出 0~5 范围；
+        参考：Step 07 Rating 组件中的 disabled 属性 */
 .rating-action:disabled {
   opacity: 0.35;
   cursor: not-allowed;
 }
 
-/* 禁用状态下悬停也不改变颜色 */
+/* 作用：禁用状态下悬停也不改变颜色 */
+/* 解释：禁用按钮不应该有悬停反馈，这里覆盖上面的 hover 规则；
+        参考：上方 .rating-action:hover 的规则 */
 .rating-action:disabled:hover {
   background: #e8ebf1;
   color: #8b93a3;
 }
 
-/* 列表为空时的提示文字 */
+/* 作用：列表为空时的提示文字 */
+/* 解释：所有电影被删除后显示引导文案，浅灰色居中弱化显示；
+        参考：Step 10 起 App 组件中的 .empty 提示 */
 .empty {
   margin: 0;
   padding: 30px 20px;

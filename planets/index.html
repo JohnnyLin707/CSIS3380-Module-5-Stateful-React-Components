@@ -2,18 +2,36 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
+<!-- 作用：设置视口，让页面在手机等小屏设备上正确缩放 -->
+<!-- 解释：没有这行移动浏览器会按桌面宽度渲染再缩小，导致字太小；
+        参考：HTML5 响应式页面标准写法（MDN viewport 文档） -->
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Planet Card App | Module 5 · CSIS3380</title>
+<!-- 作用：内联 SVG favicon——渐变圆角方块加 ⚛ 符号 -->
+<!-- 解释：用 data URI 内联，省一次 favicon.ico 请求，也不会有 404；
+        参考：三个项目页面均使用同一图标保持整站一致 -->
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><defs><linearGradient id='g' x1='0' y1='0' x2='1' y2='1'><stop offset='0' stop-color='%236366f1'/><stop offset='1' stop-color='%2322d3ee'/></linearGradient></defs><rect width='100' height='100' rx='22' fill='url(%23g)'/><text x='50' y='70' font-size='55' text-anchor='middle' fill='white'>⚛</text></svg>">
+<!-- 作用：引入全站样式表 -->
+<!-- 解释：子页面在 assets/css/ 的上一级，所以路径是 ../assets/；
+        参考：assets/css/style.css 文件顶部的样式说明 -->
 <link rel="stylesheet" href="../assets/css/style.css">
+<!-- 作用：预连接并加载 Google Fonts（Inter + JetBrains Mono） -->
+<!-- 解释：preconnect 提前建立连接加快字体加载；等宽字体专门给代码区用；
+        本地已设系统字体兜底，加载失败也不影响阅读 -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<!-- 作用：引入 highlight.js——为代码区提供语法高亮 -->
+<!-- 解释：从 CDN 加载后，在 DOMContentLoaded 时调用 hljs.highlightAll()
+        自动着色页面中所有 <code>；配色主题在 style.css 中自定义 -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
 <script>document.addEventListener("DOMContentLoaded", function () { if (window.hljs) { hljs.highlightAll(); } });</script>
 
 </head>
 <body>
 
+<!-- 作用：顶部导航栏——返回首页按钮 + 当前项目名 + GitHub 链接 -->
+<!-- 解释：三个子页面共用此结构；返回链接指向上级目录的主页；
+        参考：style.css 中 .topbar 相关样式 -->
 <header class="topbar">
   <a class="back-link" href="../index.html">← 返回首页</a>
   <span class="crumb">Planet Card App</span>
@@ -23,6 +41,9 @@
 
 <main class="wrap">
 
+  <!-- 作用：项目标题区——分类标签、标题、描述、技术标签 -->
+  <!-- 解释：内容由 build_site.py 的各 build_xxx() 函数参数填入；
+          参考：counter/index.html 等同名页面实际效果 -->
   <section class="page-hero">
     <p class="kicker">Project 02 · Planets</p>
     <h1>Planet Card App</h1>
@@ -30,6 +51,10 @@
     <div class="tags"><span class="tag">React 18</span><span class="tag">useState</span><span class="tag">列表渲染</span><span class="tag">CSS Grid</span></div>
   </section>
 
+  <!-- 作用：实时演示区——浏览器模拟框内嵌运行中的项目 -->
+  <!-- 解释：iframe 的 src 指向真实项目目录的 index.html，
+          学生可以直接在框里点击按钮体验；重载/新窗口按钮由 main.js 实现；
+          参考：../assets/js/main.js 中演示 iframe 相关代码 -->
   <section class="section reveal">
     <h2 class="section-title">实时演示</h2>
     <p class="section-sub">下方嵌入运行中的项目（需联网加载 React CDN）。可直接在iframe中操作，或在新窗口中打开。</p>
@@ -48,11 +73,20 @@
     </div>
   </section>
 
+  <!-- 作用：项目说明区——若干技术要点小卡片 -->
+  <!-- 解释：notes_html 由 build_counter/build_planets/build_movie_night
+          各自生成，说明本项目的核心知识点；
+          参考：style.css 中 .note 卡片样式 -->
   <section class="section reveal">
     <h2 class="section-title">项目说明</h2>
     <div class="notes"><div class="note"><h4>数据驱动视图</h4><p>8 颗行星的数据存于数组中，通过 map 遍历渲染成卡片，修改数据即更新界面。</p></div><div class="note"><h4>删除与重置</h4><p>点击 Remove 用 filter 移除对应行星；Reset 一键恢复完整列表，标题实时显示剩余数量。</p></div><div class="note"><h4>条件渲染</h4><p>列表为空时显示 "No planets left!" 提示，否则展示响应式 CSS Grid 卡片墙。</p></div></div>
   </section>
 
+  <!-- 作用：源码区——带行号和语法高亮的代码浏览器 -->
+  <!-- 解释：code_html 由 code_panel()/tab_button() 生成：
+          每个文件一个面板，面板内含行号列和高亮代码；
+          Movie Night 页面此处是 12 个步骤的代码容器；
+          参考：build_site.py 顶部的 code_panel() 函数 -->
   <section class="section reveal">
     <h2 class="section-title">源码（含中文注释）</h2>
     <p class="section-sub">老师原有英文注释后附中文翻译，代码补全部分以中文注释说明作用。点击标签页切换文件。</p>
@@ -89,27 +123,53 @@
 20
 21
 22
-23</div>
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36</div>
     <pre><code class="language-xml">&lt;!DOCTYPE html&gt;
 &lt;html&gt;
   &lt;head&gt;
     &lt;meta charset="utf-8"&gt;
     &lt;title&gt;The React Planets&lt;/title&gt;
-    &lt;!-- 引入页面样式表 --&gt;
+    &lt;!-- 作用：引入页面样式表 style.css --&gt;
+    &lt;!-- 解释：行星卡片的外观（网格、配色、按钮）全部在这个文件里定义；
+            参考：同目录下的 style.css --&gt;
     &lt;link rel="stylesheet" href="./style.css" /&gt;
   &lt;/head&gt;
 
   &lt;body&gt;
-    &lt;!-- React 组件渲染挂载的根节点 --&gt;
+    &lt;!-- 作用：React 组件渲染挂载的根节点，初始为空 --&gt;
+    &lt;!-- 解释：React 会把整个行星应用渲染到这个 div 中，id 必须与 app.js 末尾
+            document.getElementById('root') 一致；
+            参考：Movie Night 项目 index.html 的同名结构 --&gt;
     &lt;div id="root"&gt;&lt;/div&gt;
 
-    &lt;!-- 引入 React 核心库（开发版） --&gt;
+    &lt;!-- 作用：引入 React 核心库（开发版） --&gt;
+    &lt;!-- 解释：开发版报错信息更完整，适合学习调试；app.js 里用的 React.useState
+            就来自这个全局对象；参考：app.js 中 React.useState(planets) 的写法 --&gt;
     &lt;script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"&gt;&lt;/script&gt;
-    &lt;!-- 引入 ReactDOM，负责把组件渲染到浏览器 DOM --&gt;
+    &lt;!-- 作用：引入 ReactDOM，负责把组件渲染到浏览器 DOM --&gt;
+    &lt;!-- 解释：React 管"组件结构"，ReactDOM 管"画到页面"，两者配合使用；
+            参考：app.js 末尾 ReactDOM.createRoot 的用法 --&gt;
     &lt;script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"&gt;&lt;/script&gt;
-    &lt;!-- 引入 Babel，用于在浏览器中编译 JSX 语法 --&gt;
+    &lt;!-- 作用：引入 Babel，用于在浏览器中编译 JSX 语法 --&gt;
+    &lt;!-- 解释：浏览器不识别 JSX，需要 Babel 现场翻译成普通 JS 再执行；
+            参考：app.js 中大量的 JSX 标签写法 --&gt;
     &lt;script src="https://unpkg.com/babel-standalone@6/babel.min.js"&gt;&lt;/script&gt;
-    &lt;!-- 引入本项目的 React 代码（JSX 需经 Babel 编译后执行） --&gt;
+    &lt;!-- 作用：引入本项目的 React 代码（JSX 需经 Babel 编译后执行） --&gt;
+    &lt;!-- 解释：type="text/babel" 标记此脚本需要 Babel 处理，src 指向组件代码；
+            参考：app.js（Planet 与 PlanetList 两个组件都在里面） --&gt;
     &lt;script type="text/babel" src="./app.js"&gt;&lt;/script&gt;
   &lt;/body&gt;
 &lt;/html&gt;
@@ -268,8 +328,65 @@
 148
 149
 150
-151</div>
-    <pre><code class="language-javascript">// 八大行星数据源：每颗行星包含 id、名称、直径、卫星数、简介和图片路径
+151
+152
+153
+154
+155
+156
+157
+158
+159
+160
+161
+162
+163
+164
+165
+166
+167
+168
+169
+170
+171
+172
+173
+174
+175
+176
+177
+178
+179
+180
+181
+182
+183
+184
+185
+186
+187
+188
+189
+190
+191
+192
+193
+194
+195
+196
+197
+198
+199
+200
+201
+202
+203
+204</div>
+    <pre><code class="language-javascript">// 作用：八大行星数据源——数组，每颗行星包含 id、名称、直径、卫星数、简介和图片路径
+// 解释：把数据（planets）和界面（组件）分开，之后改数据不用动组件代码，
+//       这是 React"数据驱动视图"的基础；数组中每个对象的字段与下方 Planet 组件里
+//       planet.xxx 的读取一一对应
+//       参考：老师提供的光盘文件 planets-starter.zip 中的原始数据
 const planets = [
   {
     id: '1',
@@ -344,20 +461,39 @@ const planets = [
 
 // 1: Create a 'Planet' component that renders a planet card
 //    任务 1：创建一个渲染行星卡片的 'Planet' 组件
+// 作用：定义单张行星卡片组件，接收父组件传入的一颗行星数据（planet）和删除回调（onRemove）
+// 解释：一个组件只负责"一张卡片"，8 颗行星复用同一个组件，避免重复写 8 遍 HTML；
+//       组件的输入全部来自 props，自己不存数据（纯展示 + 回调上报）
+//       参考：Movie Night Part 1 starter/app.js 中 Movie 组件按 props 渲染一部电影的结构
 function Planet({ planet, onRemove }) {
-  // planet：单颗行星的数据对象；onRemove：父组件传来的删除回调函数
+  // 作用：planet 是单颗行星的数据对象；onRemove 是父组件传下来的删除回调函数
+  // 解释：用对象解构的写法从 props 里取字段，比 props.planet / props.onRemove 更短；
+  //       参考：Movie Night Part 1 starter/app.js 中 const Movie = (props) =&gt; 的 props 传参方式
   return (
     &lt;div className="card"&gt;
-      {/* 行星图片区域：黑色背景衬托星球照片 */}
+      {/* 作用：行星图片区域——用黑色背景衬托星球照片，图片地址来自数据里的 url 字段 */}
+      {/* 解释：img 的 src 直接绑定 planet.url，换图片只改数据不改组件；
+              参考：html-template.html 中静态卡片的 &lt;img src="img/mercury.jpg"&gt; 结构 */}
       &lt;div&gt;
         &lt;img src={planet.url} alt={planet.name} /&gt;
       &lt;/div&gt;
-      {/* 行星名称标题 */}
+
+      {/* 作用：行星名称标题，内容来自 planet.name */}
+      {/* 解释：alt 属性与名称保持一致，图片加载失败时也能显示文字，利于无障碍访问；
+              参考：html-template.html 中的 &lt;h2&gt;Mercury&lt;/h2&gt; */}
       &lt;h2&gt;{planet.name}&lt;/h2&gt;
-      {/* 行星简介文字 */}
+
+      {/* 作用：行星简介文字，内容来自 planet.desc */}
+      {/* 解释：desc 是数据里的长文本，直接插值即可自动换行显示；
+              参考：html-template.html 中卡片里的简介段落 */}
       &lt;p&gt;{planet.desc}&lt;/p&gt;
+
       &lt;h3&gt;Planet Profile&lt;/h3&gt;
-      {/* 行星档案列表：直径与卫星数量 */}
+
+      {/* 作用：行星档案列表——展示直径与卫星数量两项数据 */}
+      {/* 解释：ul/li 是语义化的列表结构，比纯文字更清晰；
+              strong 标签让"Diameter:""Moons:"这类标签加粗突出；
+              参考：html-template.html 中的 &lt;ul&gt;&lt;li&gt;&lt;strong&gt;Diameter:&lt;/strong&gt; ... */}
       &lt;ul&gt;
         &lt;li&gt;
           &lt;strong&gt;Diameter:&lt;/strong&gt; {planet.diameter}
@@ -366,7 +502,11 @@ function Planet({ planet, onRemove }) {
           &lt;strong&gt;Moons:&lt;/strong&gt; {planet.moons}
         &lt;/li&gt;
       &lt;/ul&gt;
-      {/* 删除按钮：点击时调用 onRemove 并把当前行星的 id 传出去 */}
+
+      {/* 作用：删除按钮——点击时调用 onRemove，并把当前行星的 id 传出去 */}
+      {/* 解释：卡片自己不知道"怎么删"，只负责把 id 报告给父组件（状态在父组件里），
+              这是"状态提升"的典型用法；箭头函数保证点击时才取到最新 id
+              参考：Movie Night Part 2 Step 10 中删除电影按钮的写法 */}
       &lt;button className="remove-btn" onClick={() =&gt; onRemove(planet.id)}&gt;
         Remove
       &lt;/button&gt;
@@ -377,24 +517,41 @@ function Planet({ planet, onRemove }) {
 // 2: Create a container component that iterates over the planets array
 //    and renders a 'Planet' component for each object in the array
 //    任务 2：创建一个容器组件，遍历行星数组，为每个行星对象渲染一个 'Planet' 组件
+// 作用：容器组件 PlanetList——持有行星列表状态，负责遍历渲染所有卡片，并处理删除与重置
+// 解释：把"数据存在哪、怎么增删"集中在容器组件，展示型子组件保持简单，
+//       父组件通过 props 把数据和回调传下去
+//       参考：Movie Night Part 2 Step 09-10 中 App 组件管理电影列表的写法
 function PlanetList() {
-  // 用 useState 把初始行星数组存进组件状态，planetList 是当前显示的行星列表
+  // 作用：用 useState 把初始行星数组存进组件状态，planetList 是当前显示的行星列表
+  // 解释：放进 state 后，每次增删行星 React 都会自动重新渲染列表；
+  //       初始值直接取上面定义好的 planets 常量
+  //       参考：Movie Night Part 2 Step 03（state = { score: this.props.score } 的初始化思路）
   const [planetList, setPlanetList] = React.useState(planets);
 
-  // 删除指定 id 的行星：用 filter 过滤掉被点击的那颗，得到新数组并更新状态
+  // 作用：删除指定 id 的行星——用 filter 过滤掉被点击的那颗，得到新数组并更新状态
+  // 解释：filter 返回新数组而不是修改原数组，符合 React"不可变更新"的要求；
+  //       条件 planet.id !== id 表示"保留 id 不等于传入 id 的行星"
+  //       参考：Movie Night Part 2 Step 10 中 handleRemoveMovie 的 filter 写法
   function removePlanet(id) {
     setPlanetList(planetList.filter((planet) =&gt; planet.id !== id));
   }
 
-  // 重置行星列表：恢复为最初的完整数组
+  // 作用：重置行星列表——恢复为最初的完整数组
+  // 解释：删除后想一键找回所有行星，直接再用一次初始数组 planets；
+  //       参考：Movie Night Part 2 Step 09 中 App 的 state 初始化值
   function resetPlanets() {
     setPlanetList(planets);
   }
 
   return (
     // React.Fragment 允许返回多个并列元素而不需要额外的包裹节点
+    // 作用：用 React.Fragment 包住多个并列元素，避免多加一层无意义的 div
+    // 解释：Fragment 不会生成真实 DOM 节点，不影响布局和样式；
+    //       参考：React 官方文档 Fragment 的说明
     &lt;React.Fragment&gt;
-      {/* 顶部工具栏：显示标题（含当前行星数量）和重置按钮 */}
+      {/* 作用：顶部工具栏——显示标题（含当前行星数量）和重置按钮 */}
+      {/* 解释：planetList.length 实时反映剩余行星数量，删除后会立即变小；
+              参考：Movie Night Part 1 starter/app.js 中 Header 组件显示统计数字的写法 */}
       &lt;div className="toolbar"&gt;
         &lt;h1&gt;Planets ({planetList.length})&lt;/h1&gt;
         &lt;button className="reset-btn" onClick={resetPlanets}&gt;
@@ -402,12 +559,17 @@ function PlanetList() {
         &lt;/button&gt;
       &lt;/div&gt;
 
-      {/* 条件渲染：如果列表为空显示提示文字，否则渲染行星卡片网格 */}
+      {/* 作用：条件渲染——列表为空显示提示文字，否则渲染行星卡片网格 */}
+      {/* 解释：用三元运算符按条件二选一渲染，防止空数组时页面出现空白网格；
+              参考：Movie Night Part 2 Step 10 中"列表为空显示提示"的写法 */}
       {planetList.length === 0 ? (
         &lt;p className="empty"&gt;No planets left!&lt;/p&gt;
       ) : (
         &lt;div className="container"&gt;
-          {/* 遍历行星列表，为每颗行星渲染一个 Planet 组件；key 用 id 保证 React 高效更新 */}
+          {/* 作用：遍历行星列表，为每颗行星渲染一个 Planet 组件；key 用 id 保证 React 高效更新 */}
+          {/* 解释：map 把数组逐项变成 JSX 元素；key 是每项的唯一标识，
+                  React 靠它判断哪些卡片变了/删了，不能用数组下标代替
+                  参考：Movie Night Part 1 starter/app.js 中电影列表的 map + key 写法 */}
           {planetList.map((planet) =&gt; (
             &lt;Planet key={planet.id} planet={planet} onRemove={removePlanet} /&gt;
           ))}
@@ -419,6 +581,10 @@ function PlanetList() {
 
 // 3: Render the container component to the DOM
 //    任务 3：把容器组件渲染到页面 DOM 中
+// 作用：创建 React 18 根节点，把 PlanetList 容器组件渲染进 id 为 root 的 DOM 节点
+// 解释：createRoot 是 React 18 的新入口，替代旧的 ReactDOM.render；
+//       整棵组件树从 PlanetList 开始向下渲染
+//       参考：Movie Night Part 1 starter/app.js 文件末尾的渲染写法
 ReactDOM.createRoot(document.getElementById('root')).render(&lt;PlanetList /&gt;);
 </code></pre>
   </div>
@@ -564,15 +730,64 @@ ReactDOM.createRoot(document.getElementById('root')).render(&lt;PlanetList /&gt;
 137
 138
 139
-140</div>
-    <pre><code class="language-css">/* 页面整体样式：浅灰背景、无外边距、Helvetica 字体 */
+140
+141
+142
+143
+144
+145
+146
+147
+148
+149
+150
+151
+152
+153
+154
+155
+156
+157
+158
+159
+160
+161
+162
+163
+164
+165
+166
+167
+168
+169
+170
+171
+172
+173
+174
+175
+176
+177
+178
+179
+180
+181
+182</div>
+    <pre><code class="language-css">/* 作用：页面整体样式——浅灰背景、无外边距、Helvetica 字体 */
+/* 解释：margin:0 去掉浏览器默认外边距，让卡片区从页面顶端开始；
+        font-family 指定字体族，保证不同电脑上显示一致；
+        参考：常见页面初始化的标准写法 */
 body {
   background: #edeff0;
   margin: 0;
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
-/* 行星卡片网格容器：自适应列宽，最小 320px，自动换行 */
+/* 作用：行星卡片网格容器——自适应列宽，最小 320px，自动换行 */
+/* 解释：display:grid 配合 repeat(auto-fit, minmax(320px, 1fr))，
+        不用写媒体查询就能实现"宽屏多列、窄屏少列"的响应式布局；
+        width:90% + max-width 限制内容区宽度并居中（margin:auto）；
+        参考：app.js 中 &lt;div className="container"&gt; 元素 */
 .container {
   width: 90%;
   max-width: 1100px;
@@ -583,7 +798,10 @@ body {
   grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
 }
 
-/* 单张行星卡片：白底、圆角、轻投影 */
+/* 作用：单张行星卡片——白底、圆角、轻投影 */
+/* 解释：白底 + 圆角 + 阴影让卡片从灰背景中"浮"起来；
+        box-sizing:border-box 让 padding 不会把卡片撑大（避免超出网格列宽）；
+        参考：app.js 中 Planet 组件最外层 &lt;div className="card"&gt; */
 .card {
   box-sizing: border-box;
   background: white;
@@ -592,7 +810,10 @@ body {
   box-shadow: 0 1px 0 0 rgba(0, 0, 0, 0.1);
 }
 
-/* 卡片内的图片容器：居中、黑色背景衬托星球照片 */
+/* 作用：卡片内的图片容器——居中、黑色背景衬托星球照片 */
+/* 解释：星球图片本身是深色太空背景，用纯黑底衬托更自然；
+        注意这个选择器会命中卡片内所有 div，图片容器是第一个 div；
+        参考：app.js 中包裹 &lt;img&gt; 的那个 &lt;div&gt; */
 .card div {
   text-align: center;
   padding: 1em;
@@ -600,7 +821,9 @@ body {
   margin-bottom: 1.5em;
 }
 
-/* 行星名称标题 */
+/* 作用：行星名称标题 */
+/* 解释：h2 是页面次级标题，2em 让行星名足够醒目；
+        参考：app.js 中 &lt;h2&gt;{planet.name}&lt;/h2&gt; */
 h2 {
   font-size: 2em;
   margin-bottom: 8px;
@@ -609,24 +832,32 @@ h2 {
   margin-top: 5px;
 }
 
-/* “Planet Profile”小标题 */
+/* 作用："Planet Profile"小标题 */
+/* 解释：控制档案列表上方小标题的间距，margin-top 拉大与简介段落的距离；
+        参考：app.js 中 &lt;h3&gt;Planet Profile&lt;/h3&gt; */
 h3 {
   margin-top: 1.5em;
   margin-bottom: 0;
 }
 
-/* 档案列表样式 */
+/* 作用：档案列表样式 */
+/* 解释：padding-left 给列表符号留出空间；margin 收紧与上方 h3 的距离；
+        参考：app.js 中的 &lt;ul&gt; 直径/卫星列表 */
 ul {
   padding: 0 0 0 1em;
   margin-top: 0.85em;
 }
 
-/* 列表项间距 */
+/* 作用：列表项间距 */
+/* 解释：让"Diameter"和"Moons"两行之间有点呼吸空间，不挤在一起；
+        参考：app.js 中的 &lt;li&gt; 元素 */
 li {
   margin-bottom: 0.5em;
 }
 
-/* 简介段落文字 */
+/* 作用：简介段落文字 */
+/* 解释：line-height:1.4 增加行高，长段英文简介读起来更舒服；
+        参考：app.js 中 &lt;p&gt;{planet.desc}&lt;/p&gt; */
 p {
   color: #222;
   font-size: 1em;
@@ -634,12 +865,17 @@ p {
   line-height: 1.4;
 }
 
-/* 行星图片尺寸 */
+/* 作用：行星图片尺寸 */
+/* 解释：固定 150px 宽度，高度由图片比例自动算出，防止大图撑破卡片；
+        参考：img/ 目录下的各行星图片 */
 img {
   width: 150px;
 }
 
-/* 顶部工具栏：标题与重置按钮两端对齐，底部灰色分隔线 */
+/* 作用：顶部工具栏——标题与重置按钮两端对齐，底部灰色分隔线 */
+/* 解释：flex + justify-content:space-between 让标题靠左、Reset 按钮靠右；
+        border-bottom 在工具栏和卡片网格之间画一条分隔线；
+        参考：app.js 中 &lt;div className="toolbar"&gt; */
 .toolbar {
   width: 90%;
   max-width: 1100px;
@@ -651,14 +887,19 @@ img {
   border-bottom: 2px solid gray;
 }
 
-/* 工具栏主标题 */
+/* 作用：工具栏主标题 */
+/* 解释：标题里带括号显示当前行星数量（JS 动态生成），这里只控制文字大小；
+        参考：app.js 中 &lt;h1&gt;Planets ({planetList.length})&lt;/h1&gt; */
 h1 {
   font-size: 1.6em;
   color: #384047;
   margin: 0;
 }
 
-/* 删除按钮与重置按钮的通用样式 */
+/* 作用：删除按钮与重置按钮的通用样式 */
+/* 解释：两个按钮功能不同但外观风格一致，抽出来共用；
+        transition 让悬停变色更平滑；
+        参考：app.js 中的 remove-btn 和 reset-btn 两个按钮 */
 .remove-btn,
 .reset-btn {
   font-family: inherit;
@@ -671,7 +912,10 @@ h1 {
   transition: background-color 0.2s ease, transform 0.1s ease;
 }
 
-/* 删除按钮：红色，悬停变橙 */
+/* 作用：删除按钮——红色，悬停变橙 */
+/* 解释：红色暗示"删除/危险"操作，悬停变橙提供点击反馈；
+        margin-top 让按钮与上方列表拉开距离；
+        参考：app.js 中 onClick={() =&gt; onRemove(planet.id)} 的删除按钮 */
 .remove-btn {
   margin-top: 0.75em;
   background-color: red;
@@ -681,7 +925,9 @@ h1 {
   background-color: orange;
 }
 
-/* 重置按钮：蓝色，悬停变紫罗兰 */
+/* 作用：重置按钮——蓝色，悬停变紫罗兰 */
+/* 解释：蓝色与删除按钮的红色形成对比，表示"恢复"而非"破坏"；
+        参考：app.js 中 onClick={resetPlanets} 的重置按钮 */
 .reset-btn {
   background-color: blue;
 }
@@ -690,13 +936,17 @@ h1 {
   background-color: blueviolet;
 }
 
-/* 按钮按下时轻微下移，形成按压手感 */
+/* 作用：按钮按下时轻微下移，形成按压手感 */
+/* 解释：:active 是按住鼠标时的状态，translateY(1px) 模拟按钮被按下去；
+        参考：上面两个按钮的悬停效果，三者组成完整的交互反馈 */
 .remove-btn:active,
 .reset-btn:active {
   transform: translateY(1px);
 }
 
-/* 列表为空时的提示文字 */
+/* 作用：列表为空时的提示文字 */
+/* 解释：当所有行星都被删除后显示"No planets left!"，居中淡灰色弱化处理；
+        参考：app.js 中 {planetList.length === 0 ? ...} 条件渲染的那一行 */
 .empty {
   width: 90%;
   max-width: 1100px;
@@ -728,9 +978,17 @@ h1 {
 16
 17
 18
-19</div>
+19
+20
+21
+22
+23</div>
     <pre><code class="language-xml">&lt;!-- EXAMPLE TEMPLATE --&gt;
 &lt;!-- 示例模板：下面是被注释掉的静态 HTML 卡片结构，供学生对照参考用 --&gt;
+&lt;!-- 作用：这是老师给的静态 HTML 参考模板，展示一张行星卡片"长什么样" --&gt;
+&lt;!-- 解释：整个文件被 HTML 注释包住不会真正显示，它的作用是让学生对照：
+        把这段静态 HTML 改写成 app.js 里的 Planet 组件（数据部分换成 {planet.xxx}）；
+        参考：app.js 中 Planet 组件的结构与下方模板一一对应 --&gt;
     &lt;!--
     &lt;div class="container"&gt;
       &lt;div class="card"&gt;
@@ -757,11 +1015,16 @@ h1 {
 
 </main>
 
+<!-- 作用：页脚——课程信息与作者署名 -->
+<!-- 解释：与主页页脚结构一致，GitHub 链接指向本仓库 -->
 <footer class="footer">
   <p><span class="atom">⚛</span> CSIS3380 Full Stack Development With JavaScript · Module 5</p>
   <p>Jinran Lin (300395016) · <a href="https://github.com/JohnnyLin707/CSIS3380-Module-5-Stateful-React-Components.git" target="_blank" rel="noopener">GitHub Repository</a></p>
 </footer>
 
+<!-- 作用：引入全站交互脚本 -->
+<!-- 解释：放在 body 末尾，保证操作 DOM 时元素已渲染完成；
+        参考：../assets/js/main.js 文件顶部的功能说明 -->
 <script src="../assets/js/main.js"></script>
 </body>
 </html>

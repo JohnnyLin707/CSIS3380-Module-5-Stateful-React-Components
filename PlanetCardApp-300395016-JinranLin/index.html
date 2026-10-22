@@ -3,21 +3,34 @@
   <head>
     <meta charset="utf-8">
     <title>The React Planets</title>
-    <!-- 引入页面样式表 -->
+    <!-- 作用：引入页面样式表 style.css -->
+    <!-- 解释：行星卡片的外观（网格、配色、按钮）全部在这个文件里定义；
+            参考：同目录下的 style.css -->
     <link rel="stylesheet" href="./style.css" />
   </head>
 
   <body>
-    <!-- React 组件渲染挂载的根节点 -->
+    <!-- 作用：React 组件渲染挂载的根节点，初始为空 -->
+    <!-- 解释：React 会把整个行星应用渲染到这个 div 中，id 必须与 app.js 末尾
+            document.getElementById('root') 一致；
+            参考：Movie Night 项目 index.html 的同名结构 -->
     <div id="root"></div>
 
-    <!-- 引入 React 核心库（开发版） -->
+    <!-- 作用：引入 React 核心库（开发版） -->
+    <!-- 解释：开发版报错信息更完整，适合学习调试；app.js 里用的 React.useState
+            就来自这个全局对象；参考：app.js 中 React.useState(planets) 的写法 -->
     <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
-    <!-- 引入 ReactDOM，负责把组件渲染到浏览器 DOM -->
+    <!-- 作用：引入 ReactDOM，负责把组件渲染到浏览器 DOM -->
+    <!-- 解释：React 管"组件结构"，ReactDOM 管"画到页面"，两者配合使用；
+            参考：app.js 末尾 ReactDOM.createRoot 的用法 -->
     <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
-    <!-- 引入 Babel，用于在浏览器中编译 JSX 语法 -->
+    <!-- 作用：引入 Babel，用于在浏览器中编译 JSX 语法 -->
+    <!-- 解释：浏览器不识别 JSX，需要 Babel 现场翻译成普通 JS 再执行；
+            参考：app.js 中大量的 JSX 标签写法 -->
     <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
-    <!-- 引入本项目的 React 代码（JSX 需经 Babel 编译后执行） -->
+    <!-- 作用：引入本项目的 React 代码（JSX 需经 Babel 编译后执行） -->
+    <!-- 解释：type="text/babel" 标记此脚本需要 Babel 处理，src 指向组件代码；
+            参考：app.js（Planet 与 PlanetList 两个组件都在里面） -->
     <script type="text/babel" src="./app.js"></script>
   </body>
 </html>

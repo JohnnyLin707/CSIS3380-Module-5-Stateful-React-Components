@@ -1,11 +1,18 @@
-/* 页面整体样式：浅灰背景、无外边距、Helvetica 字体 */
+/* 作用：页面整体样式——浅灰背景、无外边距、Helvetica 字体 */
+/* 解释：margin:0 去掉浏览器默认外边距，让卡片区从页面顶端开始；
+        font-family 指定字体族，保证不同电脑上显示一致；
+        参考：常见页面初始化的标准写法 */
 body {
   background: #edeff0;
   margin: 0;
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
-/* 行星卡片网格容器：自适应列宽，最小 320px，自动换行 */
+/* 作用：行星卡片网格容器——自适应列宽，最小 320px，自动换行 */
+/* 解释：display:grid 配合 repeat(auto-fit, minmax(320px, 1fr))，
+        不用写媒体查询就能实现"宽屏多列、窄屏少列"的响应式布局；
+        width:90% + max-width 限制内容区宽度并居中（margin:auto）；
+        参考：app.js 中 <div className="container"> 元素 */
 .container {
   width: 90%;
   max-width: 1100px;
@@ -16,7 +23,10 @@ body {
   grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
 }
 
-/* 单张行星卡片：白底、圆角、轻投影 */
+/* 作用：单张行星卡片——白底、圆角、轻投影 */
+/* 解释：白底 + 圆角 + 阴影让卡片从灰背景中"浮"起来；
+        box-sizing:border-box 让 padding 不会把卡片撑大（避免超出网格列宽）；
+        参考：app.js 中 Planet 组件最外层 <div className="card"> */
 .card {
   box-sizing: border-box;
   background: white;
@@ -25,7 +35,10 @@ body {
   box-shadow: 0 1px 0 0 rgba(0, 0, 0, 0.1);
 }
 
-/* 卡片内的图片容器：居中、黑色背景衬托星球照片 */
+/* 作用：卡片内的图片容器——居中、黑色背景衬托星球照片 */
+/* 解释：星球图片本身是深色太空背景，用纯黑底衬托更自然；
+        注意这个选择器会命中卡片内所有 div，图片容器是第一个 div；
+        参考：app.js 中包裹 <img> 的那个 <div> */
 .card div {
   text-align: center;
   padding: 1em;
@@ -33,7 +46,9 @@ body {
   margin-bottom: 1.5em;
 }
 
-/* 行星名称标题 */
+/* 作用：行星名称标题 */
+/* 解释：h2 是页面次级标题，2em 让行星名足够醒目；
+        参考：app.js 中 <h2>{planet.name}</h2> */
 h2 {
   font-size: 2em;
   margin-bottom: 8px;
@@ -42,24 +57,32 @@ h2 {
   margin-top: 5px;
 }
 
-/* “Planet Profile”小标题 */
+/* 作用："Planet Profile"小标题 */
+/* 解释：控制档案列表上方小标题的间距，margin-top 拉大与简介段落的距离；
+        参考：app.js 中 <h3>Planet Profile</h3> */
 h3 {
   margin-top: 1.5em;
   margin-bottom: 0;
 }
 
-/* 档案列表样式 */
+/* 作用：档案列表样式 */
+/* 解释：padding-left 给列表符号留出空间；margin 收紧与上方 h3 的距离；
+        参考：app.js 中的 <ul> 直径/卫星列表 */
 ul {
   padding: 0 0 0 1em;
   margin-top: 0.85em;
 }
 
-/* 列表项间距 */
+/* 作用：列表项间距 */
+/* 解释：让"Diameter"和"Moons"两行之间有点呼吸空间，不挤在一起；
+        参考：app.js 中的 <li> 元素 */
 li {
   margin-bottom: 0.5em;
 }
 
-/* 简介段落文字 */
+/* 作用：简介段落文字 */
+/* 解释：line-height:1.4 增加行高，长段英文简介读起来更舒服；
+        参考：app.js 中 <p>{planet.desc}</p> */
 p {
   color: #222;
   font-size: 1em;
@@ -67,12 +90,17 @@ p {
   line-height: 1.4;
 }
 
-/* 行星图片尺寸 */
+/* 作用：行星图片尺寸 */
+/* 解释：固定 150px 宽度，高度由图片比例自动算出，防止大图撑破卡片；
+        参考：img/ 目录下的各行星图片 */
 img {
   width: 150px;
 }
 
-/* 顶部工具栏：标题与重置按钮两端对齐，底部灰色分隔线 */
+/* 作用：顶部工具栏——标题与重置按钮两端对齐，底部灰色分隔线 */
+/* 解释：flex + justify-content:space-between 让标题靠左、Reset 按钮靠右；
+        border-bottom 在工具栏和卡片网格之间画一条分隔线；
+        参考：app.js 中 <div className="toolbar"> */
 .toolbar {
   width: 90%;
   max-width: 1100px;
@@ -84,14 +112,19 @@ img {
   border-bottom: 2px solid gray;
 }
 
-/* 工具栏主标题 */
+/* 作用：工具栏主标题 */
+/* 解释：标题里带括号显示当前行星数量（JS 动态生成），这里只控制文字大小；
+        参考：app.js 中 <h1>Planets ({planetList.length})</h1> */
 h1 {
   font-size: 1.6em;
   color: #384047;
   margin: 0;
 }
 
-/* 删除按钮与重置按钮的通用样式 */
+/* 作用：删除按钮与重置按钮的通用样式 */
+/* 解释：两个按钮功能不同但外观风格一致，抽出来共用；
+        transition 让悬停变色更平滑；
+        参考：app.js 中的 remove-btn 和 reset-btn 两个按钮 */
 .remove-btn,
 .reset-btn {
   font-family: inherit;
@@ -104,7 +137,10 @@ h1 {
   transition: background-color 0.2s ease, transform 0.1s ease;
 }
 
-/* 删除按钮：红色，悬停变橙 */
+/* 作用：删除按钮——红色，悬停变橙 */
+/* 解释：红色暗示"删除/危险"操作，悬停变橙提供点击反馈；
+        margin-top 让按钮与上方列表拉开距离；
+        参考：app.js 中 onClick={() => onRemove(planet.id)} 的删除按钮 */
 .remove-btn {
   margin-top: 0.75em;
   background-color: red;
@@ -114,7 +150,9 @@ h1 {
   background-color: orange;
 }
 
-/* 重置按钮：蓝色，悬停变紫罗兰 */
+/* 作用：重置按钮——蓝色，悬停变紫罗兰 */
+/* 解释：蓝色与删除按钮的红色形成对比，表示"恢复"而非"破坏"；
+        参考：app.js 中 onClick={resetPlanets} 的重置按钮 */
 .reset-btn {
   background-color: blue;
 }
@@ -123,13 +161,17 @@ h1 {
   background-color: blueviolet;
 }
 
-/* 按钮按下时轻微下移，形成按压手感 */
+/* 作用：按钮按下时轻微下移，形成按压手感 */
+/* 解释：:active 是按住鼠标时的状态，translateY(1px) 模拟按钮被按下去；
+        参考：上面两个按钮的悬停效果，三者组成完整的交互反馈 */
 .remove-btn:active,
 .reset-btn:active {
   transform: translateY(1px);
 }
 
-/* 列表为空时的提示文字 */
+/* 作用：列表为空时的提示文字 */
+/* 解释：当所有行星都被删除后显示"No planets left!"，居中淡灰色弱化处理；
+        参考：app.js 中 {planetList.length === 0 ? ...} 条件渲染的那一行 */
 .empty {
   width: 90%;
   max-width: 1100px;

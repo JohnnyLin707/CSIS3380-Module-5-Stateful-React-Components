@@ -1,15 +1,9 @@
 #!/usr/bin/env python3
-"""生成 CSIS3380 Module 5 展示网站的分页面。
-
-读取三个项目中已添加中文注释的源代码，HTML 转义后嵌入页面模板，
-生成：
-    index.html            主页（项目总览）
-    counter/index.html    CounterAppWithReact 子页面
-    planets/index.html    PlanetCardApp 子页面
-    movie-night/index.html MovieNightPart2codeReza 子页面（12 个步骤可切换）
-
-项目源代码更新后，重新运行 `python3 build_site.py` 即可同步网站中的代码展示。
-"""
+# 作用：生成 CSIS3380 Module 5 展示网站的分页面
+# 解释：读取三个项目中已添加中文注释的源代码，HTML 转义后嵌入页面模板，
+#       生成主页与 counter/planets/movie-night 三个子页面；
+#       项目源代码更新后，重新运行 `python3 build_site.py` 即可同步网站
+# 参考：生成的页面依赖 assets/css/style.css 与 assets/js/main.js
 
 import html
 import os
@@ -19,13 +13,18 @@ ROOT = os.path.dirname(os.path.abspath(__file__))
 GH_REPO = "https://github.com/JohnnyLin707/CSIS3380-Module-5-Stateful-React-Components.git"
 
 
+# 作用：把文本中的 < > & 转义成 HTML 实体，防止代码内容被浏览器当作标签解析
+# 解释：代码里全是 <div>、{ } 这类字符，直接插入 HTML 会破坏页面结构，
+#       必须转义后再放进 <code> 元素
 def esc(text):
-    """HTML 转义代码内容。"""
     return html.escape(text, quote=False)
 
 
+# 作用：生成一个代码面板——左侧行号列 + 右侧带语言标记的高亮代码
+# 解释：行号由 Python 预生成（1 到 N 的竖排数字），与代码行一一对应；
+#       语言标记（javascript/css/xml）供 highlight.js 选择语法规则；
+#       行数按换行符统计，文件末尾无换行时补最后一行
 def code_panel(panel_id, filename, source, lang, active=False):
-    """生成一个代码面板：左侧行号 + 右侧高亮代码。"""
     lines = source.count("\n") + (0 if source.endswith("\n") else 1)
     gutter = "\n".join(str(i) for i in range(1, lines + 1))
     cls = "code-panel" + (" active" if active else "")
@@ -39,6 +38,9 @@ def code_panel(panel_id, filename, source, lang, active=False):
     ).format(cls=cls, pid=panel_id, gutter=esc(gutter), lang=lang, code=esc(source))
 
 
+# 作用：生成一个文件标签页按钮
+# 解释：data-target 指向对应面板的 id，点击切换逻辑在 main.js；
+#       按钮文字是文件名，等宽字体显示更贴近代码语境
 def tab_button(target, filename, active=False):
     cls = "code-tab" + (" active" if active else "")
     return (
@@ -46,6 +48,9 @@ def tab_button(target, filename, active=False):
     ).format(cls=cls, target=target, name=html.escape(filename))
 
 
+# 作用：按路径片段读取项目源文件（相对仓库根目录）
+# 解释：统一用 UTF-8 读取，保证中文注释不乱码；
+#       所有被展示的源码都通过这个函数读取
 def read(*parts):
     with open(os.path.join(ROOT, *parts), encoding="utf-8") as f:
         return f.read()
@@ -57,16 +62,28 @@ LANDING = """<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
+<!-- 作用：设置视口，让页面在手机等小屏设备上正确缩放 -->
+<!-- 解释：移动浏览器默认按桌面宽度渲染再整体缩小，会导致字太小；
+        参考：HTML5 响应式页面标准写法（MDN viewport 文档） -->
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Module 5 · Stateful React Components | CSIS3380</title>
+<!-- 作用：页面描述——供搜索引擎和分享预览使用 -->
 <meta name="description" content="CSIS3380 Module 5 有状态 React 组件课程项目展示：Counter App、Planet Card App、Movie Night">
+<!-- 作用：内联 SVG favicon——渐变圆角方块加 ⚛ 符号 -->
+<!-- 解释：data URI 内联避免额外请求和 404；与子页面使用同一图标 -->
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><defs><linearGradient id='g' x1='0' y1='0' x2='1' y2='1'><stop offset='0' stop-color='%236366f1'/><stop offset='1' stop-color='%2322d3ee'/></linearGradient></defs><rect width='100' height='100' rx='22' fill='url(%23g)'/><text x='50' y='70' font-size='55' text-anchor='middle' fill='white'>⚛</text></svg>">
+<!-- 作用：引入全站样式表与字体 -->
+<!-- 解释：主页在仓库根目录，资源路径无需 ../；字体加载失败时
+        有系统字体兜底，不影响阅读 -->
 <link rel="stylesheet" href="assets/css/style.css">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 </head>
 <body>
 
+<!-- 作用：顶部导航栏——站点品牌 + 课程名 + GitHub 链接 -->
+<!-- 解释：主页导航没有"返回"按钮（已在首页），品牌图标点击回到自身；
+        SVG 是 GitHub 官方 logo 路径，fill="currentColor" 继承文字颜色 -->
 <header class="topbar">
   <a class="brand" href="index.html">
     <span class="logo">⚛</span>
@@ -82,6 +99,10 @@ LANDING = """<!DOCTYPE html>
 
 <main class="wrap">
 
+  <!-- 作用：英雄区——徽章、主标题、简介、学生信息标签 -->
+  <!-- 解释：标题第二行用 .grad 类做渐变文字；meta 里的 chip 展示
+          学生姓名、学号、技术栈等关键信息；
+          参考：style.css 中 .hero 相关样式 -->
   <section class="hero">
     <span class="badge"><span class="dot"></span>CSIS 3380 · 2026 · React State</span>
     <h1>Module 5<br><span class="grad">Stateful React Components</span></h1>
@@ -98,6 +119,10 @@ LANDING = """<!DOCTYPE html>
     </div>
   </section>
 
+  <!-- 作用：项目卡片区——三个项目的入口卡片 -->
+  <!-- 解释：每张卡片是 <a> 整张可点，链接到 counter/planets/movie-night
+          子页面；reveal 类让卡片滚动进入视口时淡入；
+          参考：style.css 中 .card 悬停光斑效果（由 main.js 驱动） -->
   <section class="cards">
     <a class="card reveal" href="counter/index.html">
       <span class="icon">🧮</span>
@@ -138,11 +163,16 @@ LANDING = """<!DOCTYPE html>
 
 </main>
 
+<!-- 作用：页脚——课程信息与作者署名 -->
+<!-- 解释：与三个子页面的页脚保持相同结构，仅链接指向不同 -->
 <footer class="footer">
   <p><span class="atom">⚛</span> CSIS3380 Full Stack Development With JavaScript · Module 5</p>
   <p>Jinran Lin (300395016) · Built with React 18 · Hosted on GitHub Pages</p>
 </footer>
 
+<!-- 作用：引入全站交互脚本 -->
+<!-- 解释：主页只用其中的卡片光斑与滚动显现两个功能；
+        标签页/iframe 控制等逻辑在子页面才会触发（脚本内有存在性判断） -->
 <script src="assets/js/main.js"></script>
 </body>
 </html>
@@ -157,18 +187,36 @@ def project_page(kicker, title, desc, tags_html, demo_src, demo_label,
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
+<!-- 作用：设置视口，让页面在手机等小屏设备上正确缩放 -->
+<!-- 解释：没有这行移动浏览器会按桌面宽度渲染再缩小，导致字太小；
+        参考：HTML5 响应式页面标准写法（MDN viewport 文档） -->
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>{title} | Module 5 · CSIS3380</title>
+<!-- 作用：内联 SVG favicon——渐变圆角方块加 ⚛ 符号 -->
+<!-- 解释：用 data URI 内联，省一次 favicon.ico 请求，也不会有 404；
+        参考：三个项目页面均使用同一图标保持整站一致 -->
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><defs><linearGradient id='g' x1='0' y1='0' x2='1' y2='1'><stop offset='0' stop-color='%236366f1'/><stop offset='1' stop-color='%2322d3ee'/></linearGradient></defs><rect width='100' height='100' rx='22' fill='url(%23g)'/><text x='50' y='70' font-size='55' text-anchor='middle' fill='white'>⚛</text></svg>">
+<!-- 作用：引入全站样式表 -->
+<!-- 解释：子页面在 assets/css/ 的上一级，所以路径是 ../assets/；
+        参考：assets/css/style.css 文件顶部的样式说明 -->
 <link rel="stylesheet" href="../assets/css/style.css">
+<!-- 作用：预连接并加载 Google Fonts（Inter + JetBrains Mono） -->
+<!-- 解释：preconnect 提前建立连接加快字体加载；等宽字体专门给代码区用；
+        本地已设系统字体兜底，加载失败也不影响阅读 -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<!-- 作用：引入 highlight.js——为代码区提供语法高亮 -->
+<!-- 解释：从 CDN 加载后，在 DOMContentLoaded 时调用 hljs.highlightAll()
+        自动着色页面中所有 <code>；配色主题在 style.css 中自定义 -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
 <script>document.addEventListener("DOMContentLoaded", function () {{ if (window.hljs) {{ hljs.highlightAll(); }} }});</script>
 {extra_head}
 </head>
 <body>
 
+<!-- 作用：顶部导航栏——返回首页按钮 + 当前项目名 + GitHub 链接 -->
+<!-- 解释：三个子页面共用此结构；返回链接指向上级目录的主页；
+        参考：style.css 中 .topbar 相关样式 -->
 <header class="topbar">
   <a class="back-link" href="../index.html">← 返回首页</a>
   <span class="crumb">{crumb}</span>
@@ -178,6 +226,9 @@ def project_page(kicker, title, desc, tags_html, demo_src, demo_label,
 
 <main class="wrap">
 
+  <!-- 作用：项目标题区——分类标签、标题、描述、技术标签 -->
+  <!-- 解释：内容由 build_site.py 的各 build_xxx() 函数参数填入；
+          参考：counter/index.html 等同名页面实际效果 -->
   <section class="page-hero">
     <p class="kicker">{kicker}</p>
     <h1>{title}</h1>
@@ -185,6 +236,10 @@ def project_page(kicker, title, desc, tags_html, demo_src, demo_label,
     <div class="tags">{tags}</div>
   </section>
 
+  <!-- 作用：实时演示区——浏览器模拟框内嵌运行中的项目 -->
+  <!-- 解释：iframe 的 src 指向真实项目目录的 index.html，
+          学生可以直接在框里点击按钮体验；重载/新窗口按钮由 main.js 实现；
+          参考：../assets/js/main.js 中演示 iframe 相关代码 -->
   <section class="section reveal">
     <h2 class="section-title">实时演示</h2>
     <p class="section-sub">下方嵌入运行中的项目（需联网加载 React CDN）。可直接在iframe中操作，或在新窗口中打开。</p>
@@ -203,11 +258,20 @@ def project_page(kicker, title, desc, tags_html, demo_src, demo_label,
     </div>
   </section>
 
+  <!-- 作用：项目说明区——若干技术要点小卡片 -->
+  <!-- 解释：notes_html 由 build_counter/build_planets/build_movie_night
+          各自生成，说明本项目的核心知识点；
+          参考：style.css 中 .note 卡片样式 -->
   <section class="section reveal">
     <h2 class="section-title">项目说明</h2>
     <div class="notes">{notes}</div>
   </section>
 
+  <!-- 作用：源码区——带行号和语法高亮的代码浏览器 -->
+  <!-- 解释：code_html 由 code_panel()/tab_button() 生成：
+          每个文件一个面板，面板内含行号列和高亮代码；
+          Movie Night 页面此处是 12 个步骤的代码容器；
+          参考：build_site.py 顶部的 code_panel() 函数 -->
   <section class="section reveal">
     <h2 class="section-title">源码（含中文注释）</h2>
     <p class="section-sub">老师原有英文注释后附中文翻译，代码补全部分以中文注释说明作用。点击标签页切换文件。</p>
@@ -216,11 +280,16 @@ def project_page(kicker, title, desc, tags_html, demo_src, demo_label,
 
 </main>
 
+<!-- 作用：页脚——课程信息与作者署名 -->
+<!-- 解释：与主页页脚结构一致，GitHub 链接指向本仓库 -->
 <footer class="footer">
   <p><span class="atom">⚛</span> CSIS3380 Full Stack Development With JavaScript · Module 5</p>
   <p>Jinran Lin (300395016) · <a href="{gh}" target="_blank" rel="noopener">GitHub Repository</a></p>
 </footer>
 
+<!-- 作用：引入全站交互脚本 -->
+<!-- 解释：放在 body 末尾，保证操作 DOM 时元素已渲染完成；
+        参考：../assets/js/main.js 文件顶部的功能说明 -->
 <script src="../assets/js/main.js"></script>
 </body>
 </html>
@@ -382,7 +451,10 @@ def build_movie_night():
             )
         )
 
-        # 每个步骤一组代码标签页：app.js / index.html / app.css
+        # 作用：每个步骤生成一组代码标签页——app.js / index.html / app.css
+        # 解释：三个文件与 checkpoint 目录中的实际文件一一对应，
+        #       默认激活第一个（app.js）；面板 id 带步骤名前缀防止冲突
+        #       参考：下方 code_panel() 与 tab_button() 的生成逻辑
         files = [
             ("app.js", "app.js", "javascript"),
             ("index.html", "index.html", "xml"),

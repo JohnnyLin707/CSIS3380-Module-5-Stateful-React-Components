@@ -2,21 +2,36 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<!-- 作用：设置视口，让页面在手机等小屏设备上也能正确缩放显示 -->
+<!-- 解释：没有这行，移动浏览器会按桌面宽度渲染再整体缩小，导致字太小看不清；
+        参考：HTML5 响应式页面的标准写法（MDN 文档中的 viewport 说明） -->
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>React Counter Lab</title>
-<!-- 引入页面样式表 -->
+<!-- 作用：引入页面样式表 styles.css -->
+<!-- 解释：React 只负责生成 DOM 结构和交互行为，外观全部交给 CSS，两者分离便于维护；
+        参考：同目录下的 styles.css 文件 -->
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-<!-- React 组件渲染挂载的根节点 -->
+<!-- 作用：React 组件渲染挂载的根节点，初始为空，内容由 JS 动态生成 -->
+<!-- 解释：React 组件必须挂载到一个真实 DOM 节点才能显示，id="root" 与 statelab.js 末尾
+        document.getElementById('root') 相对应；参考：Movie Night 项目 index.html 的同名结构 -->
 <div id="root"></div>
-<!-- 引入 React 核心库（开发版，便于调试） -->
+<!-- 作用：引入 React 核心库（开发版，便于调试） -->
+<!-- 解释：开发版保留完整的错误提示和警告信息，学习阶段排查问题更有帮助；
+        参考：statelab.js 顶部从全局 React 对象解构 useState 的写法 -->
 <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
-<!-- 引入 ReactDOM，负责把组件渲染到浏览器 DOM -->
+<!-- 作用：引入 ReactDOM，负责把组件渲染到浏览器 DOM -->
+<!-- 解释：React 负责描述"组件长什么样"，ReactDOM 负责真正"画到网页上"，两个库分工合作；
+        参考：statelab.js 中 ReactDOM.createRoot 的用法 -->
 <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
-<!-- 引入 Babel，用于在浏览器中编译 JSX 语法 -->
+<!-- 作用：引入 Babel，用于在浏览器中编译 JSX 语法 -->
+<!-- 解释：浏览器不认识 JSX（<div> 这类语法），Babel 在运行时把它翻译成普通 JS；
+        参考：statelab.js 中大量使用的 JSX 语法 -->
 <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-<!-- 引入本项目的 React 代码（JSX 需经 Babel 编译后执行） -->
+<!-- 作用：引入本项目的 React 代码（JSX 需经 Babel 编译后执行） -->
+<!-- 解释：type="text/babel" 告诉 Babel 这个脚本里有 JSX 需要编译；
+        参考：statelab.js 文件（本项目全部组件都在里面） -->
 <script type="text/babel" src="statelab.js"></script>
 </body>
 </html>

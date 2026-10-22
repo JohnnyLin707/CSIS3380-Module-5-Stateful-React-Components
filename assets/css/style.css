@@ -1,6 +1,11 @@
 /* ============================================================
    CSIS3380 Module 5 展示网站 —— 全站样式
-   深色太空主题 + 玻璃拟态卡片 + 渐变强调色
+   作用：定义展示网站的全部视觉样式——深色太空主题、玻璃拟态卡片、
+        浏览器模拟框、代码高亮区、步骤选择器等组件外观
+   解释：按"设计变量 → 布局组件 → 功能模块 → 响应式"的顺序组织；
+        修改配色只需改顶部的 :root 变量，全站自动生效
+   参考：三个被展示项目的 CSS（CounterAppWithReact/styles.css 等）
+        与本目录 main.js 中使用的 class 名一一对应
    ============================================================ */
 
 :root {
@@ -42,7 +47,10 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* 背景装饰：两团缓慢漂浮的渐变光斑 */
+/* 作用：背景装饰——两团缓慢漂浮的渐变光斑，营造太空氛围 */
+/* 解释：用 body::before / ::after 两个伪元素加 radial-gradient 圆形渐变，
+        filter:blur 让边缘柔和；animation 让光斑缓慢移动，页面不显沉闷；
+        伪元素不占用文档流，不会影响内容布局 */
 body::before,
 body::after {
   content: "";
@@ -85,6 +93,9 @@ a {
 }
 
 /* ---------- 顶部导航栏（子页面） ---------- */
+/* 作用：分节注释——以下为子页面顶部导航栏样式 */
+/* 解释：导航栏在 counter/planets/movie-night 三个子页面共用，
+        包含返回按钮、面包屑标题和 GitHub 链接三部分 */
 .topbar {
   position: sticky;
   top: 0;
@@ -168,6 +179,8 @@ a {
 }
 
 /* ---------- 布局容器 ---------- */
+/* 作用：分节注释——以下为页面通用布局容器 */
+/* 解释：所有子页面内容都包在 .wrap 里，统一控制宽度和居中 */
 .wrap {
   width: min(1180px, 92vw);
   margin: 0 auto;
@@ -201,6 +214,8 @@ a {
 }
 
 /* ---------- 主页 Hero ---------- */
+/* 作用：分节注释——以下为主页顶部英雄区样式 */
+/* 解释：英雄区是访客第一眼看到的内容：徽章、大标题、简介、信息标签 */
 .hero {
   padding: 84px 0 56px;
   text-align: center;
@@ -276,6 +291,8 @@ a {
 }
 
 /* ---------- 项目卡片 ---------- */
+/* 作用：分节注释——以下为主页三个项目入口卡片 */
+/* 解释：卡片整张是可点击链接（<a class="card">），悬停有上浮和光斑效果 */
 .cards {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -375,6 +392,8 @@ a {
 }
 
 /* ---------- 子页面 Hero ---------- */
+/* 作用：分节注释——以下为 counter/planets/movie-night 子页面的标题区 */
+/* 解释：结构比主页 Hero 简单：分类标签、标题、描述、技术标签 */
 .page-hero {
   padding: 46px 0 10px;
 }
@@ -406,6 +425,8 @@ a {
 }
 
 /* ---------- 浏览器模拟框（实时演示） ---------- */
+/* 作用：分节注释——以下为嵌入 React 演示的浏览器窗口外壳 */
+/* 解释：用标题栏加 iframe 模拟真实浏览器，让学生直观看到"网页在跑" */
 .browser-frame {
   border-radius: var(--radius);
   border: 1px solid var(--border);
@@ -487,6 +508,9 @@ a {
 }
 
 /* ---------- 代码浏览区 ---------- */
+/* 作用：分节注释——以下为带行号的代码查看器 */
+/* 解释：结构为 标签页(文件名) + 复制按钮 + 行号列 + 高亮代码列，
+        由 build_site.py 生成 HTML，main.js 负责切换，highlight.js 负责着色 */
 .code-shell {
   border-radius: var(--radius);
   border: 1px solid var(--border);
@@ -597,6 +621,9 @@ a {
 }
 
 /* highlight.js 自定义深色主题（与整站配色一致） */
+/* 作用：分节注释——以下为代码高亮的配色规则 */
+/* 解释：自己写这几条规则替代官方主题 CDN，省一次网络请求，
+        且配色（紫关键字/绿字符串/蓝函数名）与整站强调色一致 */
 .hljs-comment, .hljs-quote { color: #64748b; font-style: italic; }
 .hljs-keyword, .hljs-selector-tag, .hljs-literal, .hljs-section { color: #c084fc; }
 .hljs-string, .hljs-regexp, .hljs-addition { color: #86efac; }
@@ -610,6 +637,9 @@ a {
 .hljs-strong { font-weight: bold; }
 
 /* ---------- Movie Night 步骤选择器 ---------- */
+/* 作用：分节注释——以下为 Movie Night 页面专属的步骤切换组件 */
+/* 解释：横向滚动的步骤胶囊按钮 + 当前步骤说明文字，
+        切换逻辑在 main.js 的 activateStep 函数里 */
 .steps-bar {
   display: flex;
   gap: 8px;
@@ -668,6 +698,9 @@ a {
 }
 
 /* ---------- 项目说明小卡片 ---------- */
+/* 作用：分节注释——以下为子页面"项目说明"区域的小卡片 */
+/* 解释：用网格排列若干 .note 卡片，每条说明一个技术要点，
+        内容由 build_site.py 的 notes 参数生成 */
 .notes {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
@@ -694,6 +727,8 @@ a {
 }
 
 /* ---------- 页脚 ---------- */
+/* 作用：分节注释——以下为整站页脚样式 */
+/* 解释：页脚在主页和三个子页面共用，显示课程信息与作者 */
 .footer {
   margin-top: 70px;
   padding: 34px 0 42px;
@@ -708,6 +743,9 @@ a {
 }
 
 /* ---------- 滚动显现动画 ---------- */
+/* 作用：分节注释——以下为内容滚动进入视口时的淡入上移动画 */
+/* 解释：元素先透明下移（.reveal），被 main.js 的 IntersectionObserver
+        观察到后加 .visible 类恢复原位，实现滚动渐显 */
 .reveal {
   opacity: 0;
   transform: translateY(22px);
@@ -720,6 +758,9 @@ a {
 }
 
 /* ---------- 响应式 ---------- */
+/* 作用：分节注释——以下为小屏设备（手机）的适配规则 */
+/* 解释：720px 以下缩小导航栏内边距、隐藏面包屑、降低 iframe 高度，
+        保证手机上也能正常浏览和操作演示 */
 @media (max-width: 720px) {
   .topbar {
     padding: 12px 16px;

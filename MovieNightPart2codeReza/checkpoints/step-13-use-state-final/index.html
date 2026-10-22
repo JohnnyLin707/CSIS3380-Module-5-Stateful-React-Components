@@ -3,21 +3,34 @@
   <head>
     <meta charset="utf-8" />
     <title>Movie Night</title>
-    <!-- 引入页面样式表 -->
+    <!-- 作用：引入页面样式表 app.css -->
+    <!-- 解释：所有组件的外观（watchlist、movie、rating、badge 等）都定义在这个文件；
+            参考：同目录下的 app.css -->
     <link rel="stylesheet" href="./app.css" />
   </head>
 
   <body>
-    <!-- React 组件渲染挂载的根节点 -->
+    <!-- 作用：React 组件渲染挂载的根节点，初始为空 -->
+    <!-- 解释：React 把整棵组件树渲染进这个 div；id="root" 与 app.js 末尾
+            document.getElementById('root') 相对应
+            参考：app.js 文件最后两行 -->
     <div id="root"></div>
 
-    <!-- 引入 React 核心库（开发版，便于调试） -->
+    <!-- 作用：引入 React 核心库（开发版，便于调试） -->
+    <!-- 解释：开发版保留完整警告；app.js 里用到的 React.Component、useState
+            都来自这个全局对象；参考：app.js 中 class App extends React.Component -->
     <script crossorigin src="https://unpkg.com/react@18.3.1/umd/react.development.js"></script>
-    <!-- 引入 ReactDOM，负责把组件渲染到浏览器 DOM -->
+    <!-- 作用：引入 ReactDOM，负责把组件渲染到浏览器 DOM -->
+    <!-- 解释：React 描述界面结构，ReactDOM 负责把它画到网页上；
+            参考：app.js 中 ReactDOM.createRoot 的用法 -->
     <script crossorigin src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js"></script>
-    <!-- 引入 Babel，用于在浏览器中编译 JSX 语法 -->
+    <!-- 作用：引入 Babel，用于在浏览器中编译 JSX 语法 -->
+    <!-- 解释：浏览器不认识 JSX，Babel 在页面加载时现场编译，适合学习阶段；
+            参考：app.js 中的 JSX 语法 -->
     <script src="https://unpkg.com/@babel/standalone@7/babel.min.js"></script>
-    <!-- 引入本项目的 React 代码（JSX 需经 Babel 编译后执行） -->
+    <!-- 作用：引入本项目的 React 代码（JSX 需经 Babel 编译后执行） -->
+    <!-- 解释：type="text/babel" 告诉 Babel 这个脚本需要编译；
+            参考：app.js（Part 1 完成版，Part 2 从这里开始加 state） -->
     <script type="text/babel" src="./app.js"></script>
   </body>
 </html>

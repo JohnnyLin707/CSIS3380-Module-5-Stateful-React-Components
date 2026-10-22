@@ -1,4 +1,6 @@
-/* 页面整体样式：居中布局、浅灰背景 */
+/* 作用：页面整体样式——内容居中、浅灰背景 */
+/* 解释：用 flex + min-height:100vh 让白色卡片在浏览器窗口里垂直水平都居中，
+       视觉上更聚焦；参考：常见登录页/卡片页的居中布局写法 */
 body {
     font-family: sans-serif;
     display: flex;
@@ -8,7 +10,10 @@ body {
     background-color: #f4f4f9;
 }
 
-/* React 挂载根节点：限制宽度并做成白色卡片 */
+/* 作用：React 挂载根节点——限制宽度并做成白色卡片 */
+/* 解释：React 把所有内容渲染进 #root，给 #root 加白底、圆角和阴影，
+       应用就有了"卡片"外形；max-width 防止宽屏下内容拉得太宽；
+       参考：statelab.js 末尾 root.render 挂载的 id="root" 节点 */
 #root {
     width: 100%;
     max-width: 600px;
@@ -18,21 +23,27 @@ body {
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-/* 标题统一居中、深灰色 */
+/* 作用：标题统一居中、深灰色 */
+/* 解释：h1（页面主标题）和 h2（Calculations 小标题）共用一套文字样式，
+       用逗号写在一起避免重复；参考：statelab.js 中的 <h1> 和 <h2> */
 h1,
 h2 {
     text-align: center;
     color: #333;
 }
 
-/* 计数器容器（备用样式类） */
+/* 作用：计数器容器（备用样式类，当前 JS 未使用） */
+/* 解释：这是早期版本的布局类，保留作备用；现在并排布局用的是 .controls，
+       参考：下方 .controls 的注释说明 */
 .counters-container {
     display: flex;
     justify-content: space-around;
     margin: 2rem 0;
 }
 
-/* 单个计数器盒子（备用样式类） */
+/* 作用：单个计数器盒子（备用样式类，当前 JS 未使用） */
+/* 解释：与 .counters-container 同属早期版本的遗留样式，现由 .counter-section 替代；
+       参考：下方 .counter-section 的注释说明 */
 .counter-box {
     text-align: center;
     padding: 1rem;
@@ -40,14 +51,18 @@ h2 {
     border-radius: 8px;
 }
 
-/* 计数器数字：大号加粗 */
+/* 作用：计数器数字——大号加粗 */
+/* 解释：3rem 让数字非常醒目，配合 text-align:center 突出计数结果；
+       参考：与 .counter-box 配套使用的早期结构 */
 .counter-box p {
     font-size: 3rem;
     margin: 0.5rem;
     font-weight: bold;
 }
 
-/* 计数器盒子内按钮（备用样式类） */
+/* 作用：计数器盒子内按钮（备用样式类，当前 JS 未使用） */
+/* 解释：同上，属于早期版本按钮样式；现在按钮样式见 .counter-section button；
+       参考：下方 .counter-section button 的注释说明 */
 .counter-box button {
     font-size: 1.5rem;
     padding: 0.5rem 1rem;
@@ -57,7 +72,9 @@ h2 {
     background-color: #eee;
 }
 
-/* 计算结果区域：居中、淡蓝背景 */
+/* 作用：计算结果区域——居中、淡蓝背景 */
+/* 解释：用淡蓝色背景把"Calculations"区域和上面的计数器面板区分开；
+       对应 statelab.js 中 Results 组件的 <div className="results"> */
 .results {
     text-align: center;
     font-size: 1.2rem;
@@ -67,7 +84,9 @@ h2 {
 }
 
 
-/* 两个计数器面板的横向排列容器 */
+/* 作用：两个计数器面板的横向排列容器 */
+/* 解释：flex + space-around 让两个 .counter-section 均分宽度、两端留白；
+       gap 在 flex 项目之间加固定间距；对应 statelab.js 中的 <div className="controls"> */
 .controls {
     display: flex;
     justify-content: space-around;
@@ -75,7 +94,9 @@ h2 {
     gap: 2rem;
 }
 
-/* 单个计数器面板 */
+/* 作用：单个计数器面板的盒子样式 */
+/* 解释：给每个 CounterSection 一个浅灰底、细边框的"盒子"外观，
+       text-align:center 让标题和按钮都居中；对应 statelab.js 中的 .counter-section */
 .counter-section {
     text-align: center;
     padding: 1rem;
@@ -84,14 +105,18 @@ h2 {
     background-color: #f9f9f9;
 }
 
-/* 计数器名称标题 */
+/* 作用：计数器名称标题（Counter A / Counter B） */
+/* 解释：只作用于 .counter-section 内部的 h3，不影响页面其他标题（降低选择器影响范围）；
+       对应 statelab.js 中 <h3>{label}: {count}</h3> */
 .counter-section h3 {
     margin: 0 0 1rem 0;
     color: #555;
     font-size: 1.5rem;
 }
 
-/* 计数器操作按钮通用样式 */
+/* 作用：计数器操作按钮（增加 / 减少 / 重置）的通用样式 */
+/* 解释：三个按钮共用白底细边框，靠后面的类再区分颜色；
+       transition 让悬停变色更平滑；对应 statelab.js 中的三个 <button> */
 .counter-section button {
     font-size: 1rem;
     padding: 0.5rem 1rem;
@@ -103,24 +128,32 @@ h2 {
     transition: background-color 0.2s;
 }
 
-/* 按钮悬停时变灰，提供交互反馈 */
+/* 作用：按钮悬停时变灰，提供"可以点击"的交互反馈 */
+/* 解释：:hover 是 CSS 伪类，鼠标移上去时自动应用，无需 JS；
+       参考：下面 .reset-all-button:hover 的同款写法 */
 .counter-section button:hover {
     background-color: #e0e0e0;
 }
 
-/* 单个计数器的“重置”按钮：淡红色主题 */
+/* 作用：单个计数器的"重置"按钮——淡红色主题 */
+/* 解释：用 class 选择器 .reset-button 覆盖上面通用按钮的白色背景，
+       红色系暗示"清零/危险操作"；对应 statelab.js 中 className="reset-button" 的按钮 */
 .counter-section .reset-button {
     background-color: #ffe9e9;
     border-color: #e0a0a0;
     color: #a33;
 }
 
-/* 重置按钮悬停时颜色加深 */
+/* 作用：重置按钮悬停时颜色加深 */
+/* 解释：与普通按钮悬停逻辑相同，只是换成更深的红色，保持操作反馈一致；
+       参考：上方 .counter-section button:hover 的写法 */
 .counter-section .reset-button:hover {
     background-color: #ffd4d4;
 }
 
-/* “全部重置”按钮：居中、红色边框 */
+/* 作用："全部重置"按钮——居中、红色边框 */
+/* 解释：display:block + margin:0 auto 实现按钮水平居中（按钮不是 flex 子元素时的常用技巧）；
+       对应 statelab.js 中 className="reset-all-button" 的按钮 */
 .reset-all-button {
     display: block;
     margin: 0 auto 1rem auto;
@@ -133,7 +166,10 @@ h2 {
     border-radius: 4px;
     transition: background-color 0.2s;
 }
-/* 全部重置按钮悬停时变为浅红 */
+
+/* 作用：全部重置按钮悬停时变为浅红 */
+/* 解释：悬停反馈与上面的重置按钮保持同一视觉语言（都是红色系加深）；
+       参考：上方 .counter-section .reset-button:hover 的写法 */
 .reset-all-button:hover {
     background-color: #f1b0b7;
 }
