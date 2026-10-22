@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Module 5 · Stateful React Components | CSIS3380</title>
+<meta name="description" content="CSIS3380 Module 5 有状态 React 组件课程项目展示：Counter App、Planet Card App、Movie Night">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><defs><linearGradient id='g' x1='0' y1='0' x2='1' y2='1'><stop offset='0' stop-color='%236366f1'/><stop offset='1' stop-color='%2322d3ee'/></linearGradient></defs><rect width='100' height='100' rx='22' fill='url(%23g)'/><text x='50' y='70' font-size='55' text-anchor='middle' fill='white'>⚛</text></svg>">
+<link rel="stylesheet" href="assets/css/style.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<header class="topbar">
+  <a class="brand" href="index.html">
+    <span class="logo">⚛</span>
+    <span>CSIS3380 · Module 5</span>
+  </a>
+  <span class="crumb">Full Stack Development With JavaScript</span>
+  <div class="spacer"></div>
+  <a class="gh-link" href="https://github.com/JohnnyLin707/CSIS3380-Module-5-Stateful-React-Components.git" target="_blank" rel="noopener">
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg>
+    GitHub
+  </a>
+</header>
+
+<main class="wrap">
+
+  <section class="hero">
+    <span class="badge"><span class="dot"></span>CSIS 3380 · 2026 · React State</span>
+    <h1>Module 5<br><span class="grad">Stateful React Components</span></h1>
+    <p class="lead">
+      本页面汇总展示 Module 5 的三个 React 项目：双计数器计算器、行星卡片应用，
+      以及分 13 步教学的 Movie Night 观影清单。每个项目均可在线实时体验，
+      并附带逐行中文注释的完整源码。
+    </p>
+    <div class="meta">
+      <span class="chip">👤 学生：Jinran Lin</span>
+      <span class="chip">🆔 学号：300395016</span>
+      <span class="chip">⚛ React 18 + Babel</span>
+      <span class="chip">📚 共 3 个项目 · 12 个教学步骤</span>
+    </div>
+  </section>
+
+  <section class="cards">
+    <a class="card reveal" href="counter/index.html">
+      <span class="icon">🧮</span>
+      <h3>Counter App With React</h3>
+      <p>双计数器（Counter A / B）加减与重置，实时展示两数之和、差、积、商的四则运算结果，并用 useState 管理组件状态。</p>
+      <div class="tags">
+        <span class="tag">useState</span>
+        <span class="tag">组件通信</span>
+        <span class="tag">四则运算</span>
+      </div>
+      <span class="go">打开项目 <span class="arrow">→</span></span>
+    </a>
+
+    <a class="card reveal" href="planets/index.html">
+      <span class="icon">🪐</span>
+      <h3>Planet Card App</h3>
+      <p>八大行星卡片画廊：响应式网格布局、行星档案展示，支持删除单颗行星与一键重置，状态由容器组件统一管理。</p>
+      <div class="tags">
+        <span class="tag">列表渲染</span>
+        <span class="tag">条件渲染</span>
+        <span class="tag">CSS Grid</span>
+      </div>
+      <span class="go">打开项目 <span class="arrow">→</span></span>
+    </a>
+
+    <a class="card reveal" href="movie-night/index.html">
+      <span class="icon">🎬</span>
+      <h3>Movie Night Part 2</h3>
+      <p>观影清单应用：从普通变量、类组件 state、事件处理、this 绑定，到状态提升与 useState Hook，共 12 个递进步骤完整掌握 React 状态管理。</p>
+      <div class="tags">
+        <span class="tag">Class State</span>
+        <span class="tag">状态提升</span>
+        <span class="tag">Hooks</span>
+      </div>
+      <span class="go">打开项目 <span class="arrow">→</span></span>
+    </a>
+  </section>
+
+</main>
+
+<footer class="footer">
+  <p><span class="atom">⚛</span> CSIS3380 Full Stack Development With JavaScript · Module 5</p>
+  <p>Jinran Lin (300395016) · Built with React 18 · Hosted on GitHub Pages</p>
+</footer>
+
+<script src="assets/js/main.js"></script>
+</body>
+</html>

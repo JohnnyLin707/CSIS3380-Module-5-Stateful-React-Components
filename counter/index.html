@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Counter App With React | Module 5 · CSIS3380</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><defs><linearGradient id='g' x1='0' y1='0' x2='1' y2='1'><stop offset='0' stop-color='%236366f1'/><stop offset='1' stop-color='%2322d3ee'/></linearGradient></defs><rect width='100' height='100' rx='22' fill='url(%23g)'/><text x='50' y='70' font-size='55' text-anchor='middle' fill='white'>⚛</text></svg>">
+<link rel="stylesheet" href="../assets/css/style.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script>document.addEventListener("DOMContentLoaded", function () { if (window.hljs) { hljs.highlightAll(); } });</script>
+
+</head>
+<body>
+
+<header class="topbar">
+  <a class="back-link" href="../index.html">← 返回首页</a>
+  <span class="crumb">Counter App With React</span>
+  <div class="spacer"></div>
+  <a class="gh-link" href="https://github.com/JohnnyLin707/CSIS3380-Module-5-Stateful-React-Components.git" target="_blank" rel="noopener">GitHub</a>
+</header>
+
+<main class="wrap">
+
+  <section class="page-hero">
+    <p class="kicker">Project 01 · Counter</p>
+    <h1>Counter App With React</h1>
+    <p>一个双计数器应用：Counter A 与 Counter B 均可递增、递减、重置，页面底部实时计算并展示两个数字的和、差、积、商（除数为零时给出提示）。通过本项目练习 useState 状态管理、组件拆分与 props 传递。</p>
+    <div class="tags"><span class="tag">React 18</span><span class="tag">useState</span><span class="tag">JSX</span><span class="tag">Props</span></div>
+  </section>
+
+  <section class="section reveal">
+    <h2 class="section-title">实时演示</h2>
+    <p class="section-sub">下方嵌入运行中的项目（需联网加载 React CDN）。可直接在iframe中操作，或在新窗口中打开。</p>
+    <div class="browser-frame">
+      <div class="browser-bar">
+        <div class="dots"><span></span><span></span><span></span></div>
+        <div class="url" id="demo-url">../CounterAppWithReact-300395016-JinranLin/index.html</div>
+        <div class="actions">
+          <button class="mini-btn" id="btn-reload" type="button">↻ 重载</button>
+          <button class="mini-btn" id="btn-open" type="button">↗ 新窗口</button>
+        </div>
+      </div>
+      <div class="browser-body">
+        <iframe id="demo-frame" src="../CounterAppWithReact-300395016-JinranLin/index.html" title="Counter App With React live demo" loading="lazy"></iframe>
+      </div>
+    </div>
+  </section>
+
+  <section class="section reveal">
+    <h2 class="section-title">项目说明</h2>
+    <div class="notes"><div class="note"><h4>useState 状态管理</h4><p>Counter A 初始为 0、Counter B 初始为 1，分别用独立的 state 保存，互不影响。</p></div><div class="note"><h4>组件化拆分</h4><p>CounterSection 负责单个计数器面板，Results 负责四则运算展示，App 负责状态与组合。</p></div><div class="note"><h4>受控交互</h4><p>所有按钮通过 setCount 更新状态，界面随状态自动重新渲染，包括一键全部重置。</p></div></div>
+  </section>
+
+  <section class="section reveal">
+    <h2 class="section-title">源码（含中文注释）</h2>
+    <p class="section-sub">老师原有英文注释后附中文翻译，代码补全部分以中文注释说明作用。点击标签页切换文件。</p>
+    <div class="code-shell" data-tabs>
+  <div class="code-tabs">
+<button class="code-tab active" data-target="#panel-index-html">index.html</button>
+<button class="code-tab" data-target="#panel-statelab-js">statelab.js</button>
+<button class="code-tab" data-target="#panel-styles-css">styles.css</button>
+    <span class="spacer"></span>
+    <button class="copy-btn" type="button" data-copy="#panel-index-html">复制代码</button>
+  </div>
+<div class="code-panel active" id="panel-index-html">
+  <div class="code-block">
+    <div class="code-gutter">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22</div>
+    <pre><code class="language-xml">&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+&lt;meta charset="UTF-8"&gt;
+&lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
+&lt;title&gt;React Counter Lab&lt;/title&gt;
+&lt;!-- 引入页面样式表 --&gt;
+&lt;link rel="stylesheet" href="styles.css"&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;!-- React 组件渲染挂载的根节点 --&gt;
+&lt;div id="root"&gt;&lt;/div&gt;
+&lt;!-- 引入 React 核心库（开发版，便于调试） --&gt;
+&lt;script src="https://unpkg.com/react@18/umd/react.development.js"&gt;&lt;/script&gt;
+&lt;!-- 引入 ReactDOM，负责把组件渲染到浏览器 DOM --&gt;
+&lt;script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"&gt;&lt;/script&gt;
+&lt;!-- 引入 Babel，用于在浏览器中编译 JSX 语法 --&gt;
+&lt;script src="https://unpkg.com/@babel/standalone/babel.min.js"&gt;&lt;/script&gt;
+&lt;!-- 引入本项目的 React 代码（JSX 需经 Babel 编译后执行） --&gt;
+&lt;script type="text/babel" src="statelab.js"&gt;&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+  </div>
+</div>
+<div class="code-panel" id="panel-statelab-js">
+  <div class="code-block">
+    <div class="code-gutter">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97</div>
+    <pre><code class="language-javascript">// --- Import React and ReactDOM ---
+// --- 导入 React 和 ReactDOM ---
+const { useState } = React;
+// 从全局 React 对象中解构出 useState Hook，用于在函数组件中创建和管理状态
+
+
+// Counter Section Component
+// 计数器区域组件（单个计数器的显示与操作面板）
+const CounterSection = ({ label, count, setCount }) =&gt; {
+    return (
+        &lt;div className="counter-section"&gt;
+            {/* 显示计数器名称和当前数值 */}
+            &lt;h3&gt;{label}: {count}&lt;/h3&gt;
+            {/* 点击按钮时调用 setCount，将当前计数 +1（增加） */}
+            &lt;button onClick={() =&gt; setCount(count + 1)}&gt;+ Increment {label.split(' ')[1]}&lt;/button&gt;
+            {/* 点击按钮时调用 setCount，将当前计数 -1（减少） */}
+            &lt;button onClick={() =&gt; setCount(count - 1)}&gt;- Decrement {label.split(' ')[1]}&lt;/button&gt;
+            {/* 点击按钮时调用 setCount，将计数重置为 0 */}
+            &lt;button className="reset-button" onClick={() =&gt; setCount(0)}&gt;Reset&lt;/button&gt;
+        &lt;/div&gt;
+    );
+};
+
+
+// Results Component
+// 计算结果组件（展示两个计数器的加减乘除运算结果）
+const Results = ({ countA, countB }) =&gt; {
+    return (
+        &lt;div className="results"&gt;
+            &lt;h2&gt;Calculations&lt;/h2&gt;
+            {/* 两个计数相加的结果 */}
+            &lt;p&gt;{countA} + {countB} = {countA + countB}&lt;/p&gt;
+            {/* 两个计数相减的结果 */}
+            &lt;p&gt;{countA} - {countB} = {countA - countB}&lt;/p&gt;
+            {/* 两个计数相乘的结果 */}
+            &lt;p&gt;{countA} * {countB} = {countA * countB}&lt;/p&gt;
+            {/* 两个计数相除的结果；若除数为 0 则提示不能除以零，否则保留两位小数 */}
+            &lt;p&gt;{countA} / {countB} = {countB !== 0 ? (countA / countB).toFixed(2) :'Cannot divide by zero'}&lt;/p&gt;
+        &lt;/div&gt;
+    );
+};
+
+
+const App = () =&gt; {
+// Initialize state for two counters
+// 初始化两个计数器的状态
+    // 第一个计数器状态 countA，初始值为 0；setCountA 用于更新它
+    const [countA, setCountA] = useState(0);
+    // 第二个计数器状态 countB，初始值为 1（从 1 开始，避免初始除法出现除以零）
+    const [countB, setCountB] = useState(1); // Let's start the second one at 1 / 让第二个计数器从 1 开始
+
+    // 一键重置函数：将两个计数器都恢复为 0
+    const resetAll = () =&gt; {
+        setCountA(0);
+        setCountB(0);
+    };
+
+    return (
+        &lt;div&gt;
+            &lt;h1&gt;React Stateful Counter&lt;/h1&gt;
+
+            {/* 页面顶部的“全部重置”按钮，点击后两个计数器同时归零 */}
+            &lt;button className="reset-all-button" 
+                onClick={resetAll}&gt;Reset All
+            &lt;/button&gt;
+
+            {/* 两个计数器面板并排排列 */}
+            &lt;div className="controls"&gt;
+                {/* 计数器 A：把 countA 状态和它的更新函数传给子组件 */}
+                &lt;CounterSection
+                    label="Counter A"
+                    count={countA}
+                    setCount={setCountA}
+                /&gt;
+                {/* 计数器 B：把 countB 状态和它的更新函数传给子组件 */}
+                &lt;CounterSection
+                    label="Counter B"
+                    count={countB}
+                    setCount={setCountB}
+                /&gt;
+            &lt;/div&gt;
+            
+            {/* 底部展示两个计数器的四则运算结果 */}
+            &lt;Results countA={countA} countB={countB} /&gt;
+            
+        &lt;/div&gt;
+    );
+};
+
+// --- Render the App to the DOM ---
+// --- 将 App 组件渲染到页面 DOM 中 ---
+// 获取 id 为 root 的 DOM 容器
+const container = document.getElementById('root');
+// 创建 React 18 的根节点
+const root = ReactDOM.createRoot(container);
+// 把 App 组件渲染进根节点，页面随之显示
+root.render(&lt;App /&gt;);
+</code></pre>
+  </div>
+</div>
+<div class="code-panel" id="panel-styles-css">
+  <div class="code-block">
+    <div class="code-gutter">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98
+99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114
+115
+116
+117
+118
+119
+120
+121
+122
+123
+124
+125
+126
+127
+128
+129
+130
+131
+132
+133
+134
+135
+136
+137
+138
+139</div>
+    <pre><code class="language-css">/* 页面整体样式：居中布局、浅灰背景 */
+body {
+    font-family: sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: #f4f4f9;
+}
+
+/* React 挂载根节点：限制宽度并做成白色卡片 */
+#root {
+    width: 100%;
+    max-width: 600px;
+    padding: 2rem;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* 标题统一居中、深灰色 */
+h1,
+h2 {
+    text-align: center;
+    color: #333;
+}
+
+/* 计数器容器（备用样式类） */
+.counters-container {
+    display: flex;
+    justify-content: space-around;
+    margin: 2rem 0;
+}
+
+/* 单个计数器盒子（备用样式类） */
+.counter-box {
+    text-align: center;
+    padding: 1rem;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+}
+
+/* 计数器数字：大号加粗 */
+.counter-box p {
+    font-size: 3rem;
+    margin: 0.5rem;
+    font-weight: bold;
+}
+
+/* 计数器盒子内按钮（备用样式类） */
+.counter-box button {
+    font-size: 1.5rem;
+    padding: 0.5rem 1rem;
+    margin: 0 0.5rem;
+    cursor: pointer;
+    border: 1px solid #ccc;
+    background-color: #eee;
+}
+
+/* 计算结果区域：居中、淡蓝背景 */
+.results {
+    text-align: center;
+    font-size: 1.2rem;
+    background-color: #eef;
+    padding: 1rem;
+    border-radius: 8px;
+}
+
+
+/* 两个计数器面板的横向排列容器 */
+.controls {
+    display: flex;
+    justify-content: space-around;
+    margin: 2rem 0;
+    gap: 2rem;
+}
+
+/* 单个计数器面板 */
+.counter-section {
+    text-align: center;
+    padding: 1rem;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+}
+
+/* 计数器名称标题 */
+.counter-section h3 {
+    margin: 0 0 1rem 0;
+    color: #555;
+    font-size: 1.5rem;
+}
+
+/* 计数器操作按钮通用样式 */
+.counter-section button {
+    font-size: 1rem;
+    padding: 0.5rem 1rem;
+    margin: 0.25rem;
+    cursor: pointer;
+    border: 1px solid #ccc;
+    background-color: #fff;
+    border-radius: 4px;
+    transition: background-color 0.2s;
+}
+
+/* 按钮悬停时变灰，提供交互反馈 */
+.counter-section button:hover {
+    background-color: #e0e0e0;
+}
+
+/* 单个计数器的“重置”按钮：淡红色主题 */
+.counter-section .reset-button {
+    background-color: #ffe9e9;
+    border-color: #e0a0a0;
+    color: #a33;
+}
+
+/* 重置按钮悬停时颜色加深 */
+.counter-section .reset-button:hover {
+    background-color: #ffd4d4;
+}
+
+/* “全部重置”按钮：居中、红色边框 */
+.reset-all-button {
+    display: block;
+    margin: 0 auto 1rem auto;
+    font-size: 1rem;
+    padding: 0.5rem 1.5rem;
+    cursor: pointer;
+    border: 1px solid red;
+    background-color: whitesmoke;
+    color: red;
+    border-radius: 4px;
+    transition: background-color 0.2s;
+}
+/* 全部重置按钮悬停时变为浅红 */
+.reset-all-button:hover {
+    background-color: #f1b0b7;
+}
+</code></pre>
+  </div>
+</div>
+</div>
+
+  </section>
+
+</main>
+
+<footer class="footer">
+  <p><span class="atom">⚛</span> CSIS3380 Full Stack Development With JavaScript · Module 5</p>
+  <p>Jinran Lin (300395016) · <a href="https://github.com/JohnnyLin707/CSIS3380-Module-5-Stateful-React-Components.git" target="_blank" rel="noopener">GitHub Repository</a></p>
+</footer>
+
+<script src="../assets/js/main.js"></script>
+</body>
+</html>

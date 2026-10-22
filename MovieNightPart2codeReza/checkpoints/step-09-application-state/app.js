@@ -1,0 +1,190 @@
+// Step 09 - the movie list moves into App's state
+// 电影数据源数组：每部电影包含标题、年份、类型、评分、是否看过、是否编辑推荐和唯一 id
+const movies = [
+  {
+    title: "Spirited Away",
+    year: 2001,
+    genre: "Animation",
+    rating: 5,
+    watched: true,
+    staffPick: true,
+    id: 1
+  },
+  {
+    title: "Inception",
+    year: 2010,
+    genre: "Sci-Fi",
+    rating: 4,
+    watched: true,
+    staffPick: false,
+    id: 2
+  },
+  {
+    title: "The Grand Budapest Hotel",
+    year: 2014,
+    genre: "Comedy",
+    rating: 4,
+    watched: false,
+    staffPick: true,
+    id: 3
+  },
+  {
+    title: "Coco",
+    year: 2017,
+    genre: "Animation",
+    rating: 5,
+    watched: false,
+    staffPick: false,
+    id: 4
+  }
+];
+
+// 页头组件：显示应用标题和电影总数
+const Header = (props) => {
+  return (
+    <header>
+      <h1>{ props.title }</h1>
+      <span className="stats">Movies: { props.totalMovies }</span>
+    </header>
+  );
+};
+
+// Returns two sibling spans with no wrapper element
+// 返回两个并列的 span 元素，不需要额外的包裹节点（React Fragment 空标签）
+const MovieDetails = (props) => {
+  return (
+    <>
+      {/* 电影标题；如果是编辑推荐，追加一个 STAFF PICK 徽章 */}
+      <span className="movie-title">
+        { props.title }
+        { props.staffPick && <span className="badge badge-pick">STAFF PICK</span> }
+      </span>
+      {/* 年份与类型；根据 watched 真假显示 WATCHED 或 NOT YET 徽章 */}
+      <span className="movie-meta">
+        { props.year } · { props.genre }
+        { props.watched
+            ? <span className="badge badge-watched">WATCHED</span>
+            : <span className="badge badge-unwatched">NOT YET</span> }
+      </span>
+    </>
+  );
+};
+
+// 单部电影条目组件：左侧为电影信息，右侧为评分组件
+const Movie = (props) => {
+  return (
+    <div className="movie">
+      <div className="movie-info">
+        <MovieDetails
+          title={props.title}
+          year={props.year}
+          genre={props.genre}
+          watched={props.watched}
+          staffPick={props.staffPick}
+        />
+      </div>
+
+      {/* 评分组件，显示该电影的评分 */}
+      <Rating score={props.rating} />
+    </div>
+  );
+};
+
+// updating state from the previous state
+// 基于前一个状态来更新状态：用函数式 setState 保证多次连续点击也准确
+// 同时用 Math.min / Math.max 把评分限制在 0~5，到边界时禁用按钮
+class Rating extends React.Component {
+  state = {
+    score: this.props.score
+  };
+
+  // 评分 +1，最高不超过 5；prevState 是前一个状态
+  incrementScore = () => {
+    this.setState( prevState => ({
+      score: Math.min(prevState.score + 1, 5)
+    }));
+  }
+
+  // 评分 -1，最低不低于 0
+  decrementScore = () => {
+    this.setState( prevState => ({
+      score: Math.max(prevState.score - 1, 0)
+    }));
+  }
+
+  render() {
+    return (
+      <div className="rating">
+        {/* 评分为 0 时禁用“-”按钮 */}
+        <button
+          className="rating-action decrement"
+          onClick={this.decrementScore}
+          disabled={this.state.score === 0}
+        > - </button>
+        <span className="rating-score">{ this.state.score }</span>
+        {/* 评分为 5 时禁用“+”按钮 */}
+        <button
+          className="rating-action increment"
+          onClick={this.incrementScore}
+          disabled={this.state.score === 5}
+        > + </button>
+      </div>
+    );
+  }
+}
+
+// 页脚组件：显示已看电影数和电影总数
+const Footer = (props) => {
+  return (
+    <footer>
+      Watched { props.watchedCount } of { props.totalMovies } · Made with React
+    </footer>
+  );
+};
+
+// The movie list moves into App's state
+// 电影列表移入 App 组件的 state 中管理（应用级状态的起点）
+class App extends React.Component {
+  // 用传入的初始电影数组初始化 state
+  state = {
+    movies: this.props.initialMovies
+  };
+
+  render() {
+    // 每次渲染都从 state 统计已看电影数
+    const watchedCount = this.state.movies.filter(movie => movie.watched).length;
+
+    return (
+      <div className="watchlist">
+        {/* 页头数据全部来自 state */}
+        <Header
+          title="Movie Night"
+          totalMovies={this.state.movies.length}
+        />
+
+        {/* Movie list */}
+        {/* 电影列表：遍历 state 中的电影数组渲染 Movie 组件 */}
+        {this.state.movies.map( movie =>
+          <Movie
+            title={movie.title}
+            year={movie.year}
+            genre={movie.genre}
+            rating={movie.rating}
+            watched={movie.watched}
+            staffPick={movie.staffPick}
+            key={movie.id.toString()}
+          />
+        )}
+
+        <Footer
+          watchedCount={watchedCount}
+          totalMovies={this.state.movies.length}
+        />
+      </div>
+    );
+  }
+}
+
+// 把 App 组件渲染到 id 为 root 的 DOM 节点，并传入电影初始数据
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(<App initialMovies={movies} />);

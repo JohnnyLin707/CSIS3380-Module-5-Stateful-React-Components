@@ -1,0 +1,10586 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Movie Night Part 2 | Module 5 · CSIS3380</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><defs><linearGradient id='g' x1='0' y1='0' x2='1' y2='1'><stop offset='0' stop-color='%236366f1'/><stop offset='1' stop-color='%2322d3ee'/></linearGradient></defs><rect width='100' height='100' rx='22' fill='url(%23g)'/><text x='50' y='70' font-size='55' text-anchor='middle' fill='white'>⚛</text></svg>">
+<link rel="stylesheet" href="../assets/css/style.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script>document.addEventListener("DOMContentLoaded", function () { if (window.hljs) { hljs.highlightAll(); } });</script>
+
+</head>
+<body>
+
+<header class="topbar">
+  <a class="back-link" href="../index.html">← 返回首页</a>
+  <span class="crumb">Movie Night Part 2</span>
+  <div class="spacer"></div>
+  <a class="gh-link" href="https://github.com/JohnnyLin707/CSIS3380-Module-5-Stateful-React-Components.git" target="_blank" rel="noopener">GitHub</a>
+</header>
+
+<main class="wrap">
+
+  <section class="page-hero">
+    <p class="kicker">Project 03 · Movie Night</p>
+    <h1>Movie Night Part 2</h1>
+    <p>观影清单应用的 Part 2 状态管理教程，共 12 个递进步骤（Step 01 – 13）。选择下方步骤按钮，可实时运行对应版本的代码并查看带中文注释的源码；浏览器地址栏锚点（如 #step-06-bind-handlers）可直接分享某个步骤。</p>
+    <div class="tags"><span class="tag">React 18</span><span class="tag">Class State</span><span class="tag">useState Hook</span><span class="tag">状态提升</span></div>
+  </section>
+
+  <section class="section reveal">
+    <h2 class="section-title">实时演示</h2>
+    <p class="section-sub">下方嵌入运行中的项目（需联网加载 React CDN）。可直接在iframe中操作，或在新窗口中打开。</p>
+    <div class="browser-frame">
+      <div class="browser-bar">
+        <div class="dots"><span></span><span></span><span></span></div>
+        <div class="url" id="demo-url">../MovieNightPart2codeReza/checkpoints/step-13-use-state-final/index.html</div>
+        <div class="actions">
+          <button class="mini-btn" id="btn-reload" type="button">↻ 重载</button>
+          <button class="mini-btn" id="btn-open" type="button">↗ 新窗口</button>
+        </div>
+      </div>
+      <div class="browser-body">
+        <iframe id="demo-frame" src="../MovieNightPart2codeReza/checkpoints/step-13-use-state-final/index.html" title="Movie Night Part 2 live demo" loading="lazy"></iframe>
+      </div>
+    </div>
+  </section>
+
+  <section class="section reveal">
+    <h2 class="section-title">项目说明</h2>
+    <div class="notes"><div class="note"><h4>12 步递进教学</h4><p>从“普通变量为什么不能驱动界面”出发，逐步引入 state、事件、this 绑定、函数式更新、状态提升与 Hook。</p></div><div class="note"><h4>最终版：useState</h4><p>Step 13 用函数组件 + useState 完成全部功能：删除电影、加减评分（0~5）、切换看过状态、平均评分统计。</p></div><div class="note"><h4>状态提升思想</h4><p>多个组件需要共享的数据提升到最近公共父组件 App，子组件通过 props 收数据、通过回调汇报操作。</p></div></div>
+  </section>
+
+  <section class="section reveal">
+    <h2 class="section-title">源码（含中文注释）</h2>
+    <p class="section-sub">老师原有英文注释后附中文翻译，代码补全部分以中文注释说明作用。点击标签页切换文件。</p>
+    <div id="steps-root" data-base="../MovieNightPart2codeReza/checkpoints/">
+  <div class="steps-bar">
+<button class="step-btn" type="button" data-step="step-01-plain-variable" data-title="Step 01 · 普通变量" data-desc="实验：把评分存到普通局部变量里，点击后控制台数字变了，界面却不变——说明普通变量无法驱动 UI。">Step 01 · 普通变量</button>
+<button class="step-btn" type="button" data-step="step-02-class-component" data-title="Step 02 · 类组件" data-desc="把 Rating 改写为 class 组件，通过 this.props 读取传入的评分，暂时还没有交互。">Step 02 · 类组件</button>
+<button class="step-btn" type="button" data-step="step-03-stateful-component" data-title="Step 03 · 有状态组件" data-desc="用 state = { score: this.props.score } 让组件拥有自己的记忆，界面显示 this.state.score。">Step 03 · 有状态组件</button>
+<button class="step-btn" type="button" data-step="step-04-handling-events" data-title="Step 04 · 处理事件" data-desc="给“+”按钮绑定 onClick={this.incrementScore}，点击时在控制台打印，验证事件处理器已连接。">Step 04 · 处理事件</button>
+<button class="step-btn" type="button" data-step="step-05-broken-this" data-title="Step 05 · this 丢失（故意写错）" data-desc="在普通方法里调用 this.setState 会报错——因为作为回调时 this 变成 undefined。此步用于演示问题。">Step 05 · this 丢失（故意写错）</button>
+<button class="step-btn" type="button" data-step="step-06-bind-handlers" data-title="Step 06 · 绑定处理器" data-desc="改用箭头函数类属性 incrementScore = () =&gt; {...}，自动绑定 this，加减分按钮都能正常工作。">Step 06 · 绑定处理器</button>
+<button class="step-btn" type="button" data-step="step-07-previous-state" data-title="Step 07 · 基于前一个状态更新" data-desc="用函数式 setState(prevState =&gt; ...) 基于前值更新，并用 Math.min/Math.max 把评分限制在 0~5，到边界禁用按钮。">Step 07 · 基于前一个状态更新</button>
+<button class="step-btn" type="button" data-step="step-09-application-state" data-title="Step 09 · 应用级状态" data-desc="把电影列表移入 App 组件的 state，页头的电影总数、页脚的已看数量都从 state 派生。">Step 09 · 应用级状态</button>
+<button class="step-btn" type="button" data-step="step-10-remove-items" data-title="Step 10 · 删除条目" data-desc="新增删除按钮：handleRemoveMovie 用 filter 生成不含该电影的新数组，列表为空时显示提示文案。">Step 10 · 删除条目</button>
+<button class="step-btn" type="button" data-step="step-11-lift-state-up" data-title="Step 11 · 状态提升" data-desc="评分状态从 Rating 提升到 App：Rating 变为纯展示组件，加减时调用 changeRating 通知 App 修改数据；Header 新增平均评分。">Step 11 · 状态提升</button>
+<button class="step-btn" type="button" data-step="step-12-toggle-watched" data-title="Step 12 · 切换看过" data-desc="点击 WATCHED/NOT YET 徽章切换观看状态：用展开运算符复制电影对象并反转 watched 字段。">Step 12 · 切换看过</button>
+<button class="step-btn active" type="button" data-step="step-13-use-state-final" data-title="Step 13 · useState 最终版" data-desc="用函数组件 + useState Hook 重写整个应用，是 Part 2 的最终完成版，也是日常开发推荐写法。">Step 13 · useState 最终版</button>
+  </div>
+  <div class="step-desc"><strong id="step-title"></strong><br><span id="step-desc"></span></div>
+<div class="step-code" data-step="step-01-plain-variable">
+<div class="code-shell" data-tabs>
+  <div class="code-tabs">
+<button class="code-tab active" data-target="#panel-step-01-plain-variable-app-js">app.js</button>
+<button class="code-tab" data-target="#panel-step-01-plain-variable-index-html">index.html</button>
+<button class="code-tab" data-target="#panel-step-01-plain-variable-app-css">app.css</button>
+    <span class="spacer"></span>
+    <button class="copy-btn" type="button" data-copy="#panel-step-01-plain-variable-app-js">复制代码</button>
+  </div>
+<div class="code-panel active" id="panel-step-01-plain-variable-app-js">
+  <div class="code-block">
+    <div class="code-gutter">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98
+99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114
+115
+116
+117
+118
+119
+120
+121
+122
+123
+124
+125
+126
+127
+128
+129
+130
+131
+132
+133
+134
+135
+136
+137
+138
+139
+140
+141
+142
+143
+144
+145
+146
+147
+148
+149
+150
+151
+152
+153
+154
+155
+156
+157
+158
+159
+160
+161</div>
+    <pre><code class="language-javascript">// Step 01 - an ordinary variable cannot drive the UI
+// 电影数据源数组：每部电影包含标题、年份、类型、评分、是否看过、是否编辑推荐和唯一 id
+const movies = [
+  {
+    title: "Spirited Away",
+    year: 2001,
+    genre: "Animation",
+    rating: 5,
+    watched: true,
+    staffPick: true,
+    id: 1
+  },
+  {
+    title: "Inception",
+    year: 2010,
+    genre: "Sci-Fi",
+    rating: 4,
+    watched: true,
+    staffPick: false,
+    id: 2
+  },
+  {
+    title: "The Grand Budapest Hotel",
+    year: 2014,
+    genre: "Comedy",
+    rating: 4,
+    watched: false,
+    staffPick: true,
+    id: 3
+  },
+  {
+    title: "Coco",
+    year: 2017,
+    genre: "Animation",
+    rating: 5,
+    watched: false,
+    staffPick: false,
+    id: 4
+  }
+];
+
+// 页头组件：显示应用标题和电影总数
+const Header = (props) =&gt; {
+  return (
+    &lt;header&gt;
+      &lt;h1&gt;{ props.title }&lt;/h1&gt;
+      &lt;span className="stats"&gt;Movies: { props.totalMovies }&lt;/span&gt;
+    &lt;/header&gt;
+  );
+};
+
+// Returns two sibling spans with no wrapper element
+// 返回两个并列的 span 元素，不需要额外的包裹节点（React Fragment 空标签）
+const MovieDetails = (props) =&gt; {
+  return (
+    &lt;&gt;
+      {/* 电影标题；如果是编辑推荐，追加一个 STAFF PICK 徽章 */}
+      &lt;span className="movie-title"&gt;
+        { props.title }
+        { props.staffPick &amp;&amp; &lt;span className="badge badge-pick"&gt;STAFF PICK&lt;/span&gt; }
+      &lt;/span&gt;
+      {/* 年份与类型；根据 watched 真假显示 WATCHED 或 NOT YET 徽章 */}
+      &lt;span className="movie-meta"&gt;
+        { props.year } · { props.genre }
+        { props.watched
+            ? &lt;span className="badge badge-watched"&gt;WATCHED&lt;/span&gt;
+            : &lt;span className="badge badge-unwatched"&gt;NOT YET&lt;/span&gt; }
+      &lt;/span&gt;
+    &lt;/&gt;
+  );
+};
+
+// 单部电影条目组件：左侧为电影信息，右侧为评分组件
+const Movie = (props) =&gt; {
+  return (
+    &lt;div className="movie"&gt;
+      &lt;div className="movie-info"&gt;
+        &lt;MovieDetails
+          title={props.title}
+          year={props.year}
+          genre={props.genre}
+          watched={props.watched}
+          staffPick={props.staffPick}
+        /&gt;
+      &lt;/div&gt;
+
+      {/* 评分组件，显示该电影的评分 */}
+      &lt;Rating score={props.rating} /&gt;
+    &lt;/div&gt;
+  );
+};
+
+// An experiment: can an ordinary variable remember the score?
+// 一个实验：普通变量能记住评分吗？（答案：不能，渲染之后修改变量不会更新界面）
+const Rating = (props) =&gt; {
+  // 把 props.score 复制到普通局部变量 score
+  let score = props.score;
+
+  // 点击“+”时把 score 加 1，并在控制台打印；但界面不会更新
+  const increment = () =&gt; {
+    score = score + 1;
+    console.log('score is now', score);
+  };
+
+  return (
+    &lt;div className="rating"&gt;
+      &lt;button className="rating-action decrement"&gt; - &lt;/button&gt;
+      &lt;span className="rating-score"&gt;{ score }&lt;/span&gt;
+      &lt;button className="rating-action increment" onClick={increment}&gt; + &lt;/button&gt;
+    &lt;/div&gt;
+  );
+};
+
+// 页脚组件：显示已看电影数和电影总数
+const Footer = (props) =&gt; {
+  return (
+    &lt;footer&gt;
+      Watched { props.watchedCount } of { props.totalMovies } · Made with React
+    &lt;/footer&gt;
+  );
+};
+
+// 应用根组件（函数组件版本）：从 props.initialMovies 读取电影列表
+const App = (props) =&gt; {
+  // 统计已看过的电影数量
+  const watchedCount = props.initialMovies.filter(movie =&gt; movie.watched).length;
+
+  return (
+    &lt;div className="watchlist"&gt;
+      {/* 页头：标题 + 电影总数 */}
+      &lt;Header
+        title="Movie Night"
+        totalMovies={props.initialMovies.length}
+      /&gt;
+
+      {/* Movie list */}
+      {/* 电影列表：遍历数组，为每部电影渲染一个 Movie 组件；key 用电影 id 保证高效更新 */}
+      {props.initialMovies.map( movie =&gt;
+        &lt;Movie
+          title={movie.title}
+          year={movie.year}
+          genre={movie.genre}
+          rating={movie.rating}
+          watched={movie.watched}
+          staffPick={movie.staffPick}
+          key={movie.id.toString()}
+        /&gt;
+      )}
+
+      {/* 页脚：已看数量与总数 */}
+      &lt;Footer
+        watchedCount={watchedCount}
+        totalMovies={props.initialMovies.length}
+      /&gt;
+    &lt;/div&gt;
+  );
+};
+
+// 把 App 组件渲染到 id 为 root 的 DOM 节点，并传入电影初始数据
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(&lt;App initialMovies={movies} /&gt;);
+</code></pre>
+  </div>
+</div>
+<div class="code-panel" id="panel-step-01-plain-variable-index-html">
+  <div class="code-block">
+    <div class="code-gutter">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23</div>
+    <pre><code class="language-xml">&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+  &lt;head&gt;
+    &lt;meta charset="utf-8" /&gt;
+    &lt;title&gt;Movie Night&lt;/title&gt;
+    &lt;!-- 引入页面样式表 --&gt;
+    &lt;link rel="stylesheet" href="./app.css" /&gt;
+  &lt;/head&gt;
+
+  &lt;body&gt;
+    &lt;!-- React 组件渲染挂载的根节点 --&gt;
+    &lt;div id="root"&gt;&lt;/div&gt;
+
+    &lt;!-- 引入 React 核心库（开发版，便于调试） --&gt;
+    &lt;script crossorigin src="https://unpkg.com/react@18.3.1/umd/react.development.js"&gt;&lt;/script&gt;
+    &lt;!-- 引入 ReactDOM，负责把组件渲染到浏览器 DOM --&gt;
+    &lt;script crossorigin src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js"&gt;&lt;/script&gt;
+    &lt;!-- 引入 Babel，用于在浏览器中编译 JSX 语法 --&gt;
+    &lt;script src="https://unpkg.com/@babel/standalone@7/babel.min.js"&gt;&lt;/script&gt;
+    &lt;!-- 引入本项目的 React 代码（JSX 需经 Babel 编译后执行） --&gt;
+    &lt;script type="text/babel" src="./app.js"&gt;&lt;/script&gt;
+  &lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+  </div>
+</div>
+<div class="code-panel" id="panel-step-01-plain-variable-app-css">
+  <div class="code-block">
+    <div class="code-gutter">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98
+99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114
+115
+116
+117
+118
+119
+120
+121
+122
+123
+124
+125
+126
+127
+128
+129
+130
+131
+132
+133
+134
+135
+136
+137
+138
+139
+140
+141
+142
+143
+144
+145
+146
+147
+148
+149
+150
+151
+152
+153
+154
+155
+156
+157
+158
+159
+160
+161
+162
+163
+164
+165
+166
+167
+168
+169
+170
+171
+172
+173
+174
+175
+176
+177
+178
+179
+180
+181
+182
+183
+184
+185
+186
+187
+188
+189
+190
+191
+192
+193
+194
+195
+196
+197
+198
+199
+200
+201
+202
+203
+204
+205
+206
+207
+208
+209
+210
+211
+212
+213
+214
+215
+216
+217
+218</div>
+    <pre><code class="language-css">/* Movie Night — styles for the Basic React tutorial.
+   You do not need to edit this file. Every class name used in the
+   tutorial (watchlist, movie, rating, badge ...) is already styled here. */
+
+/* Movie Night —— React 基础教程所用样式。
+   你不需要修改此文件。教程中用到的每个类名
+   （watchlist、movie、rating、badge 等）都已在此定义样式。 */
+
+/* ELEMENT STYLES -------------------- */
+/* 元素基础样式 -------------------- */
+
+body {
+  margin: 0;
+  background: #eef1f6;
+  font-family: Arial, Helvetica, sans-serif;
+  color: #1d2433;
+}
+
+/* 页头：深蓝背景、金黄色下边框，标题与统计徽章横向排列 */
+header {
+  display: flex;
+  align-items: center;
+  padding: 18px 24px;
+  background: #1f3a5f;
+  color: #ffffff;
+  border-bottom: 4px solid #f2b134;
+}
+
+header h1 {
+  flex-grow: 1;
+  margin: 0;
+  font-size: 1.6em;
+  letter-spacing: 1px;
+}
+
+header p {
+  margin: 6px 0 0;
+  color: #c9d6ea;
+}
+
+/* COMPONENT STYLES -------------------- */
+/* 组件样式 -------------------- */
+
+/* 应用主体：固定宽度的白色卡片，圆角加投影 */
+.watchlist {
+  width: 720px;
+  margin: 50px auto;
+  background: #ffffff;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 14px rgba(31, 58, 95, 0.18);
+}
+
+/* 页头统计徽章：金黄色胶囊 */
+.stats {
+  padding: 6px 12px;
+  background: #f2b134;
+  color: #1f3a5f;
+  border-radius: 14px;
+  font-weight: bold;
+  font-size: 0.9em;
+}
+
+/* 单部电影条目：左信息右评分，底部浅色分隔线 */
+.movie {
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid #e3e7ee;
+}
+
+/* 最后一部电影去掉底部分隔线 */
+.movie:last-of-type {
+  border-bottom: none;
+}
+
+/* 电影信息区域：占据剩余宽度 */
+.movie-info {
+  flex-grow: 1;
+  padding: 14px 20px;
+}
+
+/* 电影标题文字 */
+.movie-title {
+  display: block;
+  font-size: 1.15em;
+  font-weight: bold;
+  color: #1f3a5f;
+}
+
+/* 年份与类型等元信息文字 */
+.movie-meta {
+  display: block;
+  margin-top: 4px;
+  font-size: 0.85em;
+  color: #6b7486;
+}
+
+/* 徽章通用样式：小圆角胶囊 */
+.badge {
+  display: inline-block;
+  margin-left: 8px;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 0.7em;
+  font-weight: bold;
+  vertical-align: middle;
+  letter-spacing: 0.5px;
+}
+
+/* 三种徽章配色：编辑推荐 / 已看 / 未看 */
+.badge-pick { background: #fff1d1; color: #8a5a00; }
+.badge-watched { background: #dcf0e7; color: #0d6a50; }
+.badge-unwatched { background: #eceff4; color: #6b7486; }
+
+/* 评分区域：固定宽度，与电影条目等高 */
+.rating {
+  display: flex;
+  width: 170px;
+  align-self: stretch;
+}
+
+/* 评分加减按钮 */
+.rating-action {
+  border: none;
+  width: 50px;
+  font-size: 1.2em;
+  font-weight: bold;
+  color: #8b93a3;
+  background: #e8ebf1;
+  cursor: pointer;
+}
+
+/* 悬停时按钮文字变白 */
+.rating-action:hover { color: #ffffff; }
+/* 减分悬停变红，加分悬停变绿 */
+.decrement:hover { background: #d9534f; }
+.increment:hover { background: #3c9d6b; }
+
+/* 评分分数：等宽字体居中显示 */
+.rating-score {
+  flex-grow: 1;
+  align-self: center;
+  text-align: center;
+  font-family: "Courier New", monospace;
+  font-size: 1.8em;
+  color: #1f3a5f;
+}
+
+/* 页脚：浅色背景居中文字 */
+footer {
+  padding: 12px 20px;
+  background: #f6f8fb;
+  color: #6b7486;
+  font-size: 0.85em;
+  text-align: center;
+}
+
+/* Used in Steps 02-05, before there are components */
+/* Step 02-05 使用：那时还没有组件，直接渲染的标题/页头需要限宽居中 */
+#root &gt; h1,
+#root &gt; header {
+  max-width: 720px;
+  margin: 40px auto 0;
+}
+
+/* PART 2 ADDITIONS (state) -------------------- */
+/* PART 2 新增样式（与状态相关） -------------------- */
+
+/* 页头中相邻统计徽章之间加间距 */
+header .stats + .stats {
+  margin-left: 8px;
+}
+
+/* 删除电影按钮：默认浅灰，悬停变红 */
+.remove-movie {
+  border: none;
+  background: none;
+  margin: 0 -8px 0 14px;
+  padding: 4px;
+  font-size: 0.9em;
+  color: #c3c9d4;
+  cursor: pointer;
+}
+
+.remove-movie:hover {
+  color: #d9534f;
+}
+
+/* 可点击徽章（button.badge）：去掉默认边框，悬停时加深蓝描边 */
+button.badge {
+  border: none;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+button.badge:hover {
+  outline: 2px solid #1f3a5f;
+}
+
+/* 评分按钮禁用状态：半透明且禁止指针 */
+.rating-action:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+/* 禁用状态下悬停也不改变颜色 */
+.rating-action:disabled:hover {
+  background: #e8ebf1;
+  color: #8b93a3;
+}
+
+/* 列表为空时的提示文字 */
+.empty {
+  margin: 0;
+  padding: 30px 20px;
+  text-align: center;
+  color: #6b7486;
+}
+</code></pre>
+  </div>
+</div>
+</div>
+</div>
+<div class="step-code" data-step="step-02-class-component">
+<div class="code-shell" data-tabs>
+  <div class="code-tabs">
+<button class="code-tab active" data-target="#panel-step-02-class-component-app-js">app.js</button>
+<button class="code-tab" data-target="#panel-step-02-class-component-index-html">index.html</button>
+<button class="code-tab" data-target="#panel-step-02-class-component-app-css">app.css</button>
+    <span class="spacer"></span>
+    <button class="copy-btn" type="button" data-copy="#panel-step-02-class-component-app-js">复制代码</button>
+  </div>
+<div class="code-panel active" id="panel-step-02-class-component-app-js">
+  <div class="code-block">
+    <div class="code-gutter">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98
+99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114
+115
+116
+117
+118
+119
+120
+121
+122
+123
+124
+125
+126
+127
+128
+129
+130
+131
+132
+133
+134
+135
+136
+137
+138
+139
+140
+141
+142
+143
+144
+145
+146
+147
+148
+149
+150
+151
+152
+153
+154
+155</div>
+    <pre><code class="language-javascript">// Step 02 - Rating as a class component
+// 电影数据源数组：每部电影包含标题、年份、类型、评分、是否看过、是否编辑推荐和唯一 id
+const movies = [
+  {
+    title: "Spirited Away",
+    year: 2001,
+    genre: "Animation",
+    rating: 5,
+    watched: true,
+    staffPick: true,
+    id: 1
+  },
+  {
+    title: "Inception",
+    year: 2010,
+    genre: "Sci-Fi",
+    rating: 4,
+    watched: true,
+    staffPick: false,
+    id: 2
+  },
+  {
+    title: "The Grand Budapest Hotel",
+    year: 2014,
+    genre: "Comedy",
+    rating: 4,
+    watched: false,
+    staffPick: true,
+    id: 3
+  },
+  {
+    title: "Coco",
+    year: 2017,
+    genre: "Animation",
+    rating: 5,
+    watched: false,
+    staffPick: false,
+    id: 4
+  }
+];
+
+// 页头组件：显示应用标题和电影总数
+const Header = (props) =&gt; {
+  return (
+    &lt;header&gt;
+      &lt;h1&gt;{ props.title }&lt;/h1&gt;
+      &lt;span className="stats"&gt;Movies: { props.totalMovies }&lt;/span&gt;
+    &lt;/header&gt;
+  );
+};
+
+// Returns two sibling spans with no wrapper element
+// 返回两个并列的 span 元素，不需要额外的包裹节点（React Fragment 空标签）
+const MovieDetails = (props) =&gt; {
+  return (
+    &lt;&gt;
+      {/* 电影标题；如果是编辑推荐，追加一个 STAFF PICK 徽章 */}
+      &lt;span className="movie-title"&gt;
+        { props.title }
+        { props.staffPick &amp;&amp; &lt;span className="badge badge-pick"&gt;STAFF PICK&lt;/span&gt; }
+      &lt;/span&gt;
+      {/* 年份与类型；根据 watched 真假显示 WATCHED 或 NOT YET 徽章 */}
+      &lt;span className="movie-meta"&gt;
+        { props.year } · { props.genre }
+        { props.watched
+            ? &lt;span className="badge badge-watched"&gt;WATCHED&lt;/span&gt;
+            : &lt;span className="badge badge-unwatched"&gt;NOT YET&lt;/span&gt; }
+      &lt;/span&gt;
+    &lt;/&gt;
+  );
+};
+
+// 单部电影条目组件：左侧为电影信息，右侧为评分组件
+const Movie = (props) =&gt; {
+  return (
+    &lt;div className="movie"&gt;
+      &lt;div className="movie-info"&gt;
+        &lt;MovieDetails
+          title={props.title}
+          year={props.year}
+          genre={props.genre}
+          watched={props.watched}
+          staffPick={props.staffPick}
+        /&gt;
+      &lt;/div&gt;
+
+      {/* 评分组件，显示该电影的评分 */}
+      &lt;Rating score={props.rating} /&gt;
+    &lt;/div&gt;
+  );
+};
+
+// Rating as a class component
+// 用类组件的方式重写 Rating 组件（还没有任何交互）
+class Rating extends React.Component {
+  render() {
+    return (
+      &lt;div className="rating"&gt;
+        &lt;button className="rating-action decrement"&gt; - &lt;/button&gt;
+        {/* 类组件中通过 this.props 访问 props */}
+        &lt;span className="rating-score"&gt;{ this.props.score }&lt;/span&gt;
+        &lt;button className="rating-action increment"&gt; + &lt;/button&gt;
+      &lt;/div&gt;
+    );
+  }
+}
+
+// 页脚组件：显示已看电影数和电影总数
+const Footer = (props) =&gt; {
+  return (
+    &lt;footer&gt;
+      Watched { props.watchedCount } of { props.totalMovies } · Made with React
+    &lt;/footer&gt;
+  );
+};
+
+// 应用根组件（函数组件版本）：从 props.initialMovies 读取电影列表
+const App = (props) =&gt; {
+  // 统计已看过的电影数量
+  const watchedCount = props.initialMovies.filter(movie =&gt; movie.watched).length;
+
+  return (
+    &lt;div className="watchlist"&gt;
+      {/* 页头：标题 + 电影总数 */}
+      &lt;Header
+        title="Movie Night"
+        totalMovies={props.initialMovies.length}
+      /&gt;
+
+      {/* Movie list */}
+      {/* 电影列表：遍历数组，为每部电影渲染一个 Movie 组件；key 用电影 id 保证高效更新 */}
+      {props.initialMovies.map( movie =&gt;
+        &lt;Movie
+          title={movie.title}
+          year={movie.year}
+          genre={movie.genre}
+          rating={movie.rating}
+          watched={movie.watched}
+          staffPick={movie.staffPick}
+          key={movie.id.toString()}
+        /&gt;
+      )}
+
+      {/* 页脚：已看数量与总数 */}
+      &lt;Footer
+        watchedCount={watchedCount}
+        totalMovies={props.initialMovies.length}
+      /&gt;
+    &lt;/div&gt;
+  );
+};
+
+// 把 App 组件渲染到 id 为 root 的 DOM 节点，并传入电影初始数据
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(&lt;App initialMovies={movies} /&gt;);
+</code></pre>
+  </div>
+</div>
+<div class="code-panel" id="panel-step-02-class-component-index-html">
+  <div class="code-block">
+    <div class="code-gutter">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23</div>
+    <pre><code class="language-xml">&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+  &lt;head&gt;
+    &lt;meta charset="utf-8" /&gt;
+    &lt;title&gt;Movie Night&lt;/title&gt;
+    &lt;!-- 引入页面样式表 --&gt;
+    &lt;link rel="stylesheet" href="./app.css" /&gt;
+  &lt;/head&gt;
+
+  &lt;body&gt;
+    &lt;!-- React 组件渲染挂载的根节点 --&gt;
+    &lt;div id="root"&gt;&lt;/div&gt;
+
+    &lt;!-- 引入 React 核心库（开发版，便于调试） --&gt;
+    &lt;script crossorigin src="https://unpkg.com/react@18.3.1/umd/react.development.js"&gt;&lt;/script&gt;
+    &lt;!-- 引入 ReactDOM，负责把组件渲染到浏览器 DOM --&gt;
+    &lt;script crossorigin src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js"&gt;&lt;/script&gt;
+    &lt;!-- 引入 Babel，用于在浏览器中编译 JSX 语法 --&gt;
+    &lt;script src="https://unpkg.com/@babel/standalone@7/babel.min.js"&gt;&lt;/script&gt;
+    &lt;!-- 引入本项目的 React 代码（JSX 需经 Babel 编译后执行） --&gt;
+    &lt;script type="text/babel" src="./app.js"&gt;&lt;/script&gt;
+  &lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+  </div>
+</div>
+<div class="code-panel" id="panel-step-02-class-component-app-css">
+  <div class="code-block">
+    <div class="code-gutter">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98
+99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114
+115
+116
+117
+118
+119
+120
+121
+122
+123
+124
+125
+126
+127
+128
+129
+130
+131
+132
+133
+134
+135
+136
+137
+138
+139
+140
+141
+142
+143
+144
+145
+146
+147
+148
+149
+150
+151
+152
+153
+154
+155
+156
+157
+158
+159
+160
+161
+162
+163
+164
+165
+166
+167
+168
+169
+170
+171
+172
+173
+174
+175
+176
+177
+178
+179
+180
+181
+182
+183
+184
+185
+186
+187
+188
+189
+190
+191
+192
+193
+194
+195
+196
+197
+198
+199
+200
+201
+202
+203
+204
+205
+206
+207
+208
+209
+210
+211
+212
+213
+214
+215
+216
+217
+218</div>
+    <pre><code class="language-css">/* Movie Night — styles for the Basic React tutorial.
+   You do not need to edit this file. Every class name used in the
+   tutorial (watchlist, movie, rating, badge ...) is already styled here. */
+
+/* Movie Night —— React 基础教程所用样式。
+   你不需要修改此文件。教程中用到的每个类名
+   （watchlist、movie、rating、badge 等）都已在此定义样式。 */
+
+/* ELEMENT STYLES -------------------- */
+/* 元素基础样式 -------------------- */
+
+body {
+  margin: 0;
+  background: #eef1f6;
+  font-family: Arial, Helvetica, sans-serif;
+  color: #1d2433;
+}
+
+/* 页头：深蓝背景、金黄色下边框，标题与统计徽章横向排列 */
+header {
+  display: flex;
+  align-items: center;
+  padding: 18px 24px;
+  background: #1f3a5f;
+  color: #ffffff;
+  border-bottom: 4px solid #f2b134;
+}
+
+header h1 {
+  flex-grow: 1;
+  margin: 0;
+  font-size: 1.6em;
+  letter-spacing: 1px;
+}
+
+header p {
+  margin: 6px 0 0;
+  color: #c9d6ea;
+}
+
+/* COMPONENT STYLES -------------------- */
+/* 组件样式 -------------------- */
+
+/* 应用主体：固定宽度的白色卡片，圆角加投影 */
+.watchlist {
+  width: 720px;
+  margin: 50px auto;
+  background: #ffffff;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 14px rgba(31, 58, 95, 0.18);
+}
+
+/* 页头统计徽章：金黄色胶囊 */
+.stats {
+  padding: 6px 12px;
+  background: #f2b134;
+  color: #1f3a5f;
+  border-radius: 14px;
+  font-weight: bold;
+  font-size: 0.9em;
+}
+
+/* 单部电影条目：左信息右评分，底部浅色分隔线 */
+.movie {
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid #e3e7ee;
+}
+
+/* 最后一部电影去掉底部分隔线 */
+.movie:last-of-type {
+  border-bottom: none;
+}
+
+/* 电影信息区域：占据剩余宽度 */
+.movie-info {
+  flex-grow: 1;
+  padding: 14px 20px;
+}
+
+/* 电影标题文字 */
+.movie-title {
+  display: block;
+  font-size: 1.15em;
+  font-weight: bold;
+  color: #1f3a5f;
+}
+
+/* 年份与类型等元信息文字 */
+.movie-meta {
+  display: block;
+  margin-top: 4px;
+  font-size: 0.85em;
+  color: #6b7486;
+}
+
+/* 徽章通用样式：小圆角胶囊 */
+.badge {
+  display: inline-block;
+  margin-left: 8px;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 0.7em;
+  font-weight: bold;
+  vertical-align: middle;
+  letter-spacing: 0.5px;
+}
+
+/* 三种徽章配色：编辑推荐 / 已看 / 未看 */
+.badge-pick { background: #fff1d1; color: #8a5a00; }
+.badge-watched { background: #dcf0e7; color: #0d6a50; }
+.badge-unwatched { background: #eceff4; color: #6b7486; }
+
+/* 评分区域：固定宽度，与电影条目等高 */
+.rating {
+  display: flex;
+  width: 170px;
+  align-self: stretch;
+}
+
+/* 评分加减按钮 */
+.rating-action {
+  border: none;
+  width: 50px;
+  font-size: 1.2em;
+  font-weight: bold;
+  color: #8b93a3;
+  background: #e8ebf1;
+  cursor: pointer;
+}
+
+/* 悬停时按钮文字变白 */
+.rating-action:hover { color: #ffffff; }
+/* 减分悬停变红，加分悬停变绿 */
+.decrement:hover { background: #d9534f; }
+.increment:hover { background: #3c9d6b; }
+
+/* 评分分数：等宽字体居中显示 */
+.rating-score {
+  flex-grow: 1;
+  align-self: center;
+  text-align: center;
+  font-family: "Courier New", monospace;
+  font-size: 1.8em;
+  color: #1f3a5f;
+}
+
+/* 页脚：浅色背景居中文字 */
+footer {
+  padding: 12px 20px;
+  background: #f6f8fb;
+  color: #6b7486;
+  font-size: 0.85em;
+  text-align: center;
+}
+
+/* Used in Steps 02-05, before there are components */
+/* Step 02-05 使用：那时还没有组件，直接渲染的标题/页头需要限宽居中 */
+#root &gt; h1,
+#root &gt; header {
+  max-width: 720px;
+  margin: 40px auto 0;
+}
+
+/* PART 2 ADDITIONS (state) -------------------- */
+/* PART 2 新增样式（与状态相关） -------------------- */
+
+/* 页头中相邻统计徽章之间加间距 */
+header .stats + .stats {
+  margin-left: 8px;
+}
+
+/* 删除电影按钮：默认浅灰，悬停变红 */
+.remove-movie {
+  border: none;
+  background: none;
+  margin: 0 -8px 0 14px;
+  padding: 4px;
+  font-size: 0.9em;
+  color: #c3c9d4;
+  cursor: pointer;
+}
+
+.remove-movie:hover {
+  color: #d9534f;
+}
+
+/* 可点击徽章（button.badge）：去掉默认边框，悬停时加深蓝描边 */
+button.badge {
+  border: none;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+button.badge:hover {
+  outline: 2px solid #1f3a5f;
+}
+
+/* 评分按钮禁用状态：半透明且禁止指针 */
+.rating-action:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+/* 禁用状态下悬停也不改变颜色 */
+.rating-action:disabled:hover {
+  background: #e8ebf1;
+  color: #8b93a3;
+}
+
+/* 列表为空时的提示文字 */
+.empty {
+  margin: 0;
+  padding: 30px 20px;
+  text-align: center;
+  color: #6b7486;
+}
+</code></pre>
+  </div>
+</div>
+</div>
+</div>
+<div class="step-code" data-step="step-03-stateful-component">
+<div class="code-shell" data-tabs>
+  <div class="code-tabs">
+<button class="code-tab active" data-target="#panel-step-03-stateful-component-app-js">app.js</button>
+<button class="code-tab" data-target="#panel-step-03-stateful-component-index-html">index.html</button>
+<button class="code-tab" data-target="#panel-step-03-stateful-component-app-css">app.css</button>
+    <span class="spacer"></span>
+    <button class="copy-btn" type="button" data-copy="#panel-step-03-stateful-component-app-js">复制代码</button>
+  </div>
+<div class="code-panel active" id="panel-step-03-stateful-component-app-js">
+  <div class="code-block">
+    <div class="code-gutter">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98
+99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114
+115
+116
+117
+118
+119
+120
+121
+122
+123
+124
+125
+126
+127
+128
+129
+130
+131
+132
+133
+134
+135
+136
+137
+138
+139
+140
+141
+142
+143
+144
+145
+146
+147
+148
+149
+150
+151
+152
+153
+154
+155
+156
+157
+158
+159
+160</div>
+    <pre><code class="language-javascript">// Step 03 - Rating owns its score in state
+// 电影数据源数组：每部电影包含标题、年份、类型、评分、是否看过、是否编辑推荐和唯一 id
+const movies = [
+  {
+    title: "Spirited Away",
+    year: 2001,
+    genre: "Animation",
+    rating: 5,
+    watched: true,
+    staffPick: true,
+    id: 1
+  },
+  {
+    title: "Inception",
+    year: 2010,
+    genre: "Sci-Fi",
+    rating: 4,
+    watched: true,
+    staffPick: false,
+    id: 2
+  },
+  {
+    title: "The Grand Budapest Hotel",
+    year: 2014,
+    genre: "Comedy",
+    rating: 4,
+    watched: false,
+    staffPick: true,
+    id: 3
+  },
+  {
+    title: "Coco",
+    year: 2017,
+    genre: "Animation",
+    rating: 5,
+    watched: false,
+    staffPick: false,
+    id: 4
+  }
+];
+
+// 页头组件：显示应用标题和电影总数
+const Header = (props) =&gt; {
+  return (
+    &lt;header&gt;
+      &lt;h1&gt;{ props.title }&lt;/h1&gt;
+      &lt;span className="stats"&gt;Movies: { props.totalMovies }&lt;/span&gt;
+    &lt;/header&gt;
+  );
+};
+
+// Returns two sibling spans with no wrapper element
+// 返回两个并列的 span 元素，不需要额外的包裹节点（React Fragment 空标签）
+const MovieDetails = (props) =&gt; {
+  return (
+    &lt;&gt;
+      {/* 电影标题；如果是编辑推荐，追加一个 STAFF PICK 徽章 */}
+      &lt;span className="movie-title"&gt;
+        { props.title }
+        { props.staffPick &amp;&amp; &lt;span className="badge badge-pick"&gt;STAFF PICK&lt;/span&gt; }
+      &lt;/span&gt;
+      {/* 年份与类型；根据 watched 真假显示 WATCHED 或 NOT YET 徽章 */}
+      &lt;span className="movie-meta"&gt;
+        { props.year } · { props.genre }
+        { props.watched
+            ? &lt;span className="badge badge-watched"&gt;WATCHED&lt;/span&gt;
+            : &lt;span className="badge badge-unwatched"&gt;NOT YET&lt;/span&gt; }
+      &lt;/span&gt;
+    &lt;/&gt;
+  );
+};
+
+// 单部电影条目组件：左侧为电影信息，右侧为评分组件
+const Movie = (props) =&gt; {
+  return (
+    &lt;div className="movie"&gt;
+      &lt;div className="movie-info"&gt;
+        &lt;MovieDetails
+          title={props.title}
+          year={props.year}
+          genre={props.genre}
+          watched={props.watched}
+          staffPick={props.staffPick}
+        /&gt;
+      &lt;/div&gt;
+
+      {/* 评分组件，显示该电影的评分 */}
+      &lt;Rating score={props.rating} /&gt;
+    &lt;/div&gt;
+  );
+};
+
+// Rating owns its score in state
+// Rating 组件把评分保存在自己的 state 中（组件自己的记忆）
+class Rating extends React.Component {
+  // 初始化状态：用传入的 props.score 作为初始评分
+  state = {
+    score: this.props.score
+  };
+
+  render() {
+    return (
+      &lt;div className="rating"&gt;
+        &lt;button className="rating-action decrement"&gt; - &lt;/button&gt;
+        {/* 类组件中通过 this.state 访问状态，界面显示的是状态值 */}
+        &lt;span className="rating-score"&gt;{ this.state.score }&lt;/span&gt;
+        &lt;button className="rating-action increment"&gt; + &lt;/button&gt;
+      &lt;/div&gt;
+    );
+  }
+}
+
+// 页脚组件：显示已看电影数和电影总数
+const Footer = (props) =&gt; {
+  return (
+    &lt;footer&gt;
+      Watched { props.watchedCount } of { props.totalMovies } · Made with React
+    &lt;/footer&gt;
+  );
+};
+
+// 应用根组件（函数组件版本）：从 props.initialMovies 读取电影列表
+const App = (props) =&gt; {
+  // 统计已看过的电影数量
+  const watchedCount = props.initialMovies.filter(movie =&gt; movie.watched).length;
+
+  return (
+    &lt;div className="watchlist"&gt;
+      {/* 页头：标题 + 电影总数 */}
+      &lt;Header
+        title="Movie Night"
+        totalMovies={props.initialMovies.length}
+      /&gt;
+
+      {/* Movie list */}
+      {/* 电影列表：遍历数组，为每部电影渲染一个 Movie 组件；key 用电影 id 保证高效更新 */}
+      {props.initialMovies.map( movie =&gt;
+        &lt;Movie
+          title={movie.title}
+          year={movie.year}
+          genre={movie.genre}
+          rating={movie.rating}
+          watched={movie.watched}
+          staffPick={movie.staffPick}
+          key={movie.id.toString()}
+        /&gt;
+      )}
+
+      {/* 页脚：已看数量与总数 */}
+      &lt;Footer
+        watchedCount={watchedCount}
+        totalMovies={props.initialMovies.length}
+      /&gt;
+    &lt;/div&gt;
+  );
+};
+
+// 把 App 组件渲染到 id 为 root 的 DOM 节点，并传入电影初始数据
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(&lt;App initialMovies={movies} /&gt;);
+</code></pre>
+  </div>
+</div>
+<div class="code-panel" id="panel-step-03-stateful-component-index-html">
+  <div class="code-block">
+    <div class="code-gutter">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23</div>
+    <pre><code class="language-xml">&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+  &lt;head&gt;
+    &lt;meta charset="utf-8" /&gt;
+    &lt;title&gt;Movie Night&lt;/title&gt;
+    &lt;!-- 引入页面样式表 --&gt;
+    &lt;link rel="stylesheet" href="./app.css" /&gt;
+  &lt;/head&gt;
+
+  &lt;body&gt;
+    &lt;!-- React 组件渲染挂载的根节点 --&gt;
+    &lt;div id="root"&gt;&lt;/div&gt;
+
+    &lt;!-- 引入 React 核心库（开发版，便于调试） --&gt;
+    &lt;script crossorigin src="https://unpkg.com/react@18.3.1/umd/react.development.js"&gt;&lt;/script&gt;
+    &lt;!-- 引入 ReactDOM，负责把组件渲染到浏览器 DOM --&gt;
+    &lt;script crossorigin src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js"&gt;&lt;/script&gt;
+    &lt;!-- 引入 Babel，用于在浏览器中编译 JSX 语法 --&gt;
+    &lt;script src="https://unpkg.com/@babel/standalone@7/babel.min.js"&gt;&lt;/script&gt;
+    &lt;!-- 引入本项目的 React 代码（JSX 需经 Babel 编译后执行） --&gt;
+    &lt;script type="text/babel" src="./app.js"&gt;&lt;/script&gt;
+  &lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+  </div>
+</div>
+<div class="code-panel" id="panel-step-03-stateful-component-app-css">
+  <div class="code-block">
+    <div class="code-gutter">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98
+99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114
+115
+116
+117
+118
+119
+120
+121
+122
+123
+124
+125
+126
+127
+128
+129
+130
+131
+132
+133
+134
+135
+136
+137
+138
+139
+140
+141
+142
+143
+144
+145
+146
+147
+148
+149
+150
+151
+152
+153
+154
+155
+156
+157
+158
+159
+160
+161
+162
+163
+164
+165
+166
+167
+168
+169
+170
+171
+172
+173
+174
+175
+176
+177
+178
+179
+180
+181
+182
+183
+184
+185
+186
+187
+188
+189
+190
+191
+192
+193
+194
+195
+196
+197
+198
+199
+200
+201
+202
+203
+204
+205
+206
+207
+208
+209
+210
+211
+212
+213
+214
+215
+216
+217
+218</div>
+    <pre><code class="language-css">/* Movie Night — styles for the Basic React tutorial.
+   You do not need to edit this file. Every class name used in the
+   tutorial (watchlist, movie, rating, badge ...) is already styled here. */
+
+/* Movie Night —— React 基础教程所用样式。
+   你不需要修改此文件。教程中用到的每个类名
+   （watchlist、movie、rating、badge 等）都已在此定义样式。 */
+
+/* ELEMENT STYLES -------------------- */
+/* 元素基础样式 -------------------- */
+
+body {
+  margin: 0;
+  background: #eef1f6;
+  font-family: Arial, Helvetica, sans-serif;
+  color: #1d2433;
+}
+
+/* 页头：深蓝背景、金黄色下边框，标题与统计徽章横向排列 */
+header {
+  display: flex;
+  align-items: center;
+  padding: 18px 24px;
+  background: #1f3a5f;
+  color: #ffffff;
+  border-bottom: 4px solid #f2b134;
+}
+
+header h1 {
+  flex-grow: 1;
+  margin: 0;
+  font-size: 1.6em;
+  letter-spacing: 1px;
+}
+
+header p {
+  margin: 6px 0 0;
+  color: #c9d6ea;
+}
+
+/* COMPONENT STYLES -------------------- */
+/* 组件样式 -------------------- */
+
+/* 应用主体：固定宽度的白色卡片，圆角加投影 */
+.watchlist {
+  width: 720px;
+  margin: 50px auto;
+  background: #ffffff;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 14px rgba(31, 58, 95, 0.18);
+}
+
+/* 页头统计徽章：金黄色胶囊 */
+.stats {
+  padding: 6px 12px;
+  background: #f2b134;
+  color: #1f3a5f;
+  border-radius: 14px;
+  font-weight: bold;
+  font-size: 0.9em;
+}
+
+/* 单部电影条目：左信息右评分，底部浅色分隔线 */
+.movie {
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid #e3e7ee;
+}
+
+/* 最后一部电影去掉底部分隔线 */
+.movie:last-of-type {
+  border-bottom: none;
+}
+
+/* 电影信息区域：占据剩余宽度 */
+.movie-info {
+  flex-grow: 1;
+  padding: 14px 20px;
+}
+
+/* 电影标题文字 */
+.movie-title {
+  display: block;
+  font-size: 1.15em;
+  font-weight: bold;
+  color: #1f3a5f;
+}
+
+/* 年份与类型等元信息文字 */
+.movie-meta {
+  display: block;
+  margin-top: 4px;
+  font-size: 0.85em;
+  color: #6b7486;
+}
+
+/* 徽章通用样式：小圆角胶囊 */
+.badge {
+  display: inline-block;
+  margin-left: 8px;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 0.7em;
+  font-weight: bold;
+  vertical-align: middle;
+  letter-spacing: 0.5px;
+}
+
+/* 三种徽章配色：编辑推荐 / 已看 / 未看 */
+.badge-pick { background: #fff1d1; color: #8a5a00; }
+.badge-watched { background: #dcf0e7; color: #0d6a50; }
+.badge-unwatched { background: #eceff4; color: #6b7486; }
+
+/* 评分区域：固定宽度，与电影条目等高 */
+.rating {
+  display: flex;
+  width: 170px;
+  align-self: stretch;
+}
+
+/* 评分加减按钮 */
+.rating-action {
+  border: none;
+  width: 50px;
+  font-size: 1.2em;
+  font-weight: bold;
+  color: #8b93a3;
+  background: #e8ebf1;
+  cursor: pointer;
+}
+
+/* 悬停时按钮文字变白 */
+.rating-action:hover { color: #ffffff; }
+/* 减分悬停变红，加分悬停变绿 */
+.decrement:hover { background: #d9534f; }
+.increment:hover { background: #3c9d6b; }
+
+/* 评分分数：等宽字体居中显示 */
+.rating-score {
+  flex-grow: 1;
+  align-self: center;
+  text-align: center;
+  font-family: "Courier New", monospace;
+  font-size: 1.8em;
+  color: #1f3a5f;
+}
+
+/* 页脚：浅色背景居中文字 */
+footer {
+  padding: 12px 20px;
+  background: #f6f8fb;
+  color: #6b7486;
+  font-size: 0.85em;
+  text-align: center;
+}
+
+/* Used in Steps 02-05, before there are components */
+/* Step 02-05 使用：那时还没有组件，直接渲染的标题/页头需要限宽居中 */
+#root &gt; h1,
+#root &gt; header {
+  max-width: 720px;
+  margin: 40px auto 0;
+}
+
+/* PART 2 ADDITIONS (state) -------------------- */
+/* PART 2 新增样式（与状态相关） -------------------- */
+
+/* 页头中相邻统计徽章之间加间距 */
+header .stats + .stats {
+  margin-left: 8px;
+}
+
+/* 删除电影按钮：默认浅灰，悬停变红 */
+.remove-movie {
+  border: none;
+  background: none;
+  margin: 0 -8px 0 14px;
+  padding: 4px;
+  font-size: 0.9em;
+  color: #c3c9d4;
+  cursor: pointer;
+}
+
+.remove-movie:hover {
+  color: #d9534f;
+}
+
+/* 可点击徽章（button.badge）：去掉默认边框，悬停时加深蓝描边 */
+button.badge {
+  border: none;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+button.badge:hover {
+  outline: 2px solid #1f3a5f;
+}
+
+/* 评分按钮禁用状态：半透明且禁止指针 */
+.rating-action:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+/* 禁用状态下悬停也不改变颜色 */
+.rating-action:disabled:hover {
+  background: #e8ebf1;
+  color: #8b93a3;
+}
+
+/* 列表为空时的提示文字 */
+.empty {
+  margin: 0;
+  padding: 30px 20px;
+  text-align: center;
+  color: #6b7486;
+}
+</code></pre>
+  </div>
+</div>
+</div>
+</div>
+<div class="step-code" data-step="step-04-handling-events">
+<div class="code-shell" data-tabs>
+  <div class="code-tabs">
+<button class="code-tab active" data-target="#panel-step-04-handling-events-app-js">app.js</button>
+<button class="code-tab" data-target="#panel-step-04-handling-events-index-html">index.html</button>
+<button class="code-tab" data-target="#panel-step-04-handling-events-app-css">app.css</button>
+    <span class="spacer"></span>
+    <button class="copy-btn" type="button" data-copy="#panel-step-04-handling-events-app-js">复制代码</button>
+  </div>
+<div class="code-panel active" id="panel-step-04-handling-events-app-js">
+  <div class="code-block">
+    <div class="code-gutter">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98
+99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114
+115
+116
+117
+118
+119
+120
+121
+122
+123
+124
+125
+126
+127
+128
+129
+130
+131
+132
+133
+134
+135
+136
+137
+138
+139
+140
+141
+142
+143
+144
+145
+146
+147
+148
+149
+150
+151
+152
+153
+154
+155
+156
+157
+158
+159
+160
+161
+162
+163
+164</div>
+    <pre><code class="language-javascript">// Step 04 - handling a click
+// 电影数据源数组：每部电影包含标题、年份、类型、评分、是否看过、是否编辑推荐和唯一 id
+const movies = [
+  {
+    title: "Spirited Away",
+    year: 2001,
+    genre: "Animation",
+    rating: 5,
+    watched: true,
+    staffPick: true,
+    id: 1
+  },
+  {
+    title: "Inception",
+    year: 2010,
+    genre: "Sci-Fi",
+    rating: 4,
+    watched: true,
+    staffPick: false,
+    id: 2
+  },
+  {
+    title: "The Grand Budapest Hotel",
+    year: 2014,
+    genre: "Comedy",
+    rating: 4,
+    watched: false,
+    staffPick: true,
+    id: 3
+  },
+  {
+    title: "Coco",
+    year: 2017,
+    genre: "Animation",
+    rating: 5,
+    watched: false,
+    staffPick: false,
+    id: 4
+  }
+];
+
+// 页头组件：显示应用标题和电影总数
+const Header = (props) =&gt; {
+  return (
+    &lt;header&gt;
+      &lt;h1&gt;{ props.title }&lt;/h1&gt;
+      &lt;span className="stats"&gt;Movies: { props.totalMovies }&lt;/span&gt;
+    &lt;/header&gt;
+  );
+};
+
+// Returns two sibling spans with no wrapper element
+// 返回两个并列的 span 元素，不需要额外的包裹节点（React Fragment 空标签）
+const MovieDetails = (props) =&gt; {
+  return (
+    &lt;&gt;
+      {/* 电影标题；如果是编辑推荐，追加一个 STAFF PICK 徽章 */}
+      &lt;span className="movie-title"&gt;
+        { props.title }
+        { props.staffPick &amp;&amp; &lt;span className="badge badge-pick"&gt;STAFF PICK&lt;/span&gt; }
+      &lt;/span&gt;
+      {/* 年份与类型；根据 watched 真假显示 WATCHED 或 NOT YET 徽章 */}
+      &lt;span className="movie-meta"&gt;
+        { props.year } · { props.genre }
+        { props.watched
+            ? &lt;span className="badge badge-watched"&gt;WATCHED&lt;/span&gt;
+            : &lt;span className="badge badge-unwatched"&gt;NOT YET&lt;/span&gt; }
+      &lt;/span&gt;
+    &lt;/&gt;
+  );
+};
+
+// 单部电影条目组件：左侧为电影信息，右侧为评分组件
+const Movie = (props) =&gt; {
+  return (
+    &lt;div className="movie"&gt;
+      &lt;div className="movie-info"&gt;
+        &lt;MovieDetails
+          title={props.title}
+          year={props.year}
+          genre={props.genre}
+          watched={props.watched}
+          staffPick={props.staffPick}
+        /&gt;
+      &lt;/div&gt;
+
+      {/* 评分组件，显示该电影的评分 */}
+      &lt;Rating score={props.rating} /&gt;
+    &lt;/div&gt;
+  );
+};
+
+// handling a click
+// 处理一次点击事件：给“+”按钮绑定 onClick 事件处理器
+class Rating extends React.Component {
+  state = {
+    score: this.props.score
+  };
+
+  // 点击“+”时触发的事件处理方法（暂时只在控制台打印）
+  incrementScore() {
+    console.log('Hi, from inside incrementScore!');
+  }
+
+  render() {
+    return (
+      &lt;div className="rating"&gt;
+        &lt;button className="rating-action decrement"&gt; - &lt;/button&gt;
+        &lt;span className="rating-score"&gt;{ this.state.score }&lt;/span&gt;
+        {/* 把 incrementScore 绑定到“+”按钮的点击事件 */}
+        &lt;button className="rating-action increment" onClick={this.incrementScore}&gt; + &lt;/button&gt;
+      &lt;/div&gt;
+    );
+  }
+}
+
+// 页脚组件：显示已看电影数和电影总数
+const Footer = (props) =&gt; {
+  return (
+    &lt;footer&gt;
+      Watched { props.watchedCount } of { props.totalMovies } · Made with React
+    &lt;/footer&gt;
+  );
+};
+
+// 应用根组件（函数组件版本）：从 props.initialMovies 读取电影列表
+const App = (props) =&gt; {
+  // 统计已看过的电影数量
+  const watchedCount = props.initialMovies.filter(movie =&gt; movie.watched).length;
+
+  return (
+    &lt;div className="watchlist"&gt;
+      {/* 页头：标题 + 电影总数 */}
+      &lt;Header
+        title="Movie Night"
+        totalMovies={props.initialMovies.length}
+      /&gt;
+
+      {/* Movie list */}
+      {/* 电影列表：遍历数组，为每部电影渲染一个 Movie 组件；key 用电影 id 保证高效更新 */}
+      {props.initialMovies.map( movie =&gt;
+        &lt;Movie
+          title={movie.title}
+          year={movie.year}
+          genre={movie.genre}
+          rating={movie.rating}
+          watched={movie.watched}
+          staffPick={movie.staffPick}
+          key={movie.id.toString()}
+        /&gt;
+      )}
+
+      {/* 页脚：已看数量与总数 */}
+      &lt;Footer
+        watchedCount={watchedCount}
+        totalMovies={props.initialMovies.length}
+      /&gt;
+    &lt;/div&gt;
+  );
+};
+
+// 把 App 组件渲染到 id 为 root 的 DOM 节点，并传入电影初始数据
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(&lt;App initialMovies={movies} /&gt;);
+</code></pre>
+  </div>
+</div>
+<div class="code-panel" id="panel-step-04-handling-events-index-html">
+  <div class="code-block">
+    <div class="code-gutter">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23</div>
+    <pre><code class="language-xml">&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+  &lt;head&gt;
+    &lt;meta charset="utf-8" /&gt;
+    &lt;title&gt;Movie Night&lt;/title&gt;
+    &lt;!-- 引入页面样式表 --&gt;
+    &lt;link rel="stylesheet" href="./app.css" /&gt;
+  &lt;/head&gt;
+
+  &lt;body&gt;
+    &lt;!-- React 组件渲染挂载的根节点 --&gt;
+    &lt;div id="root"&gt;&lt;/div&gt;
+
+    &lt;!-- 引入 React 核心库（开发版，便于调试） --&gt;
+    &lt;script crossorigin src="https://unpkg.com/react@18.3.1/umd/react.development.js"&gt;&lt;/script&gt;
+    &lt;!-- 引入 ReactDOM，负责把组件渲染到浏览器 DOM --&gt;
+    &lt;script crossorigin src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js"&gt;&lt;/script&gt;
+    &lt;!-- 引入 Babel，用于在浏览器中编译 JSX 语法 --&gt;
+    &lt;script src="https://unpkg.com/@babel/standalone@7/babel.min.js"&gt;&lt;/script&gt;
+    &lt;!-- 引入本项目的 React 代码（JSX 需经 Babel 编译后执行） --&gt;
+    &lt;script type="text/babel" src="./app.js"&gt;&lt;/script&gt;
+  &lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+  </div>
+</div>
+<div class="code-panel" id="panel-step-04-handling-events-app-css">
+  <div class="code-block">
+    <div class="code-gutter">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98
+99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114
+115
+116
+117
+118
+119
+120
+121
+122
+123
+124
+125
+126
+127
+128
+129
+130
+131
+132
+133
+134
+135
+136
+137
+138
+139
+140
+141
+142
+143
+144
+145
+146
+147
+148
+149
+150
+151
+152
+153
+154
+155
+156
+157
+158
+159
+160
+161
+162
+163
+164
+165
+166
+167
+168
+169
+170
+171
+172
+173
+174
+175
+176
+177
+178
+179
+180
+181
+182
+183
+184
+185
+186
+187
+188
+189
+190
+191
+192
+193
+194
+195
+196
+197
+198
+199
+200
+201
+202
+203
+204
+205
+206
+207
+208
+209
+210
+211
+212
+213
+214
+215
+216
+217
+218</div>
+    <pre><code class="language-css">/* Movie Night — styles for the Basic React tutorial.
+   You do not need to edit this file. Every class name used in the
+   tutorial (watchlist, movie, rating, badge ...) is already styled here. */
+
+/* Movie Night —— React 基础教程所用样式。
+   你不需要修改此文件。教程中用到的每个类名
+   （watchlist、movie、rating、badge 等）都已在此定义样式。 */
+
+/* ELEMENT STYLES -------------------- */
+/* 元素基础样式 -------------------- */
+
+body {
+  margin: 0;
+  background: #eef1f6;
+  font-family: Arial, Helvetica, sans-serif;
+  color: #1d2433;
+}
+
+/* 页头：深蓝背景、金黄色下边框，标题与统计徽章横向排列 */
+header {
+  display: flex;
+  align-items: center;
+  padding: 18px 24px;
+  background: #1f3a5f;
+  color: #ffffff;
+  border-bottom: 4px solid #f2b134;
+}
+
+header h1 {
+  flex-grow: 1;
+  margin: 0;
+  font-size: 1.6em;
+  letter-spacing: 1px;
+}
+
+header p {
+  margin: 6px 0 0;
+  color: #c9d6ea;
+}
+
+/* COMPONENT STYLES -------------------- */
+/* 组件样式 -------------------- */
+
+/* 应用主体：固定宽度的白色卡片，圆角加投影 */
+.watchlist {
+  width: 720px;
+  margin: 50px auto;
+  background: #ffffff;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 14px rgba(31, 58, 95, 0.18);
+}
+
+/* 页头统计徽章：金黄色胶囊 */
+.stats {
+  padding: 6px 12px;
+  background: #f2b134;
+  color: #1f3a5f;
+  border-radius: 14px;
+  font-weight: bold;
+  font-size: 0.9em;
+}
+
+/* 单部电影条目：左信息右评分，底部浅色分隔线 */
+.movie {
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid #e3e7ee;
+}
+
+/* 最后一部电影去掉底部分隔线 */
+.movie:last-of-type {
+  border-bottom: none;
+}
+
+/* 电影信息区域：占据剩余宽度 */
+.movie-info {
+  flex-grow: 1;
+  padding: 14px 20px;
+}
+
+/* 电影标题文字 */
+.movie-title {
+  display: block;
+  font-size: 1.15em;
+  font-weight: bold;
+  color: #1f3a5f;
+}
+
+/* 年份与类型等元信息文字 */
+.movie-meta {
+  display: block;
+  margin-top: 4px;
+  font-size: 0.85em;
+  color: #6b7486;
+}
+
+/* 徽章通用样式：小圆角胶囊 */
+.badge {
+  display: inline-block;
+  margin-left: 8px;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 0.7em;
+  font-weight: bold;
+  vertical-align: middle;
+  letter-spacing: 0.5px;
+}
+
+/* 三种徽章配色：编辑推荐 / 已看 / 未看 */
+.badge-pick { background: #fff1d1; color: #8a5a00; }
+.badge-watched { background: #dcf0e7; color: #0d6a50; }
+.badge-unwatched { background: #eceff4; color: #6b7486; }
+
+/* 评分区域：固定宽度，与电影条目等高 */
+.rating {
+  display: flex;
+  width: 170px;
+  align-self: stretch;
+}
+
+/* 评分加减按钮 */
+.rating-action {
+  border: none;
+  width: 50px;
+  font-size: 1.2em;
+  font-weight: bold;
+  color: #8b93a3;
+  background: #e8ebf1;
+  cursor: pointer;
+}
+
+/* 悬停时按钮文字变白 */
+.rating-action:hover { color: #ffffff; }
+/* 减分悬停变红，加分悬停变绿 */
+.decrement:hover { background: #d9534f; }
+.increment:hover { background: #3c9d6b; }
+
+/* 评分分数：等宽字体居中显示 */
+.rating-score {
+  flex-grow: 1;
+  align-self: center;
+  text-align: center;
+  font-family: "Courier New", monospace;
+  font-size: 1.8em;
+  color: #1f3a5f;
+}
+
+/* 页脚：浅色背景居中文字 */
+footer {
+  padding: 12px 20px;
+  background: #f6f8fb;
+  color: #6b7486;
+  font-size: 0.85em;
+  text-align: center;
+}
+
+/* Used in Steps 02-05, before there are components */
+/* Step 02-05 使用：那时还没有组件，直接渲染的标题/页头需要限宽居中 */
+#root &gt; h1,
+#root &gt; header {
+  max-width: 720px;
+  margin: 40px auto 0;
+}
+
+/* PART 2 ADDITIONS (state) -------------------- */
+/* PART 2 新增样式（与状态相关） -------------------- */
+
+/* 页头中相邻统计徽章之间加间距 */
+header .stats + .stats {
+  margin-left: 8px;
+}
+
+/* 删除电影按钮：默认浅灰，悬停变红 */
+.remove-movie {
+  border: none;
+  background: none;
+  margin: 0 -8px 0 14px;
+  padding: 4px;
+  font-size: 0.9em;
+  color: #c3c9d4;
+  cursor: pointer;
+}
+
+.remove-movie:hover {
+  color: #d9534f;
+}
+
+/* 可点击徽章（button.badge）：去掉默认边框，悬停时加深蓝描边 */
+button.badge {
+  border: none;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+button.badge:hover {
+  outline: 2px solid #1f3a5f;
+}
+
+/* 评分按钮禁用状态：半透明且禁止指针 */
+.rating-action:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+/* 禁用状态下悬停也不改变颜色 */
+.rating-action:disabled:hover {
+  background: #e8ebf1;
+  color: #8b93a3;
+}
+
+/* 列表为空时的提示文字 */
+.empty {
+  margin: 0;
+  padding: 30px 20px;
+  text-align: center;
+  color: #6b7486;
+}
+</code></pre>
+  </div>
+</div>
+</div>
+</div>
+<div class="step-code" data-step="step-05-broken-this">
+<div class="code-shell" data-tabs>
+  <div class="code-tabs">
+<button class="code-tab active" data-target="#panel-step-05-broken-this-app-js">app.js</button>
+<button class="code-tab" data-target="#panel-step-05-broken-this-index-html">index.html</button>
+<button class="code-tab" data-target="#panel-step-05-broken-this-app-css">app.css</button>
+    <span class="spacer"></span>
+    <button class="copy-btn" type="button" data-copy="#panel-step-05-broken-this-app-js">复制代码</button>
+  </div>
+<div class="code-panel active" id="panel-step-05-broken-this-app-js">
+  <div class="code-block">
+    <div class="code-gutter">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98
+99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114
+115
+116
+117
+118
+119
+120
+121
+122
+123
+124
+125
+126
+127
+128
+129
+130
+131
+132
+133
+134
+135
+136
+137
+138
+139
+140
+141
+142
+143
+144
+145
+146
+147
+148
+149
+150
+151
+152
+153
+154
+155
+156
+157
+158
+159
+160
+161
+162
+163
+164
+165
+166</div>
+    <pre><code class="language-javascript">// Step 05 - setState() inside a method: BROKEN on purpose ('this' is undefined)
+// 电影数据源数组：每部电影包含标题、年份、类型、评分、是否看过、是否编辑推荐和唯一 id
+const movies = [
+  {
+    title: "Spirited Away",
+    year: 2001,
+    genre: "Animation",
+    rating: 5,
+    watched: true,
+    staffPick: true,
+    id: 1
+  },
+  {
+    title: "Inception",
+    year: 2010,
+    genre: "Sci-Fi",
+    rating: 4,
+    watched: true,
+    staffPick: false,
+    id: 2
+  },
+  {
+    title: "The Grand Budapest Hotel",
+    year: 2014,
+    genre: "Comedy",
+    rating: 4,
+    watched: false,
+    staffPick: true,
+    id: 3
+  },
+  {
+    title: "Coco",
+    year: 2017,
+    genre: "Animation",
+    rating: 5,
+    watched: false,
+    staffPick: false,
+    id: 4
+  }
+];
+
+// 页头组件：显示应用标题和电影总数
+const Header = (props) =&gt; {
+  return (
+    &lt;header&gt;
+      &lt;h1&gt;{ props.title }&lt;/h1&gt;
+      &lt;span className="stats"&gt;Movies: { props.totalMovies }&lt;/span&gt;
+    &lt;/header&gt;
+  );
+};
+
+// Returns two sibling spans with no wrapper element
+// 返回两个并列的 span 元素，不需要额外的包裹节点（React Fragment 空标签）
+const MovieDetails = (props) =&gt; {
+  return (
+    &lt;&gt;
+      {/* 电影标题；如果是编辑推荐，追加一个 STAFF PICK 徽章 */}
+      &lt;span className="movie-title"&gt;
+        { props.title }
+        { props.staffPick &amp;&amp; &lt;span className="badge badge-pick"&gt;STAFF PICK&lt;/span&gt; }
+      &lt;/span&gt;
+      {/* 年份与类型；根据 watched 真假显示 WATCHED 或 NOT YET 徽章 */}
+      &lt;span className="movie-meta"&gt;
+        { props.year } · { props.genre }
+        { props.watched
+            ? &lt;span className="badge badge-watched"&gt;WATCHED&lt;/span&gt;
+            : &lt;span className="badge badge-unwatched"&gt;NOT YET&lt;/span&gt; }
+      &lt;/span&gt;
+    &lt;/&gt;
+  );
+};
+
+// 单部电影条目组件：左侧为电影信息，右侧为评分组件
+const Movie = (props) =&gt; {
+  return (
+    &lt;div className="movie"&gt;
+      &lt;div className="movie-info"&gt;
+        &lt;MovieDetails
+          title={props.title}
+          year={props.year}
+          genre={props.genre}
+          watched={props.watched}
+          staffPick={props.staffPick}
+        /&gt;
+      &lt;/div&gt;
+
+      {/* 评分组件，显示该电影的评分 */}
+      &lt;Rating score={props.rating} /&gt;
+    &lt;/div&gt;
+  );
+};
+
+// setState() inside a method: BROKEN on purpose ('this' is undefined)
+// 在方法里调用 setState()：故意写错（'this' 是 undefined，点击会报错）
+// 因为普通方法作为回调时 this 会丢失，这是为了演示问题所在
+class Rating extends React.Component {
+  state = {
+    score: this.props.score
+  };
+
+  // 这里 this 在点击时会变成 undefined，访问 this.state / this.setState 会报错
+  incrementScore() {
+    this.setState({
+      score: this.state.score + 1
+    });
+  }
+
+  render() {
+    return (
+      &lt;div className="rating"&gt;
+        &lt;button className="rating-action decrement"&gt; - &lt;/button&gt;
+        &lt;span className="rating-score"&gt;{ this.state.score }&lt;/span&gt;
+        &lt;button className="rating-action increment" onClick={this.incrementScore}&gt; + &lt;/button&gt;
+      &lt;/div&gt;
+    );
+  }
+}
+
+// 页脚组件：显示已看电影数和电影总数
+const Footer = (props) =&gt; {
+  return (
+    &lt;footer&gt;
+      Watched { props.watchedCount } of { props.totalMovies } · Made with React
+    &lt;/footer&gt;
+  );
+};
+
+// 应用根组件（函数组件版本）：从 props.initialMovies 读取电影列表
+const App = (props) =&gt; {
+  // 统计已看过的电影数量
+  const watchedCount = props.initialMovies.filter(movie =&gt; movie.watched).length;
+
+  return (
+    &lt;div className="watchlist"&gt;
+      {/* 页头：标题 + 电影总数 */}
+      &lt;Header
+        title="Movie Night"
+        totalMovies={props.initialMovies.length}
+      /&gt;
+
+      {/* Movie list */}
+      {/* 电影列表：遍历数组，为每部电影渲染一个 Movie 组件；key 用电影 id 保证高效更新 */}
+      {props.initialMovies.map( movie =&gt;
+        &lt;Movie
+          title={movie.title}
+          year={movie.year}
+          genre={movie.genre}
+          rating={movie.rating}
+          watched={movie.watched}
+          staffPick={movie.staffPick}
+          key={movie.id.toString()}
+        /&gt;
+      )}
+
+      {/* 页脚：已看数量与总数 */}
+      &lt;Footer
+        watchedCount={watchedCount}
+        totalMovies={props.initialMovies.length}
+      /&gt;
+    &lt;/div&gt;
+  );
+};
+
+// 把 App 组件渲染到 id 为 root 的 DOM 节点，并传入电影初始数据
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(&lt;App initialMovies={movies} /&gt;);
+</code></pre>
+  </div>
+</div>
+<div class="code-panel" id="panel-step-05-broken-this-index-html">
+  <div class="code-block">
+    <div class="code-gutter">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23</div>
+    <pre><code class="language-xml">&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+  &lt;head&gt;
+    &lt;meta charset="utf-8" /&gt;
+    &lt;title&gt;Movie Night&lt;/title&gt;
+    &lt;!-- 引入页面样式表 --&gt;
+    &lt;link rel="stylesheet" href="./app.css" /&gt;
+  &lt;/head&gt;
+
+  &lt;body&gt;
+    &lt;!-- React 组件渲染挂载的根节点 --&gt;
+    &lt;div id="root"&gt;&lt;/div&gt;
+
+    &lt;!-- 引入 React 核心库（开发版，便于调试） --&gt;
+    &lt;script crossorigin src="https://unpkg.com/react@18.3.1/umd/react.development.js"&gt;&lt;/script&gt;
+    &lt;!-- 引入 ReactDOM，负责把组件渲染到浏览器 DOM --&gt;
+    &lt;script crossorigin src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js"&gt;&lt;/script&gt;
+    &lt;!-- 引入 Babel，用于在浏览器中编译 JSX 语法 --&gt;
+    &lt;script src="https://unpkg.com/@babel/standalone@7/babel.min.js"&gt;&lt;/script&gt;
+    &lt;!-- 引入本项目的 React 代码（JSX 需经 Babel 编译后执行） --&gt;
+    &lt;script type="text/babel" src="./app.js"&gt;&lt;/script&gt;
+  &lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+  </div>
+</div>
+<div class="code-panel" id="panel-step-05-broken-this-app-css">
+  <div class="code-block">
+    <div class="code-gutter">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98
+99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114
+115
+116
+117
+118
+119
+120
+121
+122
+123
+124
+125
+126
+127
+128
+129
+130
+131
+132
+133
+134
+135
+136
+137
+138
+139
+140
+141
+142
+143
+144
+145
+146
+147
+148
+149
+150
+151
+152
+153
+154
+155
+156
+157
+158
+159
+160
+161
+162
+163
+164
+165
+166
+167
+168
+169
+170
+171
+172
+173
+174
+175
+176
+177
+178
+179
+180
+181
+182
+183
+184
+185
+186
+187
+188
+189
+190
+191
+192
+193
+194
+195
+196
+197
+198
+199
+200
+201
+202
+203
+204
+205
+206
+207
+208
+209
+210
+211
+212
+213
+214
+215
+216
+217
+218</div>
+    <pre><code class="language-css">/* Movie Night — styles for the Basic React tutorial.
+   You do not need to edit this file. Every class name used in the
+   tutorial (watchlist, movie, rating, badge ...) is already styled here. */
+
+/* Movie Night —— React 基础教程所用样式。
+   你不需要修改此文件。教程中用到的每个类名
+   （watchlist、movie、rating、badge 等）都已在此定义样式。 */
+
+/* ELEMENT STYLES -------------------- */
+/* 元素基础样式 -------------------- */
+
+body {
+  margin: 0;
+  background: #eef1f6;
+  font-family: Arial, Helvetica, sans-serif;
+  color: #1d2433;
+}
+
+/* 页头：深蓝背景、金黄色下边框，标题与统计徽章横向排列 */
+header {
+  display: flex;
+  align-items: center;
+  padding: 18px 24px;
+  background: #1f3a5f;
+  color: #ffffff;
+  border-bottom: 4px solid #f2b134;
+}
+
+header h1 {
+  flex-grow: 1;
+  margin: 0;
+  font-size: 1.6em;
+  letter-spacing: 1px;
+}
+
+header p {
+  margin: 6px 0 0;
+  color: #c9d6ea;
+}
+
+/* COMPONENT STYLES -------------------- */
+/* 组件样式 -------------------- */
+
+/* 应用主体：固定宽度的白色卡片，圆角加投影 */
+.watchlist {
+  width: 720px;
+  margin: 50px auto;
+  background: #ffffff;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 14px rgba(31, 58, 95, 0.18);
+}
+
+/* 页头统计徽章：金黄色胶囊 */
+.stats {
+  padding: 6px 12px;
+  background: #f2b134;
+  color: #1f3a5f;
+  border-radius: 14px;
+  font-weight: bold;
+  font-size: 0.9em;
+}
+
+/* 单部电影条目：左信息右评分，底部浅色分隔线 */
+.movie {
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid #e3e7ee;
+}
+
+/* 最后一部电影去掉底部分隔线 */
+.movie:last-of-type {
+  border-bottom: none;
+}
+
+/* 电影信息区域：占据剩余宽度 */
+.movie-info {
+  flex-grow: 1;
+  padding: 14px 20px;
+}
+
+/* 电影标题文字 */
+.movie-title {
+  display: block;
+  font-size: 1.15em;
+  font-weight: bold;
+  color: #1f3a5f;
+}
+
+/* 年份与类型等元信息文字 */
+.movie-meta {
+  display: block;
+  margin-top: 4px;
+  font-size: 0.85em;
+  color: #6b7486;
+}
+
+/* 徽章通用样式：小圆角胶囊 */
+.badge {
+  display: inline-block;
+  margin-left: 8px;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 0.7em;
+  font-weight: bold;
+  vertical-align: middle;
+  letter-spacing: 0.5px;
+}
+
+/* 三种徽章配色：编辑推荐 / 已看 / 未看 */
+.badge-pick { background: #fff1d1; color: #8a5a00; }
+.badge-watched { background: #dcf0e7; color: #0d6a50; }
+.badge-unwatched { background: #eceff4; color: #6b7486; }
+
+/* 评分区域：固定宽度，与电影条目等高 */
+.rating {
+  display: flex;
+  width: 170px;
+  align-self: stretch;
+}
+
+/* 评分加减按钮 */
+.rating-action {
+  border: none;
+  width: 50px;
+  font-size: 1.2em;
+  font-weight: bold;
+  color: #8b93a3;
+  background: #e8ebf1;
+  cursor: pointer;
+}
+
+/* 悬停时按钮文字变白 */
+.rating-action:hover { color: #ffffff; }
+/* 减分悬停变红，加分悬停变绿 */
+.decrement:hover { background: #d9534f; }
+.increment:hover { background: #3c9d6b; }
+
+/* 评分分数：等宽字体居中显示 */
+.rating-score {
+  flex-grow: 1;
+  align-self: center;
+  text-align: center;
+  font-family: "Courier New", monospace;
+  font-size: 1.8em;
+  color: #1f3a5f;
+}
+
+/* 页脚：浅色背景居中文字 */
+footer {
+  padding: 12px 20px;
+  background: #f6f8fb;
+  color: #6b7486;
+  font-size: 0.85em;
+  text-align: center;
+}
+
+/* Used in Steps 02-05, before there are components */
+/* Step 02-05 使用：那时还没有组件，直接渲染的标题/页头需要限宽居中 */
+#root &gt; h1,
+#root &gt; header {
+  max-width: 720px;
+  margin: 40px auto 0;
+}
+
+/* PART 2 ADDITIONS (state) -------------------- */
+/* PART 2 新增样式（与状态相关） -------------------- */
+
+/* 页头中相邻统计徽章之间加间距 */
+header .stats + .stats {
+  margin-left: 8px;
+}
+
+/* 删除电影按钮：默认浅灰，悬停变红 */
+.remove-movie {
+  border: none;
+  background: none;
+  margin: 0 -8px 0 14px;
+  padding: 4px;
+  font-size: 0.9em;
+  color: #c3c9d4;
+  cursor: pointer;
+}
+
+.remove-movie:hover {
+  color: #d9534f;
+}
+
+/* 可点击徽章（button.badge）：去掉默认边框，悬停时加深蓝描边 */
+button.badge {
+  border: none;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+button.badge:hover {
+  outline: 2px solid #1f3a5f;
+}
+
+/* 评分按钮禁用状态：半透明且禁止指针 */
+.rating-action:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+/* 禁用状态下悬停也不改变颜色 */
+.rating-action:disabled:hover {
+  background: #e8ebf1;
+  color: #8b93a3;
+}
+
+/* 列表为空时的提示文字 */
+.empty {
+  margin: 0;
+  padding: 30px 20px;
+  text-align: center;
+  color: #6b7486;
+}
+</code></pre>
+  </div>
+</div>
+</div>
+</div>
+<div class="step-code" data-step="step-06-bind-handlers">
+<div class="code-shell" data-tabs>
+  <div class="code-tabs">
+<button class="code-tab active" data-target="#panel-step-06-bind-handlers-app-js">app.js</button>
+<button class="code-tab" data-target="#panel-step-06-bind-handlers-index-html">index.html</button>
+<button class="code-tab" data-target="#panel-step-06-bind-handlers-app-css">app.css</button>
+    <span class="spacer"></span>
+    <button class="copy-btn" type="button" data-copy="#panel-step-06-bind-handlers-app-js">复制代码</button>
+  </div>
+<div class="code-panel active" id="panel-step-06-bind-handlers-app-js">
+  <div class="code-block">
+    <div class="code-gutter">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98
+99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114
+115
+116
+117
+118
+119
+120
+121
+122
+123
+124
+125
+126
+127
+128
+129
+130
+131
+132
+133
+134
+135
+136
+137
+138
+139
+140
+141
+142
+143
+144
+145
+146
+147
+148
+149
+150
+151
+152
+153
+154
+155
+156
+157
+158
+159
+160
+161
+162
+163
+164
+165
+166
+167
+168
+169
+170
+171
+172
+173
+174</div>
+    <pre><code class="language-javascript">// Step 06 - arrow-function class fields keep 'this'
+// 电影数据源数组：每部电影包含标题、年份、类型、评分、是否看过、是否编辑推荐和唯一 id
+const movies = [
+  {
+    title: "Spirited Away",
+    year: 2001,
+    genre: "Animation",
+    rating: 5,
+    watched: true,
+    staffPick: true,
+    id: 1
+  },
+  {
+    title: "Inception",
+    year: 2010,
+    genre: "Sci-Fi",
+    rating: 4,
+    watched: true,
+    staffPick: false,
+    id: 2
+  },
+  {
+    title: "The Grand Budapest Hotel",
+    year: 2014,
+    genre: "Comedy",
+    rating: 4,
+    watched: false,
+    staffPick: true,
+    id: 3
+  },
+  {
+    title: "Coco",
+    year: 2017,
+    genre: "Animation",
+    rating: 5,
+    watched: false,
+    staffPick: false,
+    id: 4
+  }
+];
+
+// 页头组件：显示应用标题和电影总数
+const Header = (props) =&gt; {
+  return (
+    &lt;header&gt;
+      &lt;h1&gt;{ props.title }&lt;/h1&gt;
+      &lt;span className="stats"&gt;Movies: { props.totalMovies }&lt;/span&gt;
+    &lt;/header&gt;
+  );
+};
+
+// Returns two sibling spans with no wrapper element
+// 返回两个并列的 span 元素，不需要额外的包裹节点（React Fragment 空标签）
+const MovieDetails = (props) =&gt; {
+  return (
+    &lt;&gt;
+      {/* 电影标题；如果是编辑推荐，追加一个 STAFF PICK 徽章 */}
+      &lt;span className="movie-title"&gt;
+        { props.title }
+        { props.staffPick &amp;&amp; &lt;span className="badge badge-pick"&gt;STAFF PICK&lt;/span&gt; }
+      &lt;/span&gt;
+      {/* 年份与类型；根据 watched 真假显示 WATCHED 或 NOT YET 徽章 */}
+      &lt;span className="movie-meta"&gt;
+        { props.year } · { props.genre }
+        { props.watched
+            ? &lt;span className="badge badge-watched"&gt;WATCHED&lt;/span&gt;
+            : &lt;span className="badge badge-unwatched"&gt;NOT YET&lt;/span&gt; }
+      &lt;/span&gt;
+    &lt;/&gt;
+  );
+};
+
+// 单部电影条目组件：左侧为电影信息，右侧为评分组件
+const Movie = (props) =&gt; {
+  return (
+    &lt;div className="movie"&gt;
+      &lt;div className="movie-info"&gt;
+        &lt;MovieDetails
+          title={props.title}
+          year={props.year}
+          genre={props.genre}
+          watched={props.watched}
+          staffPick={props.staffPick}
+        /&gt;
+      &lt;/div&gt;
+
+      {/* 评分组件，显示该电影的评分 */}
+      &lt;Rating score={props.rating} /&gt;
+    &lt;/div&gt;
+  );
+};
+
+// arrow-function class fields keep 'this'
+// 使用箭头函数类属性可以绑定 this，解决上一步 this 丢失的问题
+class Rating extends React.Component {
+  state = {
+    score: this.props.score
+  };
+
+  // 箭头函数写法：自动继承定义处的 this，点击时 this 指向组件实例
+  incrementScore = () =&gt; {
+    // 调用 setState 更新评分：当前评分 +1
+    this.setState({
+      score: this.state.score + 1
+    });
+  }
+
+  // 箭头函数写法：评分 -1
+  decrementScore = () =&gt; {
+    this.setState({
+      score: this.state.score - 1
+    });
+  }
+
+  render() {
+    return (
+      &lt;div className="rating"&gt;
+        {/* 两个按钮分别绑定加/减分方法 */}
+        &lt;button className="rating-action decrement" onClick={this.decrementScore}&gt; - &lt;/button&gt;
+        &lt;span className="rating-score"&gt;{ this.state.score }&lt;/span&gt;
+        &lt;button className="rating-action increment" onClick={this.incrementScore}&gt; + &lt;/button&gt;
+      &lt;/div&gt;
+    );
+  }
+}
+
+// 页脚组件：显示已看电影数和电影总数
+const Footer = (props) =&gt; {
+  return (
+    &lt;footer&gt;
+      Watched { props.watchedCount } of { props.totalMovies } · Made with React
+    &lt;/footer&gt;
+  );
+};
+
+// 应用根组件（函数组件版本）：从 props.initialMovies 读取电影列表
+const App = (props) =&gt; {
+  // 统计已看过的电影数量
+  const watchedCount = props.initialMovies.filter(movie =&gt; movie.watched).length;
+
+  return (
+    &lt;div className="watchlist"&gt;
+      {/* 页头：标题 + 电影总数 */}
+      &lt;Header
+        title="Movie Night"
+        totalMovies={props.initialMovies.length}
+      /&gt;
+
+      {/* Movie list */}
+      {/* 电影列表：遍历数组，为每部电影渲染一个 Movie 组件；key 用电影 id 保证高效更新 */}
+      {props.initialMovies.map( movie =&gt;
+        &lt;Movie
+          title={movie.title}
+          year={movie.year}
+          genre={movie.genre}
+          rating={movie.rating}
+          watched={movie.watched}
+          staffPick={movie.staffPick}
+          key={movie.id.toString()}
+        /&gt;
+      )}
+
+      {/* 页脚：已看数量与总数 */}
+      &lt;Footer
+        watchedCount={watchedCount}
+        totalMovies={props.initialMovies.length}
+      /&gt;
+    &lt;/div&gt;
+  );
+};
+
+// 把 App 组件渲染到 id 为 root 的 DOM 节点，并传入电影初始数据
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(&lt;App initialMovies={movies} /&gt;);
+</code></pre>
+  </div>
+</div>
+<div class="code-panel" id="panel-step-06-bind-handlers-index-html">
+  <div class="code-block">
+    <div class="code-gutter">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23</div>
+    <pre><code class="language-xml">&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+  &lt;head&gt;
+    &lt;meta charset="utf-8" /&gt;
+    &lt;title&gt;Movie Night&lt;/title&gt;
+    &lt;!-- 引入页面样式表 --&gt;
+    &lt;link rel="stylesheet" href="./app.css" /&gt;
+  &lt;/head&gt;
+
+  &lt;body&gt;
+    &lt;!-- React 组件渲染挂载的根节点 --&gt;
+    &lt;div id="root"&gt;&lt;/div&gt;
+
+    &lt;!-- 引入 React 核心库（开发版，便于调试） --&gt;
+    &lt;script crossorigin src="https://unpkg.com/react@18.3.1/umd/react.development.js"&gt;&lt;/script&gt;
+    &lt;!-- 引入 ReactDOM，负责把组件渲染到浏览器 DOM --&gt;
+    &lt;script crossorigin src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js"&gt;&lt;/script&gt;
+    &lt;!-- 引入 Babel，用于在浏览器中编译 JSX 语法 --&gt;
+    &lt;script src="https://unpkg.com/@babel/standalone@7/babel.min.js"&gt;&lt;/script&gt;
+    &lt;!-- 引入本项目的 React 代码（JSX 需经 Babel 编译后执行） --&gt;
+    &lt;script type="text/babel" src="./app.js"&gt;&lt;/script&gt;
+  &lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+  </div>
+</div>
+<div class="code-panel" id="panel-step-06-bind-handlers-app-css">
+  <div class="code-block">
+    <div class="code-gutter">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98
+99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114
+115
+116
+117
+118
+119
+120
+121
+122
+123
+124
+125
+126
+127
+128
+129
+130
+131
+132
+133
+134
+135
+136
+137
+138
+139
+140
+141
+142
+143
+144
+145
+146
+147
+148
+149
+150
+151
+152
+153
+154
+155
+156
+157
+158
+159
+160
+161
+162
+163
+164
+165
+166
+167
+168
+169
+170
+171
+172
+173
+174
+175
+176
+177
+178
+179
+180
+181
+182
+183
+184
+185
+186
+187
+188
+189
+190
+191
+192
+193
+194
+195
+196
+197
+198
+199
+200
+201
+202
+203
+204
+205
+206
+207
+208
+209
+210
+211
+212
+213
+214
+215
+216
+217
+218</div>
+    <pre><code class="language-css">/* Movie Night — styles for the Basic React tutorial.
+   You do not need to edit this file. Every class name used in the
+   tutorial (watchlist, movie, rating, badge ...) is already styled here. */
+
+/* Movie Night —— React 基础教程所用样式。
+   你不需要修改此文件。教程中用到的每个类名
+   （watchlist、movie、rating、badge 等）都已在此定义样式。 */
+
+/* ELEMENT STYLES -------------------- */
+/* 元素基础样式 -------------------- */
+
+body {
+  margin: 0;
+  background: #eef1f6;
+  font-family: Arial, Helvetica, sans-serif;
+  color: #1d2433;
+}
+
+/* 页头：深蓝背景、金黄色下边框，标题与统计徽章横向排列 */
+header {
+  display: flex;
+  align-items: center;
+  padding: 18px 24px;
+  background: #1f3a5f;
+  color: #ffffff;
+  border-bottom: 4px solid #f2b134;
+}
+
+header h1 {
+  flex-grow: 1;
+  margin: 0;
+  font-size: 1.6em;
+  letter-spacing: 1px;
+}
+
+header p {
+  margin: 6px 0 0;
+  color: #c9d6ea;
+}
+
+/* COMPONENT STYLES -------------------- */
+/* 组件样式 -------------------- */
+
+/* 应用主体：固定宽度的白色卡片，圆角加投影 */
+.watchlist {
+  width: 720px;
+  margin: 50px auto;
+  background: #ffffff;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 14px rgba(31, 58, 95, 0.18);
+}
+
+/* 页头统计徽章：金黄色胶囊 */
+.stats {
+  padding: 6px 12px;
+  background: #f2b134;
+  color: #1f3a5f;
+  border-radius: 14px;
+  font-weight: bold;
+  font-size: 0.9em;
+}
+
+/* 单部电影条目：左信息右评分，底部浅色分隔线 */
+.movie {
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid #e3e7ee;
+}
+
+/* 最后一部电影去掉底部分隔线 */
+.movie:last-of-type {
+  border-bottom: none;
+}
+
+/* 电影信息区域：占据剩余宽度 */
+.movie-info {
+  flex-grow: 1;
+  padding: 14px 20px;
+}
+
+/* 电影标题文字 */
+.movie-title {
+  display: block;
+  font-size: 1.15em;
+  font-weight: bold;
+  color: #1f3a5f;
+}
+
+/* 年份与类型等元信息文字 */
+.movie-meta {
+  display: block;
+  margin-top: 4px;
+  font-size: 0.85em;
+  color: #6b7486;
+}
+
+/* 徽章通用样式：小圆角胶囊 */
+.badge {
+  display: inline-block;
+  margin-left: 8px;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 0.7em;
+  font-weight: bold;
+  vertical-align: middle;
+  letter-spacing: 0.5px;
+}
+
+/* 三种徽章配色：编辑推荐 / 已看 / 未看 */
+.badge-pick { background: #fff1d1; color: #8a5a00; }
+.badge-watched { background: #dcf0e7; color: #0d6a50; }
+.badge-unwatched { background: #eceff4; color: #6b7486; }
+
+/* 评分区域：固定宽度，与电影条目等高 */
+.rating {
+  display: flex;
+  width: 170px;
+  align-self: stretch;
+}
+
+/* 评分加减按钮 */
+.rating-action {
+  border: none;
+  width: 50px;
+  font-size: 1.2em;
+  font-weight: bold;
+  color: #8b93a3;
+  background: #e8ebf1;
+  cursor: pointer;
+}
+
+/* 悬停时按钮文字变白 */
+.rating-action:hover { color: #ffffff; }
+/* 减分悬停变红，加分悬停变绿 */
+.decrement:hover { background: #d9534f; }
+.increment:hover { background: #3c9d6b; }
+
+/* 评分分数：等宽字体居中显示 */
+.rating-score {
+  flex-grow: 1;
+  align-self: center;
+  text-align: center;
+  font-family: "Courier New", monospace;
+  font-size: 1.8em;
+  color: #1f3a5f;
+}
+
+/* 页脚：浅色背景居中文字 */
+footer {
+  padding: 12px 20px;
+  background: #f6f8fb;
+  color: #6b7486;
+  font-size: 0.85em;
+  text-align: center;
+}
+
+/* Used in Steps 02-05, before there are components */
+/* Step 02-05 使用：那时还没有组件，直接渲染的标题/页头需要限宽居中 */
+#root &gt; h1,
+#root &gt; header {
+  max-width: 720px;
+  margin: 40px auto 0;
+}
+
+/* PART 2 ADDITIONS (state) -------------------- */
+/* PART 2 新增样式（与状态相关） -------------------- */
+
+/* 页头中相邻统计徽章之间加间距 */
+header .stats + .stats {
+  margin-left: 8px;
+}
+
+/* 删除电影按钮：默认浅灰，悬停变红 */
+.remove-movie {
+  border: none;
+  background: none;
+  margin: 0 -8px 0 14px;
+  padding: 4px;
+  font-size: 0.9em;
+  color: #c3c9d4;
+  cursor: pointer;
+}
+
+.remove-movie:hover {
+  color: #d9534f;
+}
+
+/* 可点击徽章（button.badge）：去掉默认边框，悬停时加深蓝描边 */
+button.badge {
+  border: none;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+button.badge:hover {
+  outline: 2px solid #1f3a5f;
+}
+
+/* 评分按钮禁用状态：半透明且禁止指针 */
+.rating-action:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+/* 禁用状态下悬停也不改变颜色 */
+.rating-action:disabled:hover {
+  background: #e8ebf1;
+  color: #8b93a3;
+}
+
+/* 列表为空时的提示文字 */
+.empty {
+  margin: 0;
+  padding: 30px 20px;
+  text-align: center;
+  color: #6b7486;
+}
+</code></pre>
+  </div>
+</div>
+</div>
+</div>
+<div class="step-code" data-step="step-07-previous-state">
+<div class="code-shell" data-tabs>
+  <div class="code-tabs">
+<button class="code-tab active" data-target="#panel-step-07-previous-state-app-js">app.js</button>
+<button class="code-tab" data-target="#panel-step-07-previous-state-index-html">index.html</button>
+<button class="code-tab" data-target="#panel-step-07-previous-state-app-css">app.css</button>
+    <span class="spacer"></span>
+    <button class="copy-btn" type="button" data-copy="#panel-step-07-previous-state-app-js">复制代码</button>
+  </div>
+<div class="code-panel active" id="panel-step-07-previous-state-app-js">
+  <div class="code-block">
+    <div class="code-gutter">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98
+99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114
+115
+116
+117
+118
+119
+120
+121
+122
+123
+124
+125
+126
+127
+128
+129
+130
+131
+132
+133
+134
+135
+136
+137
+138
+139
+140
+141
+142
+143
+144
+145
+146
+147
+148
+149
+150
+151
+152
+153
+154
+155
+156
+157
+158
+159
+160
+161
+162
+163
+164
+165
+166
+167
+168
+169
+170
+171
+172
+173
+174
+175
+176
+177
+178
+179
+180
+181
+182
+183</div>
+    <pre><code class="language-javascript">// Step 07 - updating state from the previous state
+// 电影数据源数组：每部电影包含标题、年份、类型、评分、是否看过、是否编辑推荐和唯一 id
+const movies = [
+  {
+    title: "Spirited Away",
+    year: 2001,
+    genre: "Animation",
+    rating: 5,
+    watched: true,
+    staffPick: true,
+    id: 1
+  },
+  {
+    title: "Inception",
+    year: 2010,
+    genre: "Sci-Fi",
+    rating: 4,
+    watched: true,
+    staffPick: false,
+    id: 2
+  },
+  {
+    title: "The Grand Budapest Hotel",
+    year: 2014,
+    genre: "Comedy",
+    rating: 4,
+    watched: false,
+    staffPick: true,
+    id: 3
+  },
+  {
+    title: "Coco",
+    year: 2017,
+    genre: "Animation",
+    rating: 5,
+    watched: false,
+    staffPick: false,
+    id: 4
+  }
+];
+
+// 页头组件：显示应用标题和电影总数
+const Header = (props) =&gt; {
+  return (
+    &lt;header&gt;
+      &lt;h1&gt;{ props.title }&lt;/h1&gt;
+      &lt;span className="stats"&gt;Movies: { props.totalMovies }&lt;/span&gt;
+    &lt;/header&gt;
+  );
+};
+
+// Returns two sibling spans with no wrapper element
+// 返回两个并列的 span 元素，不需要额外的包裹节点（React Fragment 空标签）
+const MovieDetails = (props) =&gt; {
+  return (
+    &lt;&gt;
+      {/* 电影标题；如果是编辑推荐，追加一个 STAFF PICK 徽章 */}
+      &lt;span className="movie-title"&gt;
+        { props.title }
+        { props.staffPick &amp;&amp; &lt;span className="badge badge-pick"&gt;STAFF PICK&lt;/span&gt; }
+      &lt;/span&gt;
+      {/* 年份与类型；根据 watched 真假显示 WATCHED 或 NOT YET 徽章 */}
+      &lt;span className="movie-meta"&gt;
+        { props.year } · { props.genre }
+        { props.watched
+            ? &lt;span className="badge badge-watched"&gt;WATCHED&lt;/span&gt;
+            : &lt;span className="badge badge-unwatched"&gt;NOT YET&lt;/span&gt; }
+      &lt;/span&gt;
+    &lt;/&gt;
+  );
+};
+
+// 单部电影条目组件：左侧为电影信息，右侧为评分组件
+const Movie = (props) =&gt; {
+  return (
+    &lt;div className="movie"&gt;
+      &lt;div className="movie-info"&gt;
+        &lt;MovieDetails
+          title={props.title}
+          year={props.year}
+          genre={props.genre}
+          watched={props.watched}
+          staffPick={props.staffPick}
+        /&gt;
+      &lt;/div&gt;
+
+      {/* 评分组件，显示该电影的评分 */}
+      &lt;Rating score={props.rating} /&gt;
+    &lt;/div&gt;
+  );
+};
+
+// updating state from the previous state
+// 基于前一个状态来更新状态：用函数式 setState 保证多次连续点击也准确
+// 同时用 Math.min / Math.max 把评分限制在 0~5，到边界时禁用按钮
+class Rating extends React.Component {
+  state = {
+    score: this.props.score
+  };
+
+  // 评分 +1，最高不超过 5；prevState 是前一个状态
+  incrementScore = () =&gt; {
+    this.setState( prevState =&gt; ({
+      score: Math.min(prevState.score + 1, 5)
+    }));
+  }
+
+  // 评分 -1，最低不低于 0
+  decrementScore = () =&gt; {
+    this.setState( prevState =&gt; ({
+      score: Math.max(prevState.score - 1, 0)
+    }));
+  }
+
+  render() {
+    return (
+      &lt;div className="rating"&gt;
+        {/* 评分为 0 时禁用“-”按钮 */}
+        &lt;button
+          className="rating-action decrement"
+          onClick={this.decrementScore}
+          disabled={this.state.score === 0}
+        &gt; - &lt;/button&gt;
+        &lt;span className="rating-score"&gt;{ this.state.score }&lt;/span&gt;
+        {/* 评分为 5 时禁用“+”按钮 */}
+        &lt;button
+          className="rating-action increment"
+          onClick={this.incrementScore}
+          disabled={this.state.score === 5}
+        &gt; + &lt;/button&gt;
+      &lt;/div&gt;
+    );
+  }
+}
+
+// 页脚组件：显示已看电影数和电影总数
+const Footer = (props) =&gt; {
+  return (
+    &lt;footer&gt;
+      Watched { props.watchedCount } of { props.totalMovies } · Made with React
+    &lt;/footer&gt;
+  );
+};
+
+// 应用根组件（函数组件版本）：从 props.initialMovies 读取电影列表
+const App = (props) =&gt; {
+  // 统计已看过的电影数量
+  const watchedCount = props.initialMovies.filter(movie =&gt; movie.watched).length;
+
+  return (
+    &lt;div className="watchlist"&gt;
+      {/* 页头：标题 + 电影总数 */}
+      &lt;Header
+        title="Movie Night"
+        totalMovies={props.initialMovies.length}
+      /&gt;
+
+      {/* Movie list */}
+      {/* 电影列表：遍历数组，为每部电影渲染一个 Movie 组件；key 用电影 id 保证高效更新 */}
+      {props.initialMovies.map( movie =&gt;
+        &lt;Movie
+          title={movie.title}
+          year={movie.year}
+          genre={movie.genre}
+          rating={movie.rating}
+          watched={movie.watched}
+          staffPick={movie.staffPick}
+          key={movie.id.toString()}
+        /&gt;
+      )}
+
+      {/* 页脚：已看数量与总数 */}
+      &lt;Footer
+        watchedCount={watchedCount}
+        totalMovies={props.initialMovies.length}
+      /&gt;
+    &lt;/div&gt;
+  );
+};
+
+// 把 App 组件渲染到 id 为 root 的 DOM 节点，并传入电影初始数据
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(&lt;App initialMovies={movies} /&gt;);
+</code></pre>
+  </div>
+</div>
+<div class="code-panel" id="panel-step-07-previous-state-index-html">
+  <div class="code-block">
+    <div class="code-gutter">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23</div>
+    <pre><code class="language-xml">&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+  &lt;head&gt;
+    &lt;meta charset="utf-8" /&gt;
+    &lt;title&gt;Movie Night&lt;/title&gt;
+    &lt;!-- 引入页面样式表 --&gt;
+    &lt;link rel="stylesheet" href="./app.css" /&gt;
+  &lt;/head&gt;
+
+  &lt;body&gt;
+    &lt;!-- React 组件渲染挂载的根节点 --&gt;
+    &lt;div id="root"&gt;&lt;/div&gt;
+
+    &lt;!-- 引入 React 核心库（开发版，便于调试） --&gt;
+    &lt;script crossorigin src="https://unpkg.com/react@18.3.1/umd/react.development.js"&gt;&lt;/script&gt;
+    &lt;!-- 引入 ReactDOM，负责把组件渲染到浏览器 DOM --&gt;
+    &lt;script crossorigin src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js"&gt;&lt;/script&gt;
+    &lt;!-- 引入 Babel，用于在浏览器中编译 JSX 语法 --&gt;
+    &lt;script src="https://unpkg.com/@babel/standalone@7/babel.min.js"&gt;&lt;/script&gt;
+    &lt;!-- 引入本项目的 React 代码（JSX 需经 Babel 编译后执行） --&gt;
+    &lt;script type="text/babel" src="./app.js"&gt;&lt;/script&gt;
+  &lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+  </div>
+</div>
+<div class="code-panel" id="panel-step-07-previous-state-app-css">
+  <div class="code-block">
+    <div class="code-gutter">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98
+99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114
+115
+116
+117
+118
+119
+120
+121
+122
+123
+124
+125
+126
+127
+128
+129
+130
+131
+132
+133
+134
+135
+136
+137
+138
+139
+140
+141
+142
+143
+144
+145
+146
+147
+148
+149
+150
+151
+152
+153
+154
+155
+156
+157
+158
+159
+160
+161
+162
+163
+164
+165
+166
+167
+168
+169
+170
+171
+172
+173
+174
+175
+176
+177
+178
+179
+180
+181
+182
+183
+184
+185
+186
+187
+188
+189
+190
+191
+192
+193
+194
+195
+196
+197
+198
+199
+200
+201
+202
+203
+204
+205
+206
+207
+208
+209
+210
+211
+212
+213
+214
+215
+216
+217
+218</div>
+    <pre><code class="language-css">/* Movie Night — styles for the Basic React tutorial.
+   You do not need to edit this file. Every class name used in the
+   tutorial (watchlist, movie, rating, badge ...) is already styled here. */
+
+/* Movie Night —— React 基础教程所用样式。
+   你不需要修改此文件。教程中用到的每个类名
+   （watchlist、movie、rating、badge 等）都已在此定义样式。 */
+
+/* ELEMENT STYLES -------------------- */
+/* 元素基础样式 -------------------- */
+
+body {
+  margin: 0;
+  background: #eef1f6;
+  font-family: Arial, Helvetica, sans-serif;
+  color: #1d2433;
+}
+
+/* 页头：深蓝背景、金黄色下边框，标题与统计徽章横向排列 */
+header {
+  display: flex;
+  align-items: center;
+  padding: 18px 24px;
+  background: #1f3a5f;
+  color: #ffffff;
+  border-bottom: 4px solid #f2b134;
+}
+
+header h1 {
+  flex-grow: 1;
+  margin: 0;
+  font-size: 1.6em;
+  letter-spacing: 1px;
+}
+
+header p {
+  margin: 6px 0 0;
+  color: #c9d6ea;
+}
+
+/* COMPONENT STYLES -------------------- */
+/* 组件样式 -------------------- */
+
+/* 应用主体：固定宽度的白色卡片，圆角加投影 */
+.watchlist {
+  width: 720px;
+  margin: 50px auto;
+  background: #ffffff;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 14px rgba(31, 58, 95, 0.18);
+}
+
+/* 页头统计徽章：金黄色胶囊 */
+.stats {
+  padding: 6px 12px;
+  background: #f2b134;
+  color: #1f3a5f;
+  border-radius: 14px;
+  font-weight: bold;
+  font-size: 0.9em;
+}
+
+/* 单部电影条目：左信息右评分，底部浅色分隔线 */
+.movie {
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid #e3e7ee;
+}
+
+/* 最后一部电影去掉底部分隔线 */
+.movie:last-of-type {
+  border-bottom: none;
+}
+
+/* 电影信息区域：占据剩余宽度 */
+.movie-info {
+  flex-grow: 1;
+  padding: 14px 20px;
+}
+
+/* 电影标题文字 */
+.movie-title {
+  display: block;
+  font-size: 1.15em;
+  font-weight: bold;
+  color: #1f3a5f;
+}
+
+/* 年份与类型等元信息文字 */
+.movie-meta {
+  display: block;
+  margin-top: 4px;
+  font-size: 0.85em;
+  color: #6b7486;
+}
+
+/* 徽章通用样式：小圆角胶囊 */
+.badge {
+  display: inline-block;
+  margin-left: 8px;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 0.7em;
+  font-weight: bold;
+  vertical-align: middle;
+  letter-spacing: 0.5px;
+}
+
+/* 三种徽章配色：编辑推荐 / 已看 / 未看 */
+.badge-pick { background: #fff1d1; color: #8a5a00; }
+.badge-watched { background: #dcf0e7; color: #0d6a50; }
+.badge-unwatched { background: #eceff4; color: #6b7486; }
+
+/* 评分区域：固定宽度，与电影条目等高 */
+.rating {
+  display: flex;
+  width: 170px;
+  align-self: stretch;
+}
+
+/* 评分加减按钮 */
+.rating-action {
+  border: none;
+  width: 50px;
+  font-size: 1.2em;
+  font-weight: bold;
+  color: #8b93a3;
+  background: #e8ebf1;
+  cursor: pointer;
+}
+
+/* 悬停时按钮文字变白 */
+.rating-action:hover { color: #ffffff; }
+/* 减分悬停变红，加分悬停变绿 */
+.decrement:hover { background: #d9534f; }
+.increment:hover { background: #3c9d6b; }
+
+/* 评分分数：等宽字体居中显示 */
+.rating-score {
+  flex-grow: 1;
+  align-self: center;
+  text-align: center;
+  font-family: "Courier New", monospace;
+  font-size: 1.8em;
+  color: #1f3a5f;
+}
+
+/* 页脚：浅色背景居中文字 */
+footer {
+  padding: 12px 20px;
+  background: #f6f8fb;
+  color: #6b7486;
+  font-size: 0.85em;
+  text-align: center;
+}
+
+/* Used in Steps 02-05, before there are components */
+/* Step 02-05 使用：那时还没有组件，直接渲染的标题/页头需要限宽居中 */
+#root &gt; h1,
+#root &gt; header {
+  max-width: 720px;
+  margin: 40px auto 0;
+}
+
+/* PART 2 ADDITIONS (state) -------------------- */
+/* PART 2 新增样式（与状态相关） -------------------- */
+
+/* 页头中相邻统计徽章之间加间距 */
+header .stats + .stats {
+  margin-left: 8px;
+}
+
+/* 删除电影按钮：默认浅灰，悬停变红 */
+.remove-movie {
+  border: none;
+  background: none;
+  margin: 0 -8px 0 14px;
+  padding: 4px;
+  font-size: 0.9em;
+  color: #c3c9d4;
+  cursor: pointer;
+}
+
+.remove-movie:hover {
+  color: #d9534f;
+}
+
+/* 可点击徽章（button.badge）：去掉默认边框，悬停时加深蓝描边 */
+button.badge {
+  border: none;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+button.badge:hover {
+  outline: 2px solid #1f3a5f;
+}
+
+/* 评分按钮禁用状态：半透明且禁止指针 */
+.rating-action:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+/* 禁用状态下悬停也不改变颜色 */
+.rating-action:disabled:hover {
+  background: #e8ebf1;
+  color: #8b93a3;
+}
+
+/* 列表为空时的提示文字 */
+.empty {
+  margin: 0;
+  padding: 30px 20px;
+  text-align: center;
+  color: #6b7486;
+}
+</code></pre>
+  </div>
+</div>
+</div>
+</div>
+<div class="step-code" data-step="step-09-application-state">
+<div class="code-shell" data-tabs>
+  <div class="code-tabs">
+<button class="code-tab active" data-target="#panel-step-09-application-state-app-js">app.js</button>
+<button class="code-tab" data-target="#panel-step-09-application-state-index-html">index.html</button>
+<button class="code-tab" data-target="#panel-step-09-application-state-app-css">app.css</button>
+    <span class="spacer"></span>
+    <button class="copy-btn" type="button" data-copy="#panel-step-09-application-state-app-js">复制代码</button>
+  </div>
+<div class="code-panel active" id="panel-step-09-application-state-app-js">
+  <div class="code-block">
+    <div class="code-gutter">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98
+99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114
+115
+116
+117
+118
+119
+120
+121
+122
+123
+124
+125
+126
+127
+128
+129
+130
+131
+132
+133
+134
+135
+136
+137
+138
+139
+140
+141
+142
+143
+144
+145
+146
+147
+148
+149
+150
+151
+152
+153
+154
+155
+156
+157
+158
+159
+160
+161
+162
+163
+164
+165
+166
+167
+168
+169
+170
+171
+172
+173
+174
+175
+176
+177
+178
+179
+180
+181
+182
+183
+184
+185
+186
+187
+188
+189
+190</div>
+    <pre><code class="language-javascript">// Step 09 - the movie list moves into App's state
+// 电影数据源数组：每部电影包含标题、年份、类型、评分、是否看过、是否编辑推荐和唯一 id
+const movies = [
+  {
+    title: "Spirited Away",
+    year: 2001,
+    genre: "Animation",
+    rating: 5,
+    watched: true,
+    staffPick: true,
+    id: 1
+  },
+  {
+    title: "Inception",
+    year: 2010,
+    genre: "Sci-Fi",
+    rating: 4,
+    watched: true,
+    staffPick: false,
+    id: 2
+  },
+  {
+    title: "The Grand Budapest Hotel",
+    year: 2014,
+    genre: "Comedy",
+    rating: 4,
+    watched: false,
+    staffPick: true,
+    id: 3
+  },
+  {
+    title: "Coco",
+    year: 2017,
+    genre: "Animation",
+    rating: 5,
+    watched: false,
+    staffPick: false,
+    id: 4
+  }
+];
+
+// 页头组件：显示应用标题和电影总数
+const Header = (props) =&gt; {
+  return (
+    &lt;header&gt;
+      &lt;h1&gt;{ props.title }&lt;/h1&gt;
+      &lt;span className="stats"&gt;Movies: { props.totalMovies }&lt;/span&gt;
+    &lt;/header&gt;
+  );
+};
+
+// Returns two sibling spans with no wrapper element
+// 返回两个并列的 span 元素，不需要额外的包裹节点（React Fragment 空标签）
+const MovieDetails = (props) =&gt; {
+  return (
+    &lt;&gt;
+      {/* 电影标题；如果是编辑推荐，追加一个 STAFF PICK 徽章 */}
+      &lt;span className="movie-title"&gt;
+        { props.title }
+        { props.staffPick &amp;&amp; &lt;span className="badge badge-pick"&gt;STAFF PICK&lt;/span&gt; }
+      &lt;/span&gt;
+      {/* 年份与类型；根据 watched 真假显示 WATCHED 或 NOT YET 徽章 */}
+      &lt;span className="movie-meta"&gt;
+        { props.year } · { props.genre }
+        { props.watched
+            ? &lt;span className="badge badge-watched"&gt;WATCHED&lt;/span&gt;
+            : &lt;span className="badge badge-unwatched"&gt;NOT YET&lt;/span&gt; }
+      &lt;/span&gt;
+    &lt;/&gt;
+  );
+};
+
+// 单部电影条目组件：左侧为电影信息，右侧为评分组件
+const Movie = (props) =&gt; {
+  return (
+    &lt;div className="movie"&gt;
+      &lt;div className="movie-info"&gt;
+        &lt;MovieDetails
+          title={props.title}
+          year={props.year}
+          genre={props.genre}
+          watched={props.watched}
+          staffPick={props.staffPick}
+        /&gt;
+      &lt;/div&gt;
+
+      {/* 评分组件，显示该电影的评分 */}
+      &lt;Rating score={props.rating} /&gt;
+    &lt;/div&gt;
+  );
+};
+
+// updating state from the previous state
+// 基于前一个状态来更新状态：用函数式 setState 保证多次连续点击也准确
+// 同时用 Math.min / Math.max 把评分限制在 0~5，到边界时禁用按钮
+class Rating extends React.Component {
+  state = {
+    score: this.props.score
+  };
+
+  // 评分 +1，最高不超过 5；prevState 是前一个状态
+  incrementScore = () =&gt; {
+    this.setState( prevState =&gt; ({
+      score: Math.min(prevState.score + 1, 5)
+    }));
+  }
+
+  // 评分 -1，最低不低于 0
+  decrementScore = () =&gt; {
+    this.setState( prevState =&gt; ({
+      score: Math.max(prevState.score - 1, 0)
+    }));
+  }
+
+  render() {
+    return (
+      &lt;div className="rating"&gt;
+        {/* 评分为 0 时禁用“-”按钮 */}
+        &lt;button
+          className="rating-action decrement"
+          onClick={this.decrementScore}
+          disabled={this.state.score === 0}
+        &gt; - &lt;/button&gt;
+        &lt;span className="rating-score"&gt;{ this.state.score }&lt;/span&gt;
+        {/* 评分为 5 时禁用“+”按钮 */}
+        &lt;button
+          className="rating-action increment"
+          onClick={this.incrementScore}
+          disabled={this.state.score === 5}
+        &gt; + &lt;/button&gt;
+      &lt;/div&gt;
+    );
+  }
+}
+
+// 页脚组件：显示已看电影数和电影总数
+const Footer = (props) =&gt; {
+  return (
+    &lt;footer&gt;
+      Watched { props.watchedCount } of { props.totalMovies } · Made with React
+    &lt;/footer&gt;
+  );
+};
+
+// The movie list moves into App's state
+// 电影列表移入 App 组件的 state 中管理（应用级状态的起点）
+class App extends React.Component {
+  // 用传入的初始电影数组初始化 state
+  state = {
+    movies: this.props.initialMovies
+  };
+
+  render() {
+    // 每次渲染都从 state 统计已看电影数
+    const watchedCount = this.state.movies.filter(movie =&gt; movie.watched).length;
+
+    return (
+      &lt;div className="watchlist"&gt;
+        {/* 页头数据全部来自 state */}
+        &lt;Header
+          title="Movie Night"
+          totalMovies={this.state.movies.length}
+        /&gt;
+
+        {/* Movie list */}
+        {/* 电影列表：遍历 state 中的电影数组渲染 Movie 组件 */}
+        {this.state.movies.map( movie =&gt;
+          &lt;Movie
+            title={movie.title}
+            year={movie.year}
+            genre={movie.genre}
+            rating={movie.rating}
+            watched={movie.watched}
+            staffPick={movie.staffPick}
+            key={movie.id.toString()}
+          /&gt;
+        )}
+
+        &lt;Footer
+          watchedCount={watchedCount}
+          totalMovies={this.state.movies.length}
+        /&gt;
+      &lt;/div&gt;
+    );
+  }
+}
+
+// 把 App 组件渲染到 id 为 root 的 DOM 节点，并传入电影初始数据
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(&lt;App initialMovies={movies} /&gt;);
+</code></pre>
+  </div>
+</div>
+<div class="code-panel" id="panel-step-09-application-state-index-html">
+  <div class="code-block">
+    <div class="code-gutter">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23</div>
+    <pre><code class="language-xml">&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+  &lt;head&gt;
+    &lt;meta charset="utf-8" /&gt;
+    &lt;title&gt;Movie Night&lt;/title&gt;
+    &lt;!-- 引入页面样式表 --&gt;
+    &lt;link rel="stylesheet" href="./app.css" /&gt;
+  &lt;/head&gt;
+
+  &lt;body&gt;
+    &lt;!-- React 组件渲染挂载的根节点 --&gt;
+    &lt;div id="root"&gt;&lt;/div&gt;
+
+    &lt;!-- 引入 React 核心库（开发版，便于调试） --&gt;
+    &lt;script crossorigin src="https://unpkg.com/react@18.3.1/umd/react.development.js"&gt;&lt;/script&gt;
+    &lt;!-- 引入 ReactDOM，负责把组件渲染到浏览器 DOM --&gt;
+    &lt;script crossorigin src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js"&gt;&lt;/script&gt;
+    &lt;!-- 引入 Babel，用于在浏览器中编译 JSX 语法 --&gt;
+    &lt;script src="https://unpkg.com/@babel/standalone@7/babel.min.js"&gt;&lt;/script&gt;
+    &lt;!-- 引入本项目的 React 代码（JSX 需经 Babel 编译后执行） --&gt;
+    &lt;script type="text/babel" src="./app.js"&gt;&lt;/script&gt;
+  &lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+  </div>
+</div>
+<div class="code-panel" id="panel-step-09-application-state-app-css">
+  <div class="code-block">
+    <div class="code-gutter">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98
+99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114
+115
+116
+117
+118
+119
+120
+121
+122
+123
+124
+125
+126
+127
+128
+129
+130
+131
+132
+133
+134
+135
+136
+137
+138
+139
+140
+141
+142
+143
+144
+145
+146
+147
+148
+149
+150
+151
+152
+153
+154
+155
+156
+157
+158
+159
+160
+161
+162
+163
+164
+165
+166
+167
+168
+169
+170
+171
+172
+173
+174
+175
+176
+177
+178
+179
+180
+181
+182
+183
+184
+185
+186
+187
+188
+189
+190
+191
+192
+193
+194
+195
+196
+197
+198
+199
+200
+201
+202
+203
+204
+205
+206
+207
+208
+209
+210
+211
+212
+213
+214
+215
+216
+217
+218</div>
+    <pre><code class="language-css">/* Movie Night — styles for the Basic React tutorial.
+   You do not need to edit this file. Every class name used in the
+   tutorial (watchlist, movie, rating, badge ...) is already styled here. */
+
+/* Movie Night —— React 基础教程所用样式。
+   你不需要修改此文件。教程中用到的每个类名
+   （watchlist、movie、rating、badge 等）都已在此定义样式。 */
+
+/* ELEMENT STYLES -------------------- */
+/* 元素基础样式 -------------------- */
+
+body {
+  margin: 0;
+  background: #eef1f6;
+  font-family: Arial, Helvetica, sans-serif;
+  color: #1d2433;
+}
+
+/* 页头：深蓝背景、金黄色下边框，标题与统计徽章横向排列 */
+header {
+  display: flex;
+  align-items: center;
+  padding: 18px 24px;
+  background: #1f3a5f;
+  color: #ffffff;
+  border-bottom: 4px solid #f2b134;
+}
+
+header h1 {
+  flex-grow: 1;
+  margin: 0;
+  font-size: 1.6em;
+  letter-spacing: 1px;
+}
+
+header p {
+  margin: 6px 0 0;
+  color: #c9d6ea;
+}
+
+/* COMPONENT STYLES -------------------- */
+/* 组件样式 -------------------- */
+
+/* 应用主体：固定宽度的白色卡片，圆角加投影 */
+.watchlist {
+  width: 720px;
+  margin: 50px auto;
+  background: #ffffff;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 14px rgba(31, 58, 95, 0.18);
+}
+
+/* 页头统计徽章：金黄色胶囊 */
+.stats {
+  padding: 6px 12px;
+  background: #f2b134;
+  color: #1f3a5f;
+  border-radius: 14px;
+  font-weight: bold;
+  font-size: 0.9em;
+}
+
+/* 单部电影条目：左信息右评分，底部浅色分隔线 */
+.movie {
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid #e3e7ee;
+}
+
+/* 最后一部电影去掉底部分隔线 */
+.movie:last-of-type {
+  border-bottom: none;
+}
+
+/* 电影信息区域：占据剩余宽度 */
+.movie-info {
+  flex-grow: 1;
+  padding: 14px 20px;
+}
+
+/* 电影标题文字 */
+.movie-title {
+  display: block;
+  font-size: 1.15em;
+  font-weight: bold;
+  color: #1f3a5f;
+}
+
+/* 年份与类型等元信息文字 */
+.movie-meta {
+  display: block;
+  margin-top: 4px;
+  font-size: 0.85em;
+  color: #6b7486;
+}
+
+/* 徽章通用样式：小圆角胶囊 */
+.badge {
+  display: inline-block;
+  margin-left: 8px;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 0.7em;
+  font-weight: bold;
+  vertical-align: middle;
+  letter-spacing: 0.5px;
+}
+
+/* 三种徽章配色：编辑推荐 / 已看 / 未看 */
+.badge-pick { background: #fff1d1; color: #8a5a00; }
+.badge-watched { background: #dcf0e7; color: #0d6a50; }
+.badge-unwatched { background: #eceff4; color: #6b7486; }
+
+/* 评分区域：固定宽度，与电影条目等高 */
+.rating {
+  display: flex;
+  width: 170px;
+  align-self: stretch;
+}
+
+/* 评分加减按钮 */
+.rating-action {
+  border: none;
+  width: 50px;
+  font-size: 1.2em;
+  font-weight: bold;
+  color: #8b93a3;
+  background: #e8ebf1;
+  cursor: pointer;
+}
+
+/* 悬停时按钮文字变白 */
+.rating-action:hover { color: #ffffff; }
+/* 减分悬停变红，加分悬停变绿 */
+.decrement:hover { background: #d9534f; }
+.increment:hover { background: #3c9d6b; }
+
+/* 评分分数：等宽字体居中显示 */
+.rating-score {
+  flex-grow: 1;
+  align-self: center;
+  text-align: center;
+  font-family: "Courier New", monospace;
+  font-size: 1.8em;
+  color: #1f3a5f;
+}
+
+/* 页脚：浅色背景居中文字 */
+footer {
+  padding: 12px 20px;
+  background: #f6f8fb;
+  color: #6b7486;
+  font-size: 0.85em;
+  text-align: center;
+}
+
+/* Used in Steps 02-05, before there are components */
+/* Step 02-05 使用：那时还没有组件，直接渲染的标题/页头需要限宽居中 */
+#root &gt; h1,
+#root &gt; header {
+  max-width: 720px;
+  margin: 40px auto 0;
+}
+
+/* PART 2 ADDITIONS (state) -------------------- */
+/* PART 2 新增样式（与状态相关） -------------------- */
+
+/* 页头中相邻统计徽章之间加间距 */
+header .stats + .stats {
+  margin-left: 8px;
+}
+
+/* 删除电影按钮：默认浅灰，悬停变红 */
+.remove-movie {
+  border: none;
+  background: none;
+  margin: 0 -8px 0 14px;
+  padding: 4px;
+  font-size: 0.9em;
+  color: #c3c9d4;
+  cursor: pointer;
+}
+
+.remove-movie:hover {
+  color: #d9534f;
+}
+
+/* 可点击徽章（button.badge）：去掉默认边框，悬停时加深蓝描边 */
+button.badge {
+  border: none;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+button.badge:hover {
+  outline: 2px solid #1f3a5f;
+}
+
+/* 评分按钮禁用状态：半透明且禁止指针 */
+.rating-action:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+/* 禁用状态下悬停也不改变颜色 */
+.rating-action:disabled:hover {
+  background: #e8ebf1;
+  color: #8b93a3;
+}
+
+/* 列表为空时的提示文字 */
+.empty {
+  margin: 0;
+  padding: 30px 20px;
+  text-align: center;
+  color: #6b7486;
+}
+</code></pre>
+  </div>
+</div>
+</div>
+</div>
+<div class="step-code" data-step="step-10-remove-items">
+<div class="code-shell" data-tabs>
+  <div class="code-tabs">
+<button class="code-tab active" data-target="#panel-step-10-remove-items-app-js">app.js</button>
+<button class="code-tab" data-target="#panel-step-10-remove-items-index-html">index.html</button>
+<button class="code-tab" data-target="#panel-step-10-remove-items-app-css">app.css</button>
+    <span class="spacer"></span>
+    <button class="copy-btn" type="button" data-copy="#panel-step-10-remove-items-app-js">复制代码</button>
+  </div>
+<div class="code-panel active" id="panel-step-10-remove-items-app-js">
+  <div class="code-block">
+    <div class="code-gutter">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98
+99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114
+115
+116
+117
+118
+119
+120
+121
+122
+123
+124
+125
+126
+127
+128
+129
+130
+131
+132
+133
+134
+135
+136
+137
+138
+139
+140
+141
+142
+143
+144
+145
+146
+147
+148
+149
+150
+151
+152
+153
+154
+155
+156
+157
+158
+159
+160
+161
+162
+163
+164
+165
+166
+167
+168
+169
+170
+171
+172
+173
+174
+175
+176
+177
+178
+179
+180
+181
+182
+183
+184
+185
+186
+187
+188
+189
+190
+191
+192
+193
+194
+195
+196
+197
+198
+199
+200
+201</div>
+    <pre><code class="language-javascript">// Step 10 - removing items from state
+// 电影数据源数组：每部电影包含标题、年份、类型、评分、是否看过、是否编辑推荐和唯一 id
+const movies = [
+  {
+    title: "Spirited Away",
+    year: 2001,
+    genre: "Animation",
+    rating: 5,
+    watched: true,
+    staffPick: true,
+    id: 1
+  },
+  {
+    title: "Inception",
+    year: 2010,
+    genre: "Sci-Fi",
+    rating: 4,
+    watched: true,
+    staffPick: false,
+    id: 2
+  },
+  {
+    title: "The Grand Budapest Hotel",
+    year: 2014,
+    genre: "Comedy",
+    rating: 4,
+    watched: false,
+    staffPick: true,
+    id: 3
+  },
+  {
+    title: "Coco",
+    year: 2017,
+    genre: "Animation",
+    rating: 5,
+    watched: false,
+    staffPick: false,
+    id: 4
+  }
+];
+
+// 页头组件：显示应用标题和电影总数
+const Header = (props) =&gt; {
+  return (
+    &lt;header&gt;
+      &lt;h1&gt;{ props.title }&lt;/h1&gt;
+      &lt;span className="stats"&gt;Movies: { props.totalMovies }&lt;/span&gt;
+    &lt;/header&gt;
+  );
+};
+
+// Returns two sibling spans with no wrapper element
+// 返回两个并列的 span 元素，不需要额外的包裹节点（React Fragment 空标签）
+const MovieDetails = (props) =&gt; {
+  return (
+    &lt;&gt;
+      {/* 电影标题；如果是编辑推荐，追加一个 STAFF PICK 徽章 */}
+      &lt;span className="movie-title"&gt;
+        { props.title }
+        { props.staffPick &amp;&amp; &lt;span className="badge badge-pick"&gt;STAFF PICK&lt;/span&gt; }
+      &lt;/span&gt;
+      {/* 年份与类型；根据 watched 真假显示 WATCHED 或 NOT YET 徽章 */}
+      &lt;span className="movie-meta"&gt;
+        { props.year } · { props.genre }
+        { props.watched
+            ? &lt;span className="badge badge-watched"&gt;WATCHED&lt;/span&gt;
+            : &lt;span className="badge badge-unwatched"&gt;NOT YET&lt;/span&gt; }
+      &lt;/span&gt;
+    &lt;/&gt;
+  );
+};
+
+// 单部电影条目组件：新增删除按钮，点击调用父组件的 removeMovie 删除该电影
+const Movie = (props) =&gt; {
+  return (
+    &lt;div className="movie"&gt;
+      &lt;button className="remove-movie" onClick={() =&gt; props.removeMovie(props.id)}&gt;✖&lt;/button&gt;
+      &lt;div className="movie-info"&gt;
+        &lt;MovieDetails
+          title={props.title}
+          year={props.year}
+          genre={props.genre}
+          watched={props.watched}
+          staffPick={props.staffPick}
+        /&gt;
+      &lt;/div&gt;
+
+      &lt;Rating score={props.rating} /&gt;
+    &lt;/div&gt;
+  );
+};
+
+// updating state from the previous state
+// 基于前一个状态来更新状态：用函数式 setState 保证多次连续点击也准确
+// 同时用 Math.min / Math.max 把评分限制在 0~5，到边界时禁用按钮
+class Rating extends React.Component {
+  state = {
+    score: this.props.score
+  };
+
+  // 评分 +1，最高不超过 5；prevState 是前一个状态
+  incrementScore = () =&gt; {
+    this.setState( prevState =&gt; ({
+      score: Math.min(prevState.score + 1, 5)
+    }));
+  }
+
+  // 评分 -1，最低不低于 0
+  decrementScore = () =&gt; {
+    this.setState( prevState =&gt; ({
+      score: Math.max(prevState.score - 1, 0)
+    }));
+  }
+
+  render() {
+    return (
+      &lt;div className="rating"&gt;
+        {/* 评分为 0 时禁用“-”按钮 */}
+        &lt;button
+          className="rating-action decrement"
+          onClick={this.decrementScore}
+          disabled={this.state.score === 0}
+        &gt; - &lt;/button&gt;
+        &lt;span className="rating-score"&gt;{ this.state.score }&lt;/span&gt;
+        {/* 评分为 5 时禁用“+”按钮 */}
+        &lt;button
+          className="rating-action increment"
+          onClick={this.incrementScore}
+          disabled={this.state.score === 5}
+        &gt; + &lt;/button&gt;
+      &lt;/div&gt;
+    );
+  }
+}
+
+// 页脚组件：显示已看电影数和电影总数
+const Footer = (props) =&gt; {
+  return (
+    &lt;footer&gt;
+      Watched { props.watchedCount } of { props.totalMovies } · Made with React
+    &lt;/footer&gt;
+  );
+};
+
+// removing items from state
+// 从 state 中删除条目：用 filter 生成不含该电影的新数组
+class App extends React.Component {
+  state = {
+    movies: this.props.initialMovies
+  };
+
+  // 删除指定 id 的电影：箭头函数保证 this 指向组件实例
+  handleRemoveMovie = (id) =&gt; {
+    // 用函数式 setState 基于前一个状态过滤，保证连续删除也正确
+    this.setState( prevState =&gt; ({
+      movies: prevState.movies.filter( movie =&gt; movie.id !== id )
+    }));
+  }
+
+  render() {
+    const watchedCount = this.state.movies.filter(movie =&gt; movie.watched).length;
+
+    return (
+      &lt;div className="watchlist"&gt;
+        &lt;Header
+          title="Movie Night"
+          totalMovies={this.state.movies.length}
+        /&gt;
+
+        {/* Movie list */}
+        {/* 列表为空时显示提示文字 */}
+        {this.state.movies.length === 0 &amp;&amp;
+          &lt;p className="empty"&gt;The watchlist is empty. Time to pick a movie!&lt;/p&gt;}
+
+        {/* 遍历渲染电影，并把 id 和删除函数传给每个 Movie */}
+        {this.state.movies.map( movie =&gt;
+          &lt;Movie
+            title={movie.title}
+            year={movie.year}
+            genre={movie.genre}
+            rating={movie.rating}
+            watched={movie.watched}
+            staffPick={movie.staffPick}
+            id={movie.id}
+            key={movie.id.toString()}
+            removeMovie={this.handleRemoveMovie}
+          /&gt;
+        )}
+
+        &lt;Footer
+          watchedCount={watchedCount}
+          totalMovies={this.state.movies.length}
+        /&gt;
+      &lt;/div&gt;
+    );
+  }
+}
+
+// 把 App 组件渲染到 id 为 root 的 DOM 节点，并传入电影初始数据
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(&lt;App initialMovies={movies} /&gt;);
+</code></pre>
+  </div>
+</div>
+<div class="code-panel" id="panel-step-10-remove-items-index-html">
+  <div class="code-block">
+    <div class="code-gutter">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23</div>
+    <pre><code class="language-xml">&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+  &lt;head&gt;
+    &lt;meta charset="utf-8" /&gt;
+    &lt;title&gt;Movie Night&lt;/title&gt;
+    &lt;!-- 引入页面样式表 --&gt;
+    &lt;link rel="stylesheet" href="./app.css" /&gt;
+  &lt;/head&gt;
+
+  &lt;body&gt;
+    &lt;!-- React 组件渲染挂载的根节点 --&gt;
+    &lt;div id="root"&gt;&lt;/div&gt;
+
+    &lt;!-- 引入 React 核心库（开发版，便于调试） --&gt;
+    &lt;script crossorigin src="https://unpkg.com/react@18.3.1/umd/react.development.js"&gt;&lt;/script&gt;
+    &lt;!-- 引入 ReactDOM，负责把组件渲染到浏览器 DOM --&gt;
+    &lt;script crossorigin src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js"&gt;&lt;/script&gt;
+    &lt;!-- 引入 Babel，用于在浏览器中编译 JSX 语法 --&gt;
+    &lt;script src="https://unpkg.com/@babel/standalone@7/babel.min.js"&gt;&lt;/script&gt;
+    &lt;!-- 引入本项目的 React 代码（JSX 需经 Babel 编译后执行） --&gt;
+    &lt;script type="text/babel" src="./app.js"&gt;&lt;/script&gt;
+  &lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+  </div>
+</div>
+<div class="code-panel" id="panel-step-10-remove-items-app-css">
+  <div class="code-block">
+    <div class="code-gutter">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98
+99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114
+115
+116
+117
+118
+119
+120
+121
+122
+123
+124
+125
+126
+127
+128
+129
+130
+131
+132
+133
+134
+135
+136
+137
+138
+139
+140
+141
+142
+143
+144
+145
+146
+147
+148
+149
+150
+151
+152
+153
+154
+155
+156
+157
+158
+159
+160
+161
+162
+163
+164
+165
+166
+167
+168
+169
+170
+171
+172
+173
+174
+175
+176
+177
+178
+179
+180
+181
+182
+183
+184
+185
+186
+187
+188
+189
+190
+191
+192
+193
+194
+195
+196
+197
+198
+199
+200
+201
+202
+203
+204
+205
+206
+207
+208
+209
+210
+211
+212
+213
+214
+215
+216
+217
+218</div>
+    <pre><code class="language-css">/* Movie Night — styles for the Basic React tutorial.
+   You do not need to edit this file. Every class name used in the
+   tutorial (watchlist, movie, rating, badge ...) is already styled here. */
+
+/* Movie Night —— React 基础教程所用样式。
+   你不需要修改此文件。教程中用到的每个类名
+   （watchlist、movie、rating、badge 等）都已在此定义样式。 */
+
+/* ELEMENT STYLES -------------------- */
+/* 元素基础样式 -------------------- */
+
+body {
+  margin: 0;
+  background: #eef1f6;
+  font-family: Arial, Helvetica, sans-serif;
+  color: #1d2433;
+}
+
+/* 页头：深蓝背景、金黄色下边框，标题与统计徽章横向排列 */
+header {
+  display: flex;
+  align-items: center;
+  padding: 18px 24px;
+  background: #1f3a5f;
+  color: #ffffff;
+  border-bottom: 4px solid #f2b134;
+}
+
+header h1 {
+  flex-grow: 1;
+  margin: 0;
+  font-size: 1.6em;
+  letter-spacing: 1px;
+}
+
+header p {
+  margin: 6px 0 0;
+  color: #c9d6ea;
+}
+
+/* COMPONENT STYLES -------------------- */
+/* 组件样式 -------------------- */
+
+/* 应用主体：固定宽度的白色卡片，圆角加投影 */
+.watchlist {
+  width: 720px;
+  margin: 50px auto;
+  background: #ffffff;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 14px rgba(31, 58, 95, 0.18);
+}
+
+/* 页头统计徽章：金黄色胶囊 */
+.stats {
+  padding: 6px 12px;
+  background: #f2b134;
+  color: #1f3a5f;
+  border-radius: 14px;
+  font-weight: bold;
+  font-size: 0.9em;
+}
+
+/* 单部电影条目：左信息右评分，底部浅色分隔线 */
+.movie {
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid #e3e7ee;
+}
+
+/* 最后一部电影去掉底部分隔线 */
+.movie:last-of-type {
+  border-bottom: none;
+}
+
+/* 电影信息区域：占据剩余宽度 */
+.movie-info {
+  flex-grow: 1;
+  padding: 14px 20px;
+}
+
+/* 电影标题文字 */
+.movie-title {
+  display: block;
+  font-size: 1.15em;
+  font-weight: bold;
+  color: #1f3a5f;
+}
+
+/* 年份与类型等元信息文字 */
+.movie-meta {
+  display: block;
+  margin-top: 4px;
+  font-size: 0.85em;
+  color: #6b7486;
+}
+
+/* 徽章通用样式：小圆角胶囊 */
+.badge {
+  display: inline-block;
+  margin-left: 8px;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 0.7em;
+  font-weight: bold;
+  vertical-align: middle;
+  letter-spacing: 0.5px;
+}
+
+/* 三种徽章配色：编辑推荐 / 已看 / 未看 */
+.badge-pick { background: #fff1d1; color: #8a5a00; }
+.badge-watched { background: #dcf0e7; color: #0d6a50; }
+.badge-unwatched { background: #eceff4; color: #6b7486; }
+
+/* 评分区域：固定宽度，与电影条目等高 */
+.rating {
+  display: flex;
+  width: 170px;
+  align-self: stretch;
+}
+
+/* 评分加减按钮 */
+.rating-action {
+  border: none;
+  width: 50px;
+  font-size: 1.2em;
+  font-weight: bold;
+  color: #8b93a3;
+  background: #e8ebf1;
+  cursor: pointer;
+}
+
+/* 悬停时按钮文字变白 */
+.rating-action:hover { color: #ffffff; }
+/* 减分悬停变红，加分悬停变绿 */
+.decrement:hover { background: #d9534f; }
+.increment:hover { background: #3c9d6b; }
+
+/* 评分分数：等宽字体居中显示 */
+.rating-score {
+  flex-grow: 1;
+  align-self: center;
+  text-align: center;
+  font-family: "Courier New", monospace;
+  font-size: 1.8em;
+  color: #1f3a5f;
+}
+
+/* 页脚：浅色背景居中文字 */
+footer {
+  padding: 12px 20px;
+  background: #f6f8fb;
+  color: #6b7486;
+  font-size: 0.85em;
+  text-align: center;
+}
+
+/* Used in Steps 02-05, before there are components */
+/* Step 02-05 使用：那时还没有组件，直接渲染的标题/页头需要限宽居中 */
+#root &gt; h1,
+#root &gt; header {
+  max-width: 720px;
+  margin: 40px auto 0;
+}
+
+/* PART 2 ADDITIONS (state) -------------------- */
+/* PART 2 新增样式（与状态相关） -------------------- */
+
+/* 页头中相邻统计徽章之间加间距 */
+header .stats + .stats {
+  margin-left: 8px;
+}
+
+/* 删除电影按钮：默认浅灰，悬停变红 */
+.remove-movie {
+  border: none;
+  background: none;
+  margin: 0 -8px 0 14px;
+  padding: 4px;
+  font-size: 0.9em;
+  color: #c3c9d4;
+  cursor: pointer;
+}
+
+.remove-movie:hover {
+  color: #d9534f;
+}
+
+/* 可点击徽章（button.badge）：去掉默认边框，悬停时加深蓝描边 */
+button.badge {
+  border: none;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+button.badge:hover {
+  outline: 2px solid #1f3a5f;
+}
+
+/* 评分按钮禁用状态：半透明且禁止指针 */
+.rating-action:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+/* 禁用状态下悬停也不改变颜色 */
+.rating-action:disabled:hover {
+  background: #e8ebf1;
+  color: #8b93a3;
+}
+
+/* 列表为空时的提示文字 */
+.empty {
+  margin: 0;
+  padding: 30px 20px;
+  text-align: center;
+  color: #6b7486;
+}
+</code></pre>
+  </div>
+</div>
+</div>
+</div>
+<div class="step-code" data-step="step-11-lift-state-up">
+<div class="code-shell" data-tabs>
+  <div class="code-tabs">
+<button class="code-tab active" data-target="#panel-step-11-lift-state-up-app-js">app.js</button>
+<button class="code-tab" data-target="#panel-step-11-lift-state-up-index-html">index.html</button>
+<button class="code-tab" data-target="#panel-step-11-lift-state-up-app-css">app.css</button>
+    <span class="spacer"></span>
+    <button class="copy-btn" type="button" data-copy="#panel-step-11-lift-state-up-app-js">复制代码</button>
+  </div>
+<div class="code-panel active" id="panel-step-11-lift-state-up-app-js">
+  <div class="code-block">
+    <div class="code-gutter">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98
+99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114
+115
+116
+117
+118
+119
+120
+121
+122
+123
+124
+125
+126
+127
+128
+129
+130
+131
+132
+133
+134
+135
+136
+137
+138
+139
+140
+141
+142
+143
+144
+145
+146
+147
+148
+149
+150
+151
+152
+153
+154
+155
+156
+157
+158
+159
+160
+161
+162
+163
+164
+165
+166
+167
+168
+169
+170
+171
+172
+173
+174
+175
+176
+177
+178
+179
+180
+181
+182
+183
+184
+185
+186
+187
+188
+189
+190
+191
+192
+193
+194
+195
+196
+197
+198
+199
+200
+201
+202
+203
+204
+205
+206
+207
+208</div>
+    <pre><code class="language-javascript">// Step 11 - ratings lifted up into App's state
+// 电影数据源数组：每部电影包含标题、年份、类型、评分、是否看过、是否编辑推荐和唯一 id
+const movies = [
+  {
+    title: "Spirited Away",
+    year: 2001,
+    genre: "Animation",
+    rating: 5,
+    watched: true,
+    staffPick: true,
+    id: 1
+  },
+  {
+    title: "Inception",
+    year: 2010,
+    genre: "Sci-Fi",
+    rating: 4,
+    watched: true,
+    staffPick: false,
+    id: 2
+  },
+  {
+    title: "The Grand Budapest Hotel",
+    year: 2014,
+    genre: "Comedy",
+    rating: 4,
+    watched: false,
+    staffPick: true,
+    id: 3
+  },
+  {
+    title: "Coco",
+    year: 2017,
+    genre: "Animation",
+    rating: 5,
+    watched: false,
+    staffPick: false,
+    id: 4
+  }
+];
+
+// 页头组件：显示应用标题、电影总数和平均评分
+const Header = (props) =&gt; {
+  return (
+    &lt;header&gt;
+      &lt;h1&gt;{ props.title }&lt;/h1&gt;
+      &lt;span className="stats"&gt;Movies: { props.totalMovies }&lt;/span&gt;
+      &lt;span className="stats"&gt;Avg rating: { props.averageRating }&lt;/span&gt;
+    &lt;/header&gt;
+  );
+};
+
+// Returns two sibling spans with no wrapper element
+// 返回两个并列的 span 元素，不需要额外的包裹节点（React Fragment 空标签）
+const MovieDetails = (props) =&gt; {
+  return (
+    &lt;&gt;
+      {/* 电影标题；如果是编辑推荐，追加一个 STAFF PICK 徽章 */}
+      &lt;span className="movie-title"&gt;
+        { props.title }
+        { props.staffPick &amp;&amp; &lt;span className="badge badge-pick"&gt;STAFF PICK&lt;/span&gt; }
+      &lt;/span&gt;
+      {/* 年份与类型；根据 watched 真假显示 WATCHED 或 NOT YET 徽章 */}
+      &lt;span className="movie-meta"&gt;
+        { props.year } · { props.genre }
+        { props.watched
+            ? &lt;span className="badge badge-watched"&gt;WATCHED&lt;/span&gt;
+            : &lt;span className="badge badge-unwatched"&gt;NOT YET&lt;/span&gt; }
+      &lt;/span&gt;
+    &lt;/&gt;
+  );
+};
+
+// 单部电影条目组件：删除按钮 + 电影信息 + 评分组件
+// 评分改为受控：评分值来自 props，点击加减时通知父组件修改
+const Movie = (props) =&gt; {
+  return (
+    &lt;div className="movie"&gt;
+      &lt;button className="remove-movie" onClick={() =&gt; props.removeMovie(props.id)}&gt;✖&lt;/button&gt;
+      &lt;div className="movie-info"&gt;
+        &lt;MovieDetails
+          title={props.title}
+          year={props.year}
+          genre={props.genre}
+          watched={props.watched}
+          staffPick={props.staffPick}
+        /&gt;
+      &lt;/div&gt;
+
+      {/* 把电影 id 和父组件的 changeRating 一起传给 Rating，实现评分修改 */}
+      &lt;Rating
+        score={props.rating}
+        id={props.id}
+        changeRating={props.changeRating}
+      /&gt;
+    &lt;/div&gt;
+  );
+};
+
+// No state of its own any more: the score comes from App, and clicks are reported to App
+// 组件不再拥有自己的状态：评分由 App 提供，点击时向 App 汇报（状态提升）
+const Rating = (props) =&gt; {
+  return (
+    &lt;div className="rating"&gt;
+      {/* 点击“-”：调用父组件的 changeRating(-1, id)，分数为 0 时禁用 */}
+      &lt;button
+        className="rating-action decrement"
+        onClick={() =&gt; props.changeRating(-1, props.id)}
+        disabled={props.score === 0}
+      &gt; - &lt;/button&gt;
+      {/* 评分直接显示父组件传来的 props.score */}
+      &lt;span className="rating-score"&gt;{ props.score }&lt;/span&gt;
+      {/* 点击“+”：调用父组件的 changeRating(1, id)，分数为 5 时禁用 */}
+      &lt;button
+        className="rating-action increment"
+        onClick={() =&gt; props.changeRating(1, props.id)}
+        disabled={props.score === 5}
+      &gt; + &lt;/button&gt;
+    &lt;/div&gt;
+  );
+};
+
+// 页脚组件：显示已看电影数和电影总数
+const Footer = (props) =&gt; {
+  return (
+    &lt;footer&gt;
+      Watched { props.watchedCount } of { props.totalMovies } · Made with React
+    &lt;/footer&gt;
+  );
+};
+
+// ratings lifted up into App's state
+// 评分状态提升到 App：修改评分与删除电影一样，都通过更新 state 完成
+// Header 增加平均评分展示
+class App extends React.Component {
+  state = {
+    movies: this.props.initialMovies
+  };
+
+  // 删除指定 id 的电影
+  handleRemoveMovie = (id) =&gt; {
+    this.setState( prevState =&gt; ({
+      movies: prevState.movies.filter( movie =&gt; movie.id !== id )
+    }));
+  }
+
+  // 修改评分：delta 为 +1 或 -1；用 Math.min/Math.max 限制在 0~5
+  handleRatingChange = (delta, id) =&gt; {
+    this.setState( prevState =&gt; ({
+      movies: prevState.movies.map( movie =&gt;
+        movie.id === id
+          ? { ...movie, rating: Math.min(Math.max(movie.rating + delta, 0), 5) }
+          : movie
+      )
+    }));
+  }
+
+  render() {
+    const watchedCount = this.state.movies.filter(movie =&gt; movie.watched).length;
+    // 用 reduce 累加所有电影的评分得到总分
+    const totalStars = this.state.movies.reduce((sum, movie) =&gt; sum + movie.rating, 0);
+    // 平均评分 = 总分 / 电影数，保留一位小数；列表为空时显示占位符
+    const averageRating = this.state.movies.length &gt; 0
+      ? (totalStars / this.state.movies.length).toFixed(1)
+      : '–';
+
+    return (
+      &lt;div className="watchlist"&gt;
+        {/* 页头新增平均评分 */}
+        &lt;Header
+          title="Movie Night"
+          totalMovies={this.state.movies.length}
+          averageRating={averageRating}
+        /&gt;
+
+        {/* Movie list */}
+        {/* 列表为空时显示提示文字 */}
+        {this.state.movies.length === 0 &amp;&amp;
+          &lt;p className="empty"&gt;The watchlist is empty. Time to pick a movie!&lt;/p&gt;}
+
+        {/* 遍历渲染电影，把删除和评分修改函数传给每个 Movie */}
+        {this.state.movies.map( movie =&gt;
+          &lt;Movie
+            title={movie.title}
+            year={movie.year}
+            genre={movie.genre}
+            rating={movie.rating}
+            watched={movie.watched}
+            staffPick={movie.staffPick}
+            id={movie.id}
+            key={movie.id.toString()}
+            removeMovie={this.handleRemoveMovie}
+            changeRating={this.handleRatingChange}
+          /&gt;
+        )}
+
+        &lt;Footer
+          watchedCount={watchedCount}
+          totalMovies={this.state.movies.length}
+        /&gt;
+      &lt;/div&gt;
+    );
+  }
+}
+
+// 把 App 组件渲染到 id 为 root 的 DOM 节点，并传入电影初始数据
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(&lt;App initialMovies={movies} /&gt;);
+</code></pre>
+  </div>
+</div>
+<div class="code-panel" id="panel-step-11-lift-state-up-index-html">
+  <div class="code-block">
+    <div class="code-gutter">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23</div>
+    <pre><code class="language-xml">&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+  &lt;head&gt;
+    &lt;meta charset="utf-8" /&gt;
+    &lt;title&gt;Movie Night&lt;/title&gt;
+    &lt;!-- 引入页面样式表 --&gt;
+    &lt;link rel="stylesheet" href="./app.css" /&gt;
+  &lt;/head&gt;
+
+  &lt;body&gt;
+    &lt;!-- React 组件渲染挂载的根节点 --&gt;
+    &lt;div id="root"&gt;&lt;/div&gt;
+
+    &lt;!-- 引入 React 核心库（开发版，便于调试） --&gt;
+    &lt;script crossorigin src="https://unpkg.com/react@18.3.1/umd/react.development.js"&gt;&lt;/script&gt;
+    &lt;!-- 引入 ReactDOM，负责把组件渲染到浏览器 DOM --&gt;
+    &lt;script crossorigin src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js"&gt;&lt;/script&gt;
+    &lt;!-- 引入 Babel，用于在浏览器中编译 JSX 语法 --&gt;
+    &lt;script src="https://unpkg.com/@babel/standalone@7/babel.min.js"&gt;&lt;/script&gt;
+    &lt;!-- 引入本项目的 React 代码（JSX 需经 Babel 编译后执行） --&gt;
+    &lt;script type="text/babel" src="./app.js"&gt;&lt;/script&gt;
+  &lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+  </div>
+</div>
+<div class="code-panel" id="panel-step-11-lift-state-up-app-css">
+  <div class="code-block">
+    <div class="code-gutter">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98
+99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114
+115
+116
+117
+118
+119
+120
+121
+122
+123
+124
+125
+126
+127
+128
+129
+130
+131
+132
+133
+134
+135
+136
+137
+138
+139
+140
+141
+142
+143
+144
+145
+146
+147
+148
+149
+150
+151
+152
+153
+154
+155
+156
+157
+158
+159
+160
+161
+162
+163
+164
+165
+166
+167
+168
+169
+170
+171
+172
+173
+174
+175
+176
+177
+178
+179
+180
+181
+182
+183
+184
+185
+186
+187
+188
+189
+190
+191
+192
+193
+194
+195
+196
+197
+198
+199
+200
+201
+202
+203
+204
+205
+206
+207
+208
+209
+210
+211
+212
+213
+214
+215
+216
+217
+218</div>
+    <pre><code class="language-css">/* Movie Night — styles for the Basic React tutorial.
+   You do not need to edit this file. Every class name used in the
+   tutorial (watchlist, movie, rating, badge ...) is already styled here. */
+
+/* Movie Night —— React 基础教程所用样式。
+   你不需要修改此文件。教程中用到的每个类名
+   （watchlist、movie、rating、badge 等）都已在此定义样式。 */
+
+/* ELEMENT STYLES -------------------- */
+/* 元素基础样式 -------------------- */
+
+body {
+  margin: 0;
+  background: #eef1f6;
+  font-family: Arial, Helvetica, sans-serif;
+  color: #1d2433;
+}
+
+/* 页头：深蓝背景、金黄色下边框，标题与统计徽章横向排列 */
+header {
+  display: flex;
+  align-items: center;
+  padding: 18px 24px;
+  background: #1f3a5f;
+  color: #ffffff;
+  border-bottom: 4px solid #f2b134;
+}
+
+header h1 {
+  flex-grow: 1;
+  margin: 0;
+  font-size: 1.6em;
+  letter-spacing: 1px;
+}
+
+header p {
+  margin: 6px 0 0;
+  color: #c9d6ea;
+}
+
+/* COMPONENT STYLES -------------------- */
+/* 组件样式 -------------------- */
+
+/* 应用主体：固定宽度的白色卡片，圆角加投影 */
+.watchlist {
+  width: 720px;
+  margin: 50px auto;
+  background: #ffffff;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 14px rgba(31, 58, 95, 0.18);
+}
+
+/* 页头统计徽章：金黄色胶囊 */
+.stats {
+  padding: 6px 12px;
+  background: #f2b134;
+  color: #1f3a5f;
+  border-radius: 14px;
+  font-weight: bold;
+  font-size: 0.9em;
+}
+
+/* 单部电影条目：左信息右评分，底部浅色分隔线 */
+.movie {
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid #e3e7ee;
+}
+
+/* 最后一部电影去掉底部分隔线 */
+.movie:last-of-type {
+  border-bottom: none;
+}
+
+/* 电影信息区域：占据剩余宽度 */
+.movie-info {
+  flex-grow: 1;
+  padding: 14px 20px;
+}
+
+/* 电影标题文字 */
+.movie-title {
+  display: block;
+  font-size: 1.15em;
+  font-weight: bold;
+  color: #1f3a5f;
+}
+
+/* 年份与类型等元信息文字 */
+.movie-meta {
+  display: block;
+  margin-top: 4px;
+  font-size: 0.85em;
+  color: #6b7486;
+}
+
+/* 徽章通用样式：小圆角胶囊 */
+.badge {
+  display: inline-block;
+  margin-left: 8px;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 0.7em;
+  font-weight: bold;
+  vertical-align: middle;
+  letter-spacing: 0.5px;
+}
+
+/* 三种徽章配色：编辑推荐 / 已看 / 未看 */
+.badge-pick { background: #fff1d1; color: #8a5a00; }
+.badge-watched { background: #dcf0e7; color: #0d6a50; }
+.badge-unwatched { background: #eceff4; color: #6b7486; }
+
+/* 评分区域：固定宽度，与电影条目等高 */
+.rating {
+  display: flex;
+  width: 170px;
+  align-self: stretch;
+}
+
+/* 评分加减按钮 */
+.rating-action {
+  border: none;
+  width: 50px;
+  font-size: 1.2em;
+  font-weight: bold;
+  color: #8b93a3;
+  background: #e8ebf1;
+  cursor: pointer;
+}
+
+/* 悬停时按钮文字变白 */
+.rating-action:hover { color: #ffffff; }
+/* 减分悬停变红，加分悬停变绿 */
+.decrement:hover { background: #d9534f; }
+.increment:hover { background: #3c9d6b; }
+
+/* 评分分数：等宽字体居中显示 */
+.rating-score {
+  flex-grow: 1;
+  align-self: center;
+  text-align: center;
+  font-family: "Courier New", monospace;
+  font-size: 1.8em;
+  color: #1f3a5f;
+}
+
+/* 页脚：浅色背景居中文字 */
+footer {
+  padding: 12px 20px;
+  background: #f6f8fb;
+  color: #6b7486;
+  font-size: 0.85em;
+  text-align: center;
+}
+
+/* Used in Steps 02-05, before there are components */
+/* Step 02-05 使用：那时还没有组件，直接渲染的标题/页头需要限宽居中 */
+#root &gt; h1,
+#root &gt; header {
+  max-width: 720px;
+  margin: 40px auto 0;
+}
+
+/* PART 2 ADDITIONS (state) -------------------- */
+/* PART 2 新增样式（与状态相关） -------------------- */
+
+/* 页头中相邻统计徽章之间加间距 */
+header .stats + .stats {
+  margin-left: 8px;
+}
+
+/* 删除电影按钮：默认浅灰，悬停变红 */
+.remove-movie {
+  border: none;
+  background: none;
+  margin: 0 -8px 0 14px;
+  padding: 4px;
+  font-size: 0.9em;
+  color: #c3c9d4;
+  cursor: pointer;
+}
+
+.remove-movie:hover {
+  color: #d9534f;
+}
+
+/* 可点击徽章（button.badge）：去掉默认边框，悬停时加深蓝描边 */
+button.badge {
+  border: none;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+button.badge:hover {
+  outline: 2px solid #1f3a5f;
+}
+
+/* 评分按钮禁用状态：半透明且禁止指针 */
+.rating-action:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+/* 禁用状态下悬停也不改变颜色 */
+.rating-action:disabled:hover {
+  background: #e8ebf1;
+  color: #8b93a3;
+}
+
+/* 列表为空时的提示文字 */
+.empty {
+  margin: 0;
+  padding: 30px 20px;
+  text-align: center;
+  color: #6b7486;
+}
+</code></pre>
+  </div>
+</div>
+</div>
+</div>
+<div class="step-code" data-step="step-12-toggle-watched">
+<div class="code-shell" data-tabs>
+  <div class="code-tabs">
+<button class="code-tab active" data-target="#panel-step-12-toggle-watched-app-js">app.js</button>
+<button class="code-tab" data-target="#panel-step-12-toggle-watched-index-html">index.html</button>
+<button class="code-tab" data-target="#panel-step-12-toggle-watched-app-css">app.css</button>
+    <span class="spacer"></span>
+    <button class="copy-btn" type="button" data-copy="#panel-step-12-toggle-watched-app-js">复制代码</button>
+  </div>
+<div class="code-panel active" id="panel-step-12-toggle-watched-app-js">
+  <div class="code-block">
+    <div class="code-gutter">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98
+99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114
+115
+116
+117
+118
+119
+120
+121
+122
+123
+124
+125
+126
+127
+128
+129
+130
+131
+132
+133
+134
+135
+136
+137
+138
+139
+140
+141
+142
+143
+144
+145
+146
+147
+148
+149
+150
+151
+152
+153
+154
+155
+156
+157
+158
+159
+160
+161
+162
+163
+164
+165
+166
+167
+168
+169
+170
+171
+172
+173
+174
+175
+176
+177
+178
+179
+180
+181
+182
+183
+184
+185
+186
+187
+188
+189
+190
+191
+192
+193
+194
+195
+196
+197
+198
+199
+200
+201
+202
+203
+204
+205
+206
+207
+208
+209
+210
+211
+212
+213
+214
+215
+216
+217
+218
+219
+220
+221
+222</div>
+    <pre><code class="language-javascript">// Step 12 - toggling watched
+// 电影数据源数组：每部电影包含标题、年份、类型、评分、是否看过、是否编辑推荐和唯一 id
+const movies = [
+  {
+    title: "Spirited Away",
+    year: 2001,
+    genre: "Animation",
+    rating: 5,
+    watched: true,
+    staffPick: true,
+    id: 1
+  },
+  {
+    title: "Inception",
+    year: 2010,
+    genre: "Sci-Fi",
+    rating: 4,
+    watched: true,
+    staffPick: false,
+    id: 2
+  },
+  {
+    title: "The Grand Budapest Hotel",
+    year: 2014,
+    genre: "Comedy",
+    rating: 4,
+    watched: false,
+    staffPick: true,
+    id: 3
+  },
+  {
+    title: "Coco",
+    year: 2017,
+    genre: "Animation",
+    rating: 5,
+    watched: false,
+    staffPick: false,
+    id: 4
+  }
+];
+
+// 页头组件：显示应用标题、电影总数和平均评分
+const Header = (props) =&gt; {
+  return (
+    &lt;header&gt;
+      &lt;h1&gt;{ props.title }&lt;/h1&gt;
+      &lt;span className="stats"&gt;Movies: { props.totalMovies }&lt;/span&gt;
+      &lt;span className="stats"&gt;Avg rating: { props.averageRating }&lt;/span&gt;
+    &lt;/header&gt;
+  );
+};
+
+// Returns two sibling spans with no wrapper element
+// 返回两个并列的 span 元素，不需要额外的包裹节点（React Fragment 空标签）
+const MovieDetails = (props) =&gt; {
+  return (
+    &lt;&gt;
+      {/* 电影标题；如果是编辑推荐，追加一个 STAFF PICK 徽章 */}
+      &lt;span className="movie-title"&gt;
+        { props.title }
+        { props.staffPick &amp;&amp; &lt;span className="badge badge-pick"&gt;STAFF PICK&lt;/span&gt; }
+      &lt;/span&gt;
+      {/* 年份与类型；“看过/未看”徽章改为按钮，点击调用父组件的 toggleWatched 切换状态 */}
+      &lt;span className="movie-meta"&gt;
+        { props.year } · { props.genre }
+        &lt;button
+          className={ props.watched ? "badge badge-watched" : "badge badge-unwatched" }
+          onClick={() =&gt; props.toggleWatched(props.id)}
+        &gt;
+          { props.watched ? "WATCHED" : "NOT YET" }
+        &lt;/button&gt;
+      &lt;/span&gt;
+    &lt;/&gt;
+  );
+};
+
+// 单部电影条目组件：删除按钮 + 电影信息（可切换看过状态）+ 受控评分组件
+const Movie = (props) =&gt; {
+  return (
+    &lt;div className="movie"&gt;
+      &lt;button className="remove-movie" onClick={() =&gt; props.removeMovie(props.id)}&gt;✖&lt;/button&gt;
+      &lt;div className="movie-info"&gt;
+        {/* 把 id 和 toggleWatched 传给 MovieDetails，实现“看过/未看”切换 */}
+        &lt;MovieDetails
+          title={props.title}
+          year={props.year}
+          genre={props.genre}
+          watched={props.watched}
+          staffPick={props.staffPick}
+          id={props.id}
+          toggleWatched={props.toggleWatched}
+        /&gt;
+      &lt;/div&gt;
+
+      {/* 受控评分组件：评分值来自 props，点击时通知父组件修改 */}
+      &lt;Rating
+        score={props.rating}
+        id={props.id}
+        changeRating={props.changeRating}
+      /&gt;
+    &lt;/div&gt;
+  );
+};
+
+// No state of its own any more: the score comes from App, and clicks are reported to App
+// 组件不再拥有自己的状态：评分由 App 提供，点击时向 App 汇报（状态提升）
+const Rating = (props) =&gt; {
+  return (
+    &lt;div className="rating"&gt;
+      {/* 点击“-”：调用父组件的 changeRating(-1, id)，分数为 0 时禁用 */}
+      &lt;button
+        className="rating-action decrement"
+        onClick={() =&gt; props.changeRating(-1, props.id)}
+        disabled={props.score === 0}
+      &gt; - &lt;/button&gt;
+      {/* 评分直接显示父组件传来的 props.score */}
+      &lt;span className="rating-score"&gt;{ props.score }&lt;/span&gt;
+      {/* 点击“+”：调用父组件的 changeRating(1, id)，分数为 5 时禁用 */}
+      &lt;button
+        className="rating-action increment"
+        onClick={() =&gt; props.changeRating(1, props.id)}
+        disabled={props.score === 5}
+      &gt; + &lt;/button&gt;
+    &lt;/div&gt;
+  );
+};
+
+// 页脚组件：显示已看电影数和电影总数
+const Footer = (props) =&gt; {
+  return (
+    &lt;footer&gt;
+      Watched { props.watchedCount } of { props.totalMovies } · Made with React
+    &lt;/footer&gt;
+  );
+};
+
+// toggling watched
+// 切换“看过”状态：点击徽章时反转该电影的 watched 值
+class App extends React.Component {
+  state = {
+    movies: this.props.initialMovies
+  };
+
+  // 删除指定 id 的电影
+  handleRemoveMovie = (id) =&gt; {
+    this.setState( prevState =&gt; ({
+      movies: prevState.movies.filter( movie =&gt; movie.id !== id )
+    }));
+  }
+
+  // 修改评分：delta 为 +1 或 -1；限制在 0~5
+  handleRatingChange = (delta, id) =&gt; {
+    this.setState( prevState =&gt; ({
+      movies: prevState.movies.map( movie =&gt;
+        movie.id === id
+          ? { ...movie, rating: Math.min(Math.max(movie.rating + delta, 0), 5) }
+          : movie
+      )
+    }));
+  }
+
+  // 切换看过状态：用展开运算符复制该电影对象并反转 watched
+  handleToggleWatched = (id) =&gt; {
+    this.setState( prevState =&gt; ({
+      movies: prevState.movies.map( movie =&gt;
+        movie.id === id
+          ? { ...movie, watched: !movie.watched }
+          : movie
+      )
+    }));
+  }
+
+  render() {
+    const watchedCount = this.state.movies.filter(movie =&gt; movie.watched).length;
+    // 总分与平均评分
+    const totalStars = this.state.movies.reduce((sum, movie) =&gt; sum + movie.rating, 0);
+    const averageRating = this.state.movies.length &gt; 0
+      ? (totalStars / this.state.movies.length).toFixed(1)
+      : '–';
+
+    return (
+      &lt;div className="watchlist"&gt;
+        &lt;Header
+          title="Movie Night"
+          totalMovies={this.state.movies.length}
+          averageRating={averageRating}
+        /&gt;
+
+        {/* Movie list */}
+        {/* 列表为空时显示提示文字 */}
+        {this.state.movies.length === 0 &amp;&amp;
+          &lt;p className="empty"&gt;The watchlist is empty. Time to pick a movie!&lt;/p&gt;}
+
+        {/* 遍历渲染电影，把删除、改评分、切换看过三个函数传给每个 Movie */}
+        {this.state.movies.map( movie =&gt;
+          &lt;Movie
+            title={movie.title}
+            year={movie.year}
+            genre={movie.genre}
+            rating={movie.rating}
+            watched={movie.watched}
+            staffPick={movie.staffPick}
+            id={movie.id}
+            key={movie.id.toString()}
+            removeMovie={this.handleRemoveMovie}
+            changeRating={this.handleRatingChange}
+            toggleWatched={this.handleToggleWatched}
+          /&gt;
+        )}
+
+        &lt;Footer
+          watchedCount={watchedCount}
+          totalMovies={this.state.movies.length}
+        /&gt;
+      &lt;/div&gt;
+    );
+  }
+}
+
+// 把 App 组件渲染到 id 为 root 的 DOM 节点，并传入电影初始数据
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(&lt;App initialMovies={movies} /&gt;);
+</code></pre>
+  </div>
+</div>
+<div class="code-panel" id="panel-step-12-toggle-watched-index-html">
+  <div class="code-block">
+    <div class="code-gutter">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23</div>
+    <pre><code class="language-xml">&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+  &lt;head&gt;
+    &lt;meta charset="utf-8" /&gt;
+    &lt;title&gt;Movie Night&lt;/title&gt;
+    &lt;!-- 引入页面样式表 --&gt;
+    &lt;link rel="stylesheet" href="./app.css" /&gt;
+  &lt;/head&gt;
+
+  &lt;body&gt;
+    &lt;!-- React 组件渲染挂载的根节点 --&gt;
+    &lt;div id="root"&gt;&lt;/div&gt;
+
+    &lt;!-- 引入 React 核心库（开发版，便于调试） --&gt;
+    &lt;script crossorigin src="https://unpkg.com/react@18.3.1/umd/react.development.js"&gt;&lt;/script&gt;
+    &lt;!-- 引入 ReactDOM，负责把组件渲染到浏览器 DOM --&gt;
+    &lt;script crossorigin src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js"&gt;&lt;/script&gt;
+    &lt;!-- 引入 Babel，用于在浏览器中编译 JSX 语法 --&gt;
+    &lt;script src="https://unpkg.com/@babel/standalone@7/babel.min.js"&gt;&lt;/script&gt;
+    &lt;!-- 引入本项目的 React 代码（JSX 需经 Babel 编译后执行） --&gt;
+    &lt;script type="text/babel" src="./app.js"&gt;&lt;/script&gt;
+  &lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+  </div>
+</div>
+<div class="code-panel" id="panel-step-12-toggle-watched-app-css">
+  <div class="code-block">
+    <div class="code-gutter">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98
+99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114
+115
+116
+117
+118
+119
+120
+121
+122
+123
+124
+125
+126
+127
+128
+129
+130
+131
+132
+133
+134
+135
+136
+137
+138
+139
+140
+141
+142
+143
+144
+145
+146
+147
+148
+149
+150
+151
+152
+153
+154
+155
+156
+157
+158
+159
+160
+161
+162
+163
+164
+165
+166
+167
+168
+169
+170
+171
+172
+173
+174
+175
+176
+177
+178
+179
+180
+181
+182
+183
+184
+185
+186
+187
+188
+189
+190
+191
+192
+193
+194
+195
+196
+197
+198
+199
+200
+201
+202
+203
+204
+205
+206
+207
+208
+209
+210
+211
+212
+213
+214
+215
+216
+217
+218</div>
+    <pre><code class="language-css">/* Movie Night — styles for the Basic React tutorial.
+   You do not need to edit this file. Every class name used in the
+   tutorial (watchlist, movie, rating, badge ...) is already styled here. */
+
+/* Movie Night —— React 基础教程所用样式。
+   你不需要修改此文件。教程中用到的每个类名
+   （watchlist、movie、rating、badge 等）都已在此定义样式。 */
+
+/* ELEMENT STYLES -------------------- */
+/* 元素基础样式 -------------------- */
+
+body {
+  margin: 0;
+  background: #eef1f6;
+  font-family: Arial, Helvetica, sans-serif;
+  color: #1d2433;
+}
+
+/* 页头：深蓝背景、金黄色下边框，标题与统计徽章横向排列 */
+header {
+  display: flex;
+  align-items: center;
+  padding: 18px 24px;
+  background: #1f3a5f;
+  color: #ffffff;
+  border-bottom: 4px solid #f2b134;
+}
+
+header h1 {
+  flex-grow: 1;
+  margin: 0;
+  font-size: 1.6em;
+  letter-spacing: 1px;
+}
+
+header p {
+  margin: 6px 0 0;
+  color: #c9d6ea;
+}
+
+/* COMPONENT STYLES -------------------- */
+/* 组件样式 -------------------- */
+
+/* 应用主体：固定宽度的白色卡片，圆角加投影 */
+.watchlist {
+  width: 720px;
+  margin: 50px auto;
+  background: #ffffff;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 14px rgba(31, 58, 95, 0.18);
+}
+
+/* 页头统计徽章：金黄色胶囊 */
+.stats {
+  padding: 6px 12px;
+  background: #f2b134;
+  color: #1f3a5f;
+  border-radius: 14px;
+  font-weight: bold;
+  font-size: 0.9em;
+}
+
+/* 单部电影条目：左信息右评分，底部浅色分隔线 */
+.movie {
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid #e3e7ee;
+}
+
+/* 最后一部电影去掉底部分隔线 */
+.movie:last-of-type {
+  border-bottom: none;
+}
+
+/* 电影信息区域：占据剩余宽度 */
+.movie-info {
+  flex-grow: 1;
+  padding: 14px 20px;
+}
+
+/* 电影标题文字 */
+.movie-title {
+  display: block;
+  font-size: 1.15em;
+  font-weight: bold;
+  color: #1f3a5f;
+}
+
+/* 年份与类型等元信息文字 */
+.movie-meta {
+  display: block;
+  margin-top: 4px;
+  font-size: 0.85em;
+  color: #6b7486;
+}
+
+/* 徽章通用样式：小圆角胶囊 */
+.badge {
+  display: inline-block;
+  margin-left: 8px;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 0.7em;
+  font-weight: bold;
+  vertical-align: middle;
+  letter-spacing: 0.5px;
+}
+
+/* 三种徽章配色：编辑推荐 / 已看 / 未看 */
+.badge-pick { background: #fff1d1; color: #8a5a00; }
+.badge-watched { background: #dcf0e7; color: #0d6a50; }
+.badge-unwatched { background: #eceff4; color: #6b7486; }
+
+/* 评分区域：固定宽度，与电影条目等高 */
+.rating {
+  display: flex;
+  width: 170px;
+  align-self: stretch;
+}
+
+/* 评分加减按钮 */
+.rating-action {
+  border: none;
+  width: 50px;
+  font-size: 1.2em;
+  font-weight: bold;
+  color: #8b93a3;
+  background: #e8ebf1;
+  cursor: pointer;
+}
+
+/* 悬停时按钮文字变白 */
+.rating-action:hover { color: #ffffff; }
+/* 减分悬停变红，加分悬停变绿 */
+.decrement:hover { background: #d9534f; }
+.increment:hover { background: #3c9d6b; }
+
+/* 评分分数：等宽字体居中显示 */
+.rating-score {
+  flex-grow: 1;
+  align-self: center;
+  text-align: center;
+  font-family: "Courier New", monospace;
+  font-size: 1.8em;
+  color: #1f3a5f;
+}
+
+/* 页脚：浅色背景居中文字 */
+footer {
+  padding: 12px 20px;
+  background: #f6f8fb;
+  color: #6b7486;
+  font-size: 0.85em;
+  text-align: center;
+}
+
+/* Used in Steps 02-05, before there are components */
+/* Step 02-05 使用：那时还没有组件，直接渲染的标题/页头需要限宽居中 */
+#root &gt; h1,
+#root &gt; header {
+  max-width: 720px;
+  margin: 40px auto 0;
+}
+
+/* PART 2 ADDITIONS (state) -------------------- */
+/* PART 2 新增样式（与状态相关） -------------------- */
+
+/* 页头中相邻统计徽章之间加间距 */
+header .stats + .stats {
+  margin-left: 8px;
+}
+
+/* 删除电影按钮：默认浅灰，悬停变红 */
+.remove-movie {
+  border: none;
+  background: none;
+  margin: 0 -8px 0 14px;
+  padding: 4px;
+  font-size: 0.9em;
+  color: #c3c9d4;
+  cursor: pointer;
+}
+
+.remove-movie:hover {
+  color: #d9534f;
+}
+
+/* 可点击徽章（button.badge）：去掉默认边框，悬停时加深蓝描边 */
+button.badge {
+  border: none;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+button.badge:hover {
+  outline: 2px solid #1f3a5f;
+}
+
+/* 评分按钮禁用状态：半透明且禁止指针 */
+.rating-action:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+/* 禁用状态下悬停也不改变颜色 */
+.rating-action:disabled:hover {
+  background: #e8ebf1;
+  color: #8b93a3;
+}
+
+/* 列表为空时的提示文字 */
+.empty {
+  margin: 0;
+  padding: 30px 20px;
+  text-align: center;
+  color: #6b7486;
+}
+</code></pre>
+  </div>
+</div>
+</div>
+</div>
+<div class="step-code active" data-step="step-13-use-state-final">
+<div class="code-shell" data-tabs>
+  <div class="code-tabs">
+<button class="code-tab active" data-target="#panel-step-13-use-state-final-app-js">app.js</button>
+<button class="code-tab" data-target="#panel-step-13-use-state-final-index-html">index.html</button>
+<button class="code-tab" data-target="#panel-step-13-use-state-final-app-css">app.css</button>
+    <span class="spacer"></span>
+    <button class="copy-btn" type="button" data-copy="#panel-step-13-use-state-final-app-js">复制代码</button>
+  </div>
+<div class="code-panel active" id="panel-step-13-use-state-final-app-js">
+  <div class="code-block">
+    <div class="code-gutter">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98
+99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114
+115
+116
+117
+118
+119
+120
+121
+122
+123
+124
+125
+126
+127
+128
+129
+130
+131
+132
+133
+134
+135
+136
+137
+138
+139
+140
+141
+142
+143
+144
+145
+146
+147
+148
+149
+150
+151
+152
+153
+154
+155
+156
+157
+158
+159
+160
+161
+162
+163
+164
+165
+166
+167
+168
+169
+170
+171
+172
+173
+174
+175
+176
+177
+178
+179
+180
+181
+182
+183
+184
+185
+186
+187
+188
+189
+190
+191
+192
+193
+194
+195
+196
+197
+198
+199
+200
+201
+202
+203
+204
+205
+206
+207
+208
+209
+210
+211
+212
+213
+214
+215
+216
+217</div>
+    <pre><code class="language-javascript">// Step 13 - the same app with the useState hook. This is the finished Part 2 app.
+const { useState } = React;
+
+// 电影数据源数组：每部电影包含标题、年份、类型、评分、是否看过、是否编辑推荐和唯一 id
+const movies = [
+  {
+    title: "Spirited Away",
+    year: 2001,
+    genre: "Animation",
+    rating: 5,
+    watched: true,
+    staffPick: true,
+    id: 1
+  },
+  {
+    title: "Inception",
+    year: 2010,
+    genre: "Sci-Fi",
+    rating: 4,
+    watched: true,
+    staffPick: false,
+    id: 2
+  },
+  {
+    title: "The Grand Budapest Hotel",
+    year: 2014,
+    genre: "Comedy",
+    rating: 4,
+    watched: false,
+    staffPick: true,
+    id: 3
+  },
+  {
+    title: "Coco",
+    year: 2017,
+    genre: "Animation",
+    rating: 5,
+    watched: false,
+    staffPick: false,
+    id: 4
+  }
+];
+
+// 页头组件：显示应用标题、电影总数和平均评分
+const Header = (props) =&gt; {
+  return (
+    &lt;header&gt;
+      &lt;h1&gt;{ props.title }&lt;/h1&gt;
+      &lt;span className="stats"&gt;Movies: { props.totalMovies }&lt;/span&gt;
+      &lt;span className="stats"&gt;Avg rating: { props.averageRating }&lt;/span&gt;
+    &lt;/header&gt;
+  );
+};
+
+// Returns two sibling spans with no wrapper element
+// 返回两个并列的 span 元素，不需要额外的包裹节点（React Fragment 空标签）
+const MovieDetails = (props) =&gt; {
+  return (
+    &lt;&gt;
+      {/* 电影标题；如果是编辑推荐，追加一个 STAFF PICK 徽章 */}
+      &lt;span className="movie-title"&gt;
+        { props.title }
+        { props.staffPick &amp;&amp; &lt;span className="badge badge-pick"&gt;STAFF PICK&lt;/span&gt; }
+      &lt;/span&gt;
+      {/* 年份与类型；“看过/未看”徽章改为按钮，点击调用父组件的 toggleWatched 切换状态 */}
+      &lt;span className="movie-meta"&gt;
+        { props.year } · { props.genre }
+        &lt;button
+          className={ props.watched ? "badge badge-watched" : "badge badge-unwatched" }
+          onClick={() =&gt; props.toggleWatched(props.id)}
+        &gt;
+          { props.watched ? "WATCHED" : "NOT YET" }
+        &lt;/button&gt;
+      &lt;/span&gt;
+    &lt;/&gt;
+  );
+};
+
+// 单部电影条目组件：删除按钮 + 电影信息（可切换看过状态）+ 受控评分组件
+const Movie = (props) =&gt; {
+  return (
+    &lt;div className="movie"&gt;
+      &lt;button className="remove-movie" onClick={() =&gt; props.removeMovie(props.id)}&gt;✖&lt;/button&gt;
+      &lt;div className="movie-info"&gt;
+        {/* 把 id 和 toggleWatched 传给 MovieDetails，实现“看过/未看”切换 */}
+        &lt;MovieDetails
+          title={props.title}
+          year={props.year}
+          genre={props.genre}
+          watched={props.watched}
+          staffPick={props.staffPick}
+          id={props.id}
+          toggleWatched={props.toggleWatched}
+        /&gt;
+      &lt;/div&gt;
+
+      {/* 受控评分组件：评分值来自 props，点击时通知父组件修改 */}
+      &lt;Rating
+        score={props.rating}
+        id={props.id}
+        changeRating={props.changeRating}
+      /&gt;
+    &lt;/div&gt;
+  );
+};
+
+// No state of its own any more: the score comes from App, and clicks are reported to App
+// 组件不再拥有自己的状态：评分由 App 提供，点击时向 App 汇报（状态提升）
+const Rating = (props) =&gt; {
+  return (
+    &lt;div className="rating"&gt;
+      {/* 点击“-”：调用父组件的 changeRating(-1, id)，分数为 0 时禁用 */}
+      &lt;button
+        className="rating-action decrement"
+        onClick={() =&gt; props.changeRating(-1, props.id)}
+        disabled={props.score === 0}
+      &gt; - &lt;/button&gt;
+      {/* 评分直接显示父组件传来的 props.score */}
+      &lt;span className="rating-score"&gt;{ props.score }&lt;/span&gt;
+      {/* 点击“+”：调用父组件的 changeRating(1, id)，分数为 5 时禁用 */}
+      &lt;button
+        className="rating-action increment"
+        onClick={() =&gt; props.changeRating(1, props.id)}
+        disabled={props.score === 5}
+      &gt; + &lt;/button&gt;
+    &lt;/div&gt;
+  );
+};
+
+// 页脚组件：显示已看电影数和电影总数
+const Footer = (props) =&gt; {
+  return (
+    &lt;footer&gt;
+      Watched { props.watchedCount } of { props.totalMovies } · Made with React
+    &lt;/footer&gt;
+  );
+};
+
+// The same app with the useState hook. This is the finished Part 2 app.
+// 用 useState Hook 重写同一个应用：这是 Part 2 的最终完成版
+const App = (props) =&gt; {
+  // 用 useState 管理电影列表状态，初始值为传入的 initialMovies
+  const [movies, setMovies] = useState(props.initialMovies);
+
+  // 删除指定 id 的电影：基于前一个状态过滤
+  const handleRemoveMovie = (id) =&gt; {
+    setMovies( prevMovies =&gt; prevMovies.filter( movie =&gt; movie.id !== id ) );
+  };
+
+  // 修改评分：delta 为 +1 或 -1；用 Math.min/Math.max 限制在 0~5
+  const handleRatingChange = (delta, id) =&gt; {
+    setMovies( prevMovies =&gt; prevMovies.map( movie =&gt;
+      movie.id === id
+        ? { ...movie, rating: Math.min(Math.max(movie.rating + delta, 0), 5) }
+        : movie
+    ));
+  };
+
+  // 切换看过状态：反转该电影的 watched
+  const handleToggleWatched = (id) =&gt; {
+    setMovies( prevMovies =&gt; prevMovies.map( movie =&gt;
+      movie.id === id
+        ? { ...movie, watched: !movie.watched }
+        : movie
+    ));
+  };
+
+  // 派生数据：已看电影数、总分、平均评分（列表为空显示占位符）
+  const watchedCount = movies.filter(movie =&gt; movie.watched).length;
+  const totalStars = movies.reduce((sum, movie) =&gt; sum + movie.rating, 0);
+  const averageRating = movies.length &gt; 0
+    ? (totalStars / movies.length).toFixed(1)
+    : '–';
+
+  return (
+    &lt;div className="watchlist"&gt;
+      {/* 页头：标题、电影总数、平均评分 */}
+      &lt;Header
+        title="Movie Night"
+        totalMovies={movies.length}
+        averageRating={averageRating}
+      /&gt;
+
+      {/* Movie list */}
+      {/* 列表为空时显示提示文字 */}
+      {movies.length === 0 &amp;&amp;
+        &lt;p className="empty"&gt;The watchlist is empty. Time to pick a movie!&lt;/p&gt;}
+
+      {/* 遍历渲染电影，把删除、改评分、切换看过三个函数传给每个 Movie */}
+      {movies.map( movie =&gt;
+        &lt;Movie
+          title={movie.title}
+          year={movie.year}
+          genre={movie.genre}
+          rating={movie.rating}
+          watched={movie.watched}
+          staffPick={movie.staffPick}
+          id={movie.id}
+          key={movie.id.toString()}
+          removeMovie={handleRemoveMovie}
+          changeRating={handleRatingChange}
+          toggleWatched={handleToggleWatched}
+        /&gt;
+      )}
+
+      {/* 页脚：已看数量与总数 */}
+      &lt;Footer
+        watchedCount={watchedCount}
+        totalMovies={movies.length}
+      /&gt;
+    &lt;/div&gt;
+  );
+};
+
+// 把 App 组件渲染到 id 为 root 的 DOM 节点，并传入电影初始数据
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(&lt;App initialMovies={movies} /&gt;);
+</code></pre>
+  </div>
+</div>
+<div class="code-panel" id="panel-step-13-use-state-final-index-html">
+  <div class="code-block">
+    <div class="code-gutter">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23</div>
+    <pre><code class="language-xml">&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+  &lt;head&gt;
+    &lt;meta charset="utf-8" /&gt;
+    &lt;title&gt;Movie Night&lt;/title&gt;
+    &lt;!-- 引入页面样式表 --&gt;
+    &lt;link rel="stylesheet" href="./app.css" /&gt;
+  &lt;/head&gt;
+
+  &lt;body&gt;
+    &lt;!-- React 组件渲染挂载的根节点 --&gt;
+    &lt;div id="root"&gt;&lt;/div&gt;
+
+    &lt;!-- 引入 React 核心库（开发版，便于调试） --&gt;
+    &lt;script crossorigin src="https://unpkg.com/react@18.3.1/umd/react.development.js"&gt;&lt;/script&gt;
+    &lt;!-- 引入 ReactDOM，负责把组件渲染到浏览器 DOM --&gt;
+    &lt;script crossorigin src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js"&gt;&lt;/script&gt;
+    &lt;!-- 引入 Babel，用于在浏览器中编译 JSX 语法 --&gt;
+    &lt;script src="https://unpkg.com/@babel/standalone@7/babel.min.js"&gt;&lt;/script&gt;
+    &lt;!-- 引入本项目的 React 代码（JSX 需经 Babel 编译后执行） --&gt;
+    &lt;script type="text/babel" src="./app.js"&gt;&lt;/script&gt;
+  &lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+  </div>
+</div>
+<div class="code-panel" id="panel-step-13-use-state-final-app-css">
+  <div class="code-block">
+    <div class="code-gutter">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98
+99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114
+115
+116
+117
+118
+119
+120
+121
+122
+123
+124
+125
+126
+127
+128
+129
+130
+131
+132
+133
+134
+135
+136
+137
+138
+139
+140
+141
+142
+143
+144
+145
+146
+147
+148
+149
+150
+151
+152
+153
+154
+155
+156
+157
+158
+159
+160
+161
+162
+163
+164
+165
+166
+167
+168
+169
+170
+171
+172
+173
+174
+175
+176
+177
+178
+179
+180
+181
+182
+183
+184
+185
+186
+187
+188
+189
+190
+191
+192
+193
+194
+195
+196
+197
+198
+199
+200
+201
+202
+203
+204
+205
+206
+207
+208
+209
+210
+211
+212
+213
+214
+215
+216
+217
+218</div>
+    <pre><code class="language-css">/* Movie Night — styles for the Basic React tutorial.
+   You do not need to edit this file. Every class name used in the
+   tutorial (watchlist, movie, rating, badge ...) is already styled here. */
+
+/* Movie Night —— React 基础教程所用样式。
+   你不需要修改此文件。教程中用到的每个类名
+   （watchlist、movie、rating、badge 等）都已在此定义样式。 */
+
+/* ELEMENT STYLES -------------------- */
+/* 元素基础样式 -------------------- */
+
+body {
+  margin: 0;
+  background: #eef1f6;
+  font-family: Arial, Helvetica, sans-serif;
+  color: #1d2433;
+}
+
+/* 页头：深蓝背景、金黄色下边框，标题与统计徽章横向排列 */
+header {
+  display: flex;
+  align-items: center;
+  padding: 18px 24px;
+  background: #1f3a5f;
+  color: #ffffff;
+  border-bottom: 4px solid #f2b134;
+}
+
+header h1 {
+  flex-grow: 1;
+  margin: 0;
+  font-size: 1.6em;
+  letter-spacing: 1px;
+}
+
+header p {
+  margin: 6px 0 0;
+  color: #c9d6ea;
+}
+
+/* COMPONENT STYLES -------------------- */
+/* 组件样式 -------------------- */
+
+/* 应用主体：固定宽度的白色卡片，圆角加投影 */
+.watchlist {
+  width: 720px;
+  margin: 50px auto;
+  background: #ffffff;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 14px rgba(31, 58, 95, 0.18);
+}
+
+/* 页头统计徽章：金黄色胶囊 */
+.stats {
+  padding: 6px 12px;
+  background: #f2b134;
+  color: #1f3a5f;
+  border-radius: 14px;
+  font-weight: bold;
+  font-size: 0.9em;
+}
+
+/* 单部电影条目：左信息右评分，底部浅色分隔线 */
+.movie {
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid #e3e7ee;
+}
+
+/* 最后一部电影去掉底部分隔线 */
+.movie:last-of-type {
+  border-bottom: none;
+}
+
+/* 电影信息区域：占据剩余宽度 */
+.movie-info {
+  flex-grow: 1;
+  padding: 14px 20px;
+}
+
+/* 电影标题文字 */
+.movie-title {
+  display: block;
+  font-size: 1.15em;
+  font-weight: bold;
+  color: #1f3a5f;
+}
+
+/* 年份与类型等元信息文字 */
+.movie-meta {
+  display: block;
+  margin-top: 4px;
+  font-size: 0.85em;
+  color: #6b7486;
+}
+
+/* 徽章通用样式：小圆角胶囊 */
+.badge {
+  display: inline-block;
+  margin-left: 8px;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 0.7em;
+  font-weight: bold;
+  vertical-align: middle;
+  letter-spacing: 0.5px;
+}
+
+/* 三种徽章配色：编辑推荐 / 已看 / 未看 */
+.badge-pick { background: #fff1d1; color: #8a5a00; }
+.badge-watched { background: #dcf0e7; color: #0d6a50; }
+.badge-unwatched { background: #eceff4; color: #6b7486; }
+
+/* 评分区域：固定宽度，与电影条目等高 */
+.rating {
+  display: flex;
+  width: 170px;
+  align-self: stretch;
+}
+
+/* 评分加减按钮 */
+.rating-action {
+  border: none;
+  width: 50px;
+  font-size: 1.2em;
+  font-weight: bold;
+  color: #8b93a3;
+  background: #e8ebf1;
+  cursor: pointer;
+}
+
+/* 悬停时按钮文字变白 */
+.rating-action:hover { color: #ffffff; }
+/* 减分悬停变红，加分悬停变绿 */
+.decrement:hover { background: #d9534f; }
+.increment:hover { background: #3c9d6b; }
+
+/* 评分分数：等宽字体居中显示 */
+.rating-score {
+  flex-grow: 1;
+  align-self: center;
+  text-align: center;
+  font-family: "Courier New", monospace;
+  font-size: 1.8em;
+  color: #1f3a5f;
+}
+
+/* 页脚：浅色背景居中文字 */
+footer {
+  padding: 12px 20px;
+  background: #f6f8fb;
+  color: #6b7486;
+  font-size: 0.85em;
+  text-align: center;
+}
+
+/* Used in Steps 02-05, before there are components */
+/* Step 02-05 使用：那时还没有组件，直接渲染的标题/页头需要限宽居中 */
+#root &gt; h1,
+#root &gt; header {
+  max-width: 720px;
+  margin: 40px auto 0;
+}
+
+/* PART 2 ADDITIONS (state) -------------------- */
+/* PART 2 新增样式（与状态相关） -------------------- */
+
+/* 页头中相邻统计徽章之间加间距 */
+header .stats + .stats {
+  margin-left: 8px;
+}
+
+/* 删除电影按钮：默认浅灰，悬停变红 */
+.remove-movie {
+  border: none;
+  background: none;
+  margin: 0 -8px 0 14px;
+  padding: 4px;
+  font-size: 0.9em;
+  color: #c3c9d4;
+  cursor: pointer;
+}
+
+.remove-movie:hover {
+  color: #d9534f;
+}
+
+/* 可点击徽章（button.badge）：去掉默认边框，悬停时加深蓝描边 */
+button.badge {
+  border: none;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+button.badge:hover {
+  outline: 2px solid #1f3a5f;
+}
+
+/* 评分按钮禁用状态：半透明且禁止指针 */
+.rating-action:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+/* 禁用状态下悬停也不改变颜色 */
+.rating-action:disabled:hover {
+  background: #e8ebf1;
+  color: #8b93a3;
+}
+
+/* 列表为空时的提示文字 */
+.empty {
+  margin: 0;
+  padding: 30px 20px;
+  text-align: center;
+  color: #6b7486;
+}
+</code></pre>
+  </div>
+</div>
+</div>
+</div>
+</div>
+
+  </section>
+
+</main>
+
+<footer class="footer">
+  <p><span class="atom">⚛</span> CSIS3380 Full Stack Development With JavaScript · Module 5</p>
+  <p>Jinran Lin (300395016) · <a href="https://github.com/JohnnyLin707/CSIS3380-Module-5-Stateful-React-Components.git" target="_blank" rel="noopener">GitHub Repository</a></p>
+</footer>
+
+<script src="../assets/js/main.js"></script>
+</body>
+</html>

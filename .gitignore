@@ -1,0 +1,18 @@
+# 压缩包（项目源码已直接在仓库中，无需重复存档）
+*.zip
+
+# 嵌套的独立 Git 仓库（不属于本仓库内容）
+PracticeHub/
+
+# 操作系统生成的文件
+.DS_Store
+Thumbs.db
+
+# 编辑器/IDE
+.vscode/
+.idea/
+*.swp
+
+# 测试产物
+.playwright-cli/
+node_modules/

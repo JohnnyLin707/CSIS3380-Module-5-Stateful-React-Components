@@ -1,0 +1,218 @@
+/* Movie Night — styles for the Basic React tutorial.
+   You do not need to edit this file. Every class name used in the
+   tutorial (watchlist, movie, rating, badge ...) is already styled here. */
+
+/* Movie Night —— React 基础教程所用样式。
+   你不需要修改此文件。教程中用到的每个类名
+   （watchlist、movie、rating、badge 等）都已在此定义样式。 */
+
+/* ELEMENT STYLES -------------------- */
+/* 元素基础样式 -------------------- */
+
+body {
+  margin: 0;
+  background: #eef1f6;
+  font-family: Arial, Helvetica, sans-serif;
+  color: #1d2433;
+}
+
+/* 页头：深蓝背景、金黄色下边框，标题与统计徽章横向排列 */
+header {
+  display: flex;
+  align-items: center;
+  padding: 18px 24px;
+  background: #1f3a5f;
+  color: #ffffff;
+  border-bottom: 4px solid #f2b134;
+}
+
+header h1 {
+  flex-grow: 1;
+  margin: 0;
+  font-size: 1.6em;
+  letter-spacing: 1px;
+}
+
+header p {
+  margin: 6px 0 0;
+  color: #c9d6ea;
+}
+
+/* COMPONENT STYLES -------------------- */
+/* 组件样式 -------------------- */
+
+/* 应用主体：固定宽度的白色卡片，圆角加投影 */
+.watchlist {
+  width: 720px;
+  margin: 50px auto;
+  background: #ffffff;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 14px rgba(31, 58, 95, 0.18);
+}
+
+/* 页头统计徽章：金黄色胶囊 */
+.stats {
+  padding: 6px 12px;
+  background: #f2b134;
+  color: #1f3a5f;
+  border-radius: 14px;
+  font-weight: bold;
+  font-size: 0.9em;
+}
+
+/* 单部电影条目：左信息右评分，底部浅色分隔线 */
+.movie {
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid #e3e7ee;
+}
+
+/* 最后一部电影去掉底部分隔线 */
+.movie:last-of-type {
+  border-bottom: none;
+}
+
+/* 电影信息区域：占据剩余宽度 */
+.movie-info {
+  flex-grow: 1;
+  padding: 14px 20px;
+}
+
+/* 电影标题文字 */
+.movie-title {
+  display: block;
+  font-size: 1.15em;
+  font-weight: bold;
+  color: #1f3a5f;
+}
+
+/* 年份与类型等元信息文字 */
+.movie-meta {
+  display: block;
+  margin-top: 4px;
+  font-size: 0.85em;
+  color: #6b7486;
+}
+
+/* 徽章通用样式：小圆角胶囊 */
+.badge {
+  display: inline-block;
+  margin-left: 8px;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 0.7em;
+  font-weight: bold;
+  vertical-align: middle;
+  letter-spacing: 0.5px;
+}
+
+/* 三种徽章配色：编辑推荐 / 已看 / 未看 */
+.badge-pick { background: #fff1d1; color: #8a5a00; }
+.badge-watched { background: #dcf0e7; color: #0d6a50; }
+.badge-unwatched { background: #eceff4; color: #6b7486; }
+
+/* 评分区域：固定宽度，与电影条目等高 */
+.rating {
+  display: flex;
+  width: 170px;
+  align-self: stretch;
+}
+
+/* 评分加减按钮 */
+.rating-action {
+  border: none;
+  width: 50px;
+  font-size: 1.2em;
+  font-weight: bold;
+  color: #8b93a3;
+  background: #e8ebf1;
+  cursor: pointer;
+}
+
+/* 悬停时按钮文字变白 */
+.rating-action:hover { color: #ffffff; }
+/* 减分悬停变红，加分悬停变绿 */
+.decrement:hover { background: #d9534f; }
+.increment:hover { background: #3c9d6b; }
+
+/* 评分分数：等宽字体居中显示 */
+.rating-score {
+  flex-grow: 1;
+  align-self: center;
+  text-align: center;
+  font-family: "Courier New", monospace;
+  font-size: 1.8em;
+  color: #1f3a5f;
+}
+
+/* 页脚：浅色背景居中文字 */
+footer {
+  padding: 12px 20px;
+  background: #f6f8fb;
+  color: #6b7486;
+  font-size: 0.85em;
+  text-align: center;
+}
+
+/* Used in Steps 02-05, before there are components */
+/* Step 02-05 使用：那时还没有组件，直接渲染的标题/页头需要限宽居中 */
+#root > h1,
+#root > header {
+  max-width: 720px;
+  margin: 40px auto 0;
+}
+
+/* PART 2 ADDITIONS (state) -------------------- */
+/* PART 2 新增样式（与状态相关） -------------------- */
+
+/* 页头中相邻统计徽章之间加间距 */
+header .stats + .stats {
+  margin-left: 8px;
+}
+
+/* 删除电影按钮：默认浅灰，悬停变红 */
+.remove-movie {
+  border: none;
+  background: none;
+  margin: 0 -8px 0 14px;
+  padding: 4px;
+  font-size: 0.9em;
+  color: #c3c9d4;
+  cursor: pointer;
+}
+
+.remove-movie:hover {
+  color: #d9534f;
+}
+
+/* 可点击徽章（button.badge）：去掉默认边框，悬停时加深蓝描边 */
+button.badge {
+  border: none;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+button.badge:hover {
+  outline: 2px solid #1f3a5f;
+}
+
+/* 评分按钮禁用状态：半透明且禁止指针 */
+.rating-action:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+/* 禁用状态下悬停也不改变颜色 */
+.rating-action:disabled:hover {
+  background: #e8ebf1;
+  color: #8b93a3;
+}
+
+/* 列表为空时的提示文字 */
+.empty {
+  margin: 0;
+  padding: 30px 20px;
+  text-align: center;
+  color: #6b7486;
+}

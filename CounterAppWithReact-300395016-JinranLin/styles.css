@@ -1,0 +1,139 @@
+/* 页面整体样式：居中布局、浅灰背景 */
+body {
+    font-family: sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: #f4f4f9;
+}
+
+/* React 挂载根节点：限制宽度并做成白色卡片 */
+#root {
+    width: 100%;
+    max-width: 600px;
+    padding: 2rem;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* 标题统一居中、深灰色 */
+h1,
+h2 {
+    text-align: center;
+    color: #333;
+}
+
+/* 计数器容器（备用样式类） */
+.counters-container {
+    display: flex;
+    justify-content: space-around;
+    margin: 2rem 0;
+}
+
+/* 单个计数器盒子（备用样式类） */
+.counter-box {
+    text-align: center;
+    padding: 1rem;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+}
+
+/* 计数器数字：大号加粗 */
+.counter-box p {
+    font-size: 3rem;
+    margin: 0.5rem;
+    font-weight: bold;
+}
+
+/* 计数器盒子内按钮（备用样式类） */
+.counter-box button {
+    font-size: 1.5rem;
+    padding: 0.5rem 1rem;
+    margin: 0 0.5rem;
+    cursor: pointer;
+    border: 1px solid #ccc;
+    background-color: #eee;
+}
+
+/* 计算结果区域：居中、淡蓝背景 */
+.results {
+    text-align: center;
+    font-size: 1.2rem;
+    background-color: #eef;
+    padding: 1rem;
+    border-radius: 8px;
+}
+
+
+/* 两个计数器面板的横向排列容器 */
+.controls {
+    display: flex;
+    justify-content: space-around;
+    margin: 2rem 0;
+    gap: 2rem;
+}
+
+/* 单个计数器面板 */
+.counter-section {
+    text-align: center;
+    padding: 1rem;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+}
+
+/* 计数器名称标题 */
+.counter-section h3 {
+    margin: 0 0 1rem 0;
+    color: #555;
+    font-size: 1.5rem;
+}
+
+/* 计数器操作按钮通用样式 */
+.counter-section button {
+    font-size: 1rem;
+    padding: 0.5rem 1rem;
+    margin: 0.25rem;
+    cursor: pointer;
+    border: 1px solid #ccc;
+    background-color: #fff;
+    border-radius: 4px;
+    transition: background-color 0.2s;
+}
+
+/* 按钮悬停时变灰，提供交互反馈 */
+.counter-section button:hover {
+    background-color: #e0e0e0;
+}
+
+/* 单个计数器的“重置”按钮：淡红色主题 */
+.counter-section .reset-button {
+    background-color: #ffe9e9;
+    border-color: #e0a0a0;
+    color: #a33;
+}
+
+/* 重置按钮悬停时颜色加深 */
+.counter-section .reset-button:hover {
+    background-color: #ffd4d4;
+}
+
+/* “全部重置”按钮：居中、红色边框 */
+.reset-all-button {
+    display: block;
+    margin: 0 auto 1rem auto;
+    font-size: 1rem;
+    padding: 0.5rem 1.5rem;
+    cursor: pointer;
+    border: 1px solid red;
+    background-color: whitesmoke;
+    color: red;
+    border-radius: 4px;
+    transition: background-color 0.2s;
+}
+/* 全部重置按钮悬停时变为浅红 */
+.reset-all-button:hover {
+    background-color: #f1b0b7;
+}

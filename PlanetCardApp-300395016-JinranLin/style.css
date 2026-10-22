@@ -1,0 +1,140 @@
+/* 页面整体样式：浅灰背景、无外边距、Helvetica 字体 */
+body {
+  background: #edeff0;
+  margin: 0;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+/* 行星卡片网格容器：自适应列宽，最小 320px，自动换行 */
+.container {
+  width: 90%;
+  max-width: 1100px;
+  margin: 1.1em auto;
+
+  display: grid;
+  grid-gap: 20px;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+}
+
+/* 单张行星卡片：白底、圆角、轻投影 */
+.card {
+  box-sizing: border-box;
+  background: white;
+  padding: 20px;
+  border-radius: 5px;
+  box-shadow: 0 1px 0 0 rgba(0, 0, 0, 0.1);
+}
+
+/* 卡片内的图片容器：居中、黑色背景衬托星球照片 */
+.card div {
+  text-align: center;
+  padding: 1em;
+  background-color: #000;
+  margin-bottom: 1.5em;
+}
+
+/* 行星名称标题 */
+h2 {
+  font-size: 2em;
+  margin-bottom: 8px;
+  color: #384047;
+  line-height: 1.2;
+  margin-top: 5px;
+}
+
+/* “Planet Profile”小标题 */
+h3 {
+  margin-top: 1.5em;
+  margin-bottom: 0;
+}
+
+/* 档案列表样式 */
+ul {
+  padding: 0 0 0 1em;
+  margin-top: 0.85em;
+}
+
+/* 列表项间距 */
+li {
+  margin-bottom: 0.5em;
+}
+
+/* 简介段落文字 */
+p {
+  color: #222;
+  font-size: 1em;
+  margin-bottom: 15px;
+  line-height: 1.4;
+}
+
+/* 行星图片尺寸 */
+img {
+  width: 150px;
+}
+
+/* 顶部工具栏：标题与重置按钮两端对齐，底部灰色分隔线 */
+.toolbar {
+  width: 90%;
+  max-width: 1100px;
+  margin: 1.5em auto 0;
+  padding-bottom: 0.75em;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 2px solid gray;
+}
+
+/* 工具栏主标题 */
+h1 {
+  font-size: 1.6em;
+  color: #384047;
+  margin: 0;
+}
+
+/* 删除按钮与重置按钮的通用样式 */
+.remove-btn,
+.reset-btn {
+  font-family: inherit;
+  font-size: 0.85em;
+  padding: 7px 16px;
+  color: white;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+/* 删除按钮：红色，悬停变橙 */
+.remove-btn {
+  margin-top: 0.75em;
+  background-color: red;
+}
+
+.remove-btn:hover {
+  background-color: orange;
+}
+
+/* 重置按钮：蓝色，悬停变紫罗兰 */
+.reset-btn {
+  background-color: blue;
+}
+
+.reset-btn:hover {
+  background-color: blueviolet;
+}
+
+/* 按钮按下时轻微下移，形成按压手感 */
+.remove-btn:active,
+.reset-btn:active {
+  transform: translateY(1px);
+}
+
+/* 列表为空时的提示文字 */
+.empty {
+  width: 90%;
+  max-width: 1100px;
+  margin: 3em auto;
+  text-align: center;
+  font-size: 1.3em;
+  color: #6b7280;
+}
